@@ -12,8 +12,8 @@
     <groupId>ar.edu.utn.frc.tup.lc.iv</groupId>
     <artifactId>tpi-scaffolding</artifactId>
     <version>0.0.1-SNAPSHOT</version> <!-- Change the artifact version every time you release a new version-->
-    <name>tpi-scaffolding</name> <!-- TODO: Change the project name -->
-    <description>TPI Initial Scaffolding</description> <!-- TODO: Change the project description -->
+    <name>tpi_owners_and_plots</name>
+    <description>TPI owners and plots microservice</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
@@ -137,7 +137,6 @@
                 <version>3.6.0</version>
                 <configuration>
                     <source>17</source>
-                    <target>17</target>
                     <reportOutputDirectory>./docs/java_doc</reportOutputDirectory>
                 </configuration>
             </plugin>
@@ -188,7 +187,6 @@
                 <version>3.6.0</version>
                 <configuration>
                     <source>17</source>
-                    <target>17</target>
                     <reportOutputDirectory>./docs/java_doc</reportOutputDirectory>
                 </configuration>
             </plugin>
