@@ -4,6 +4,7 @@ import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotStateDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotTypeDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostPlotDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.entities.PlotEntity;
 import ar.edu.utn.frc.tup.lc.iv.entities.PlotStateEntity;
 import ar.edu.utn.frc.tup.lc.iv.entities.PlotTypeEntity;
@@ -15,6 +16,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -73,6 +75,38 @@ public class PlotServiceImpl implements PlotService {
             plotTypeDtos.add(modelMapper.map(plotTypeEntity, GetPlotTypeDto.class));
         }
         return plotTypeDtos;
+    }
+
+    @Override
+    @Transactional
+    //todo SALE ESE ERROR RARO
+    //todo El error que estás viendo en tu operación PUT está relacionado con una limitación en MySQL que evita la
+    // modificación de una tabla que ya está siendo utilizada en un trigger
+    public GetPlotDto putPlot(PutPlotDto plotDto, Integer plotId) {
+        PlotEntity plotEntity = this.plotRepository.findById(plotId).get();
+
+        if(plotEntity == null){
+            throw new RuntimeException();
+        }
+
+        PlotStateEntity plotStateEntity = this.plotStateRepository.findById(plotDto.getPlot_state_id()).get();
+        if(plotStateEntity == null){
+            throw new RuntimeException();
+        }
+
+        PlotTypeEntity plotTypeEntity = this.plotTypeRepository.findById(plotDto.getPlot_type_id()).get();
+        if(plotTypeEntity == null){
+            throw new RuntimeException();
+        }
+
+        plotEntity.setTotalAreaInM2(plotDto.getTotal_area_in_m2());
+        plotEntity.setBuiltAreaInM2(plotDto.getBuilt_area_in_m2());
+        plotEntity.setPlotState(plotStateEntity);
+        plotEntity.setPlotType(plotTypeEntity);
+        plotEntity = this.plotRepository.save(plotEntity);
+        GetPlotDto getPlotDto = new GetPlotDto();
+        this.mapPlotEntityToGetPlotDto(plotEntity , getPlotDto);
+        return getPlotDto;
     }
 
     @Override

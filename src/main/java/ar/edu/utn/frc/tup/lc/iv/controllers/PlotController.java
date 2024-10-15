@@ -5,6 +5,7 @@ import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotStateDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotTypeDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetTaxStatusDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostPlotDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,11 @@ public class PlotController {
     @PostMapping()
     public ResponseEntity<GetPlotDto> postPlot(@RequestBody PostPlotDto plotDto) {
         return ResponseEntity.ok(plotService.createPlot(plotDto));
+    }
+
+    @PutMapping()
+    public ResponseEntity<GetPlotDto> postPlot(@RequestBody PutPlotDto plotDto, @RequestParam Integer plotId) {
+        return ResponseEntity.ok(plotService.putPlot(plotDto, plotId));
     }
 
     @GetMapping()
