@@ -6,10 +6,12 @@ import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotTypeDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostPlotDto;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface PlotService {
     GetPlotDto createPlot(PostPlotDto postPlotDto);
-    GetPlotStateDto getPlotStates();
-    GetPlotTypeDto getPlotTypes();
+    List<GetPlotStateDto> getPlotStates();
+    List<GetPlotTypeDto> getPlotTypes();
 
 }
