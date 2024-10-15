@@ -29,11 +29,11 @@ public class OwnerEntity {
     private LocalDateTime dateBirth;
 
     @ManyToOne
-    @JoinColumn(name = "owner_type_id", referencedColumnName = "id")  // Agregamos la relación con OwnersTypes
+    @JoinColumn(name = "owner_type_id")
     private OwnerTypeEntity ownerType;
 
     @ManyToOne
-    @JoinColumn(name = "tax_status_id", referencedColumnName = "id")
+    @JoinColumn(name = "tax_status_id")
     private TaxStatusEntity taxStatus;
 
     @Column(name = "business_name")
