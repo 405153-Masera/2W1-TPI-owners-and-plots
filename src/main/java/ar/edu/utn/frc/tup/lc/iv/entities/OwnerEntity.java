@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,13 +21,13 @@ public class OwnerEntity {
 
     private String name;
     private String surname;
-    private Integer dni;
+    private String dni;
 
     @Column(name = "cuit_cuil")
-    private Integer cuitCuil;
+    private String cuitCuil;
 
     @Column(name = "date_birth")
-    private LocalDateTime dateBirth;
+    private LocalDate dateBirth;
 
     @ManyToOne
     @JoinColumn(name = "owner_type_id")

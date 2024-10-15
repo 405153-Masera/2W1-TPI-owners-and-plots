@@ -12,13 +12,23 @@ last_updated_datetime DATETIME,
 last_updated_user INT
 );
 
+-- Tabla OwnersTypes
+CREATE TABLE OwnersTypes (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    description VARCHAR(255),
+    created_datetime DATETIME,
+    created_user INT,
+    last_updated_datetime DATETIME,
+    last_updated_user INT
+);
+
 -- Tabla Owners
 CREATE TABLE Owners (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255),
     surname VARCHAR(255),
-    dni INT,
-    cuit_cuil INT,
+    dni VARCHAR(255),
+    cuit_cuil VARCHAR(255),
     date_birth DATETIME,
     tax_status_id INT,
     owner_type_id INT,
@@ -82,16 +92,6 @@ CREATE TABLE PlotOwners (
     FOREIGN KEY (owner_id) REFERENCES Owners(id)
 );
 
-
--- Tabla OwnersTypes
-CREATE TABLE OwnersTypes (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    description VARCHAR(255),
-    created_datetime DATETIME,
-    created_user INT,
-    last_updated_datetime DATETIME,
-    last_updated_user INT
-);
 
 -- Tabla Files
 CREATE TABLE Files (
@@ -297,11 +297,6 @@ BEGIN
     (id, version, description, created_datetime, created_user, last_updated_datetime, last_updated_user)
     VALUES 
     (OLD.id, version_number, OLD.description, OLD.created_datetime, OLD.created_user, OLD.last_updated_datetime, OLD.last_updated_user);
-
-    UPDATE TaxStatus
-    SET last_updated_datetime = NEW.last_updated_datetime, 
-        last_updated_user = NEW.last_updated_user
-    WHERE id = NEW.id;
 END$$
 
 DELIMITER ;
@@ -334,11 +329,6 @@ BEGIN
     (id, version, name, surname, dni, cuit_cuil, date_birth, tax_status_id, owner_type_id, business_name, active, created_datetime, created_user, last_updated_datetime, last_updated_user)
     VALUES 
     (OLD.id, version_number, OLD.name, OLD.surname, OLD.dni, OLD.cuit_cuil, OLD.date_birth, OLD.tax_status_id, OLD.owner_type_id, OLD.business_name, OLD.active, OLD.created_datetime, OLD.created_user, OLD.last_updated_datetime, OLD.last_updated_user);
-
-    UPDATE Owners
-    SET last_updated_datetime = NEW.last_updated_datetime, 
-        last_updated_user = NEW.last_updated_user
-    WHERE id = NEW.id;
 END$$
 
 DELIMITER ;
@@ -371,11 +361,6 @@ BEGIN
     (id, version, name, created_datetime, created_user, last_updated_datetime, last_updated_user)
     VALUES 
     (OLD.id, version_number, OLD.name, OLD.created_datetime, OLD.created_user, OLD.last_updated_datetime, OLD.last_updated_user);
-
-    UPDATE PlotStates
-    SET last_updated_datetime = NEW.last_updated_datetime, 
-        last_updated_user = NEW.last_updated_user
-    WHERE id = NEW.id;
 END$$
 
 DELIMITER ;
@@ -408,11 +393,6 @@ BEGIN
     (id, version, name, created_datetime, created_user, last_updated_datetime, last_updated_user)
     VALUES 
     (OLD.id, version_number, OLD.name, OLD.created_datetime, OLD.created_user, OLD.last_updated_datetime, OLD.last_updated_user);
-
-    UPDATE PlotTypes
-    SET last_updated_datetime = NEW.last_updated_datetime, 
-        last_updated_user = NEW.last_updated_user
-    WHERE id = NEW.id;
 END$$
 
 DELIMITER ;
@@ -445,11 +425,6 @@ BEGIN
     (id, version, plot_number, block_number, plot_state_id, plot_type_id, total_area_in_m2, built_area_in_m2, created_datetime, created_user, last_updated_datetime, last_updated_user)
     VALUES 
     (OLD.id, version_number, OLD.plot_number, OLD.block_number, OLD.plot_state_id, OLD.plot_type_id, OLD.total_area_in_m2, OLD.built_area_in_m2, OLD.created_datetime, OLD.created_user, OLD.last_updated_datetime, OLD.last_updated_user);
-
-    UPDATE Plots
-    SET last_updated_datetime = NEW.last_updated_datetime, 
-        last_updated_user = NEW.last_updated_user
-    WHERE id = NEW.id;
 END$$
 
 DELIMITER ;
@@ -482,11 +457,6 @@ BEGIN
     (id, version, plot_id, owner_id, created_datetime, created_user, last_updated_datetime, last_updated_user)
     VALUES 
     (OLD.id, version_number, OLD.plot_id, OLD.owner_id, OLD.created_datetime, OLD.created_user, OLD.last_updated_datetime, OLD.last_updated_user);
-
-    UPDATE PlotOwners
-    SET last_updated_datetime = NEW.last_updated_datetime, 
-        last_updated_user = NEW.last_updated_user
-    WHERE id = NEW.id;
 END$$
 
 DELIMITER ;
