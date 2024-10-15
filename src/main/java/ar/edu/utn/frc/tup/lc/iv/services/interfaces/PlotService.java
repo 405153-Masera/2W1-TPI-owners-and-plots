@@ -13,5 +13,6 @@ public interface PlotService {
     GetPlotDto createPlot(PostPlotDto postPlotDto);
     List<GetPlotStateDto> getPlotStates();
     List<GetPlotTypeDto> getPlotTypes();
+    List<GetPlotDto> getAllPlots();
 
 }

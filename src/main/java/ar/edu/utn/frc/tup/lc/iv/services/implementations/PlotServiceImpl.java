@@ -75,6 +75,18 @@ public class PlotServiceImpl implements PlotService {
         return plotTypeDtos;
     }
 
+    @Override
+    public List<GetPlotDto> getAllPlots() {
+        List<PlotEntity> plotEntities = plotRepository.findAll();
+        List<GetPlotDto> plotDtos = new ArrayList<>();
+        for (PlotEntity plotEntity : plotEntities) {
+            GetPlotDto getPlotDto = new GetPlotDto();
+            mapPlotEntityToGetPlotDto(plotEntity, getPlotDto );
+            plotDtos.add(getPlotDto);
+        }
+        return plotDtos;
+    }
+
     //Metodo para validar si existe un plot con ese numero
     public void validatePlotNumber(Integer plotNumber) {
         if (plotRepository.findByPlotNumber(plotNumber) != null) {

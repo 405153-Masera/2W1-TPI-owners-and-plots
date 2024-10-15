@@ -33,4 +33,9 @@ public class PlotController {
     public ResponseEntity<GetPlotDto> postPlot(@RequestBody PostPlotDto plotDto) {
         return ResponseEntity.ok(plotService.createPlot(plotDto));
     }
+
+    @GetMapping()
+    public ResponseEntity<List<GetPlotDto>> getPlots() {
+        return ResponseEntity.ok(plotService.getAllPlots());
+    }
 }
