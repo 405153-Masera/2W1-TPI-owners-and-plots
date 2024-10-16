@@ -11,11 +11,15 @@ import ar.edu.utn.frc.tup.lc.iv.entities.TaxStatusEntity;
 import ar.edu.utn.frc.tup.lc.iv.repositories.OwnerRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.OwnerTypeRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.TaxStatusRepository;
+import ar.edu.utn.frc.tup.lc.iv.restTemplate.RestUser;
+import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.UserPost;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,17 +29,26 @@ import java.util.Optional;
 @Service
 public class OwnerServiceImpl implements OwnerService {
 
-    @Autowired
-    private OwnerRepository ownerRepository;
+    private final OwnerRepository ownerRepository;
+
+    private final TaxStatusRepository taxStatusRepository;
+
+    private final OwnerTypeRepository ownerTypeRepository;
+
+    private final ModelMapper modelMapper;
+
+    private final RestUser restUser;
 
     @Autowired
-    private TaxStatusRepository taxStatusRepository;
-
-    @Autowired
-    private OwnerTypeRepository ownerTypeRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    public OwnerServiceImpl(OwnerRepository ownerRepository, TaxStatusRepository taxStatusRepository,
+                            OwnerTypeRepository ownerTypeRepository, ModelMapper modelMapper,
+                            RestUser restUser) {
+        this.ownerRepository = ownerRepository;
+        this.taxStatusRepository = taxStatusRepository;
+        this.ownerTypeRepository = ownerTypeRepository;
+        this.modelMapper = modelMapper;
+        this.restUser = restUser;
+    }
 
     @Override
     public GetOwnerDto createOwner(PostOwnerDto postOwnerDto) {
@@ -50,13 +63,16 @@ public class OwnerServiceImpl implements OwnerService {
                 .orElseThrow(() -> new EntityNotFoundException("TaxStatus not found"));
         ownerEntity.setTaxStatus(taxStatusEntity);
 
+        //Aca se crea el usuario
+        if(!restUser.createUser(postOwnerDto)){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Server error while creating the user");
+        }
+
         OwnerEntity ownerSaved = ownerRepository.save(ownerEntity);
 
         GetOwnerDto getOwnerDto = mapOwnerEntitytoGet(ownerSaved);
         getOwnerDto.setOwnerType(ownerTypeEntity.getDescription());
         getOwnerDto.setTaxStatus(taxStatusEntity.getDescription());
-        //Todo: Guardar el usuario propietario
-
         return getOwnerDto;
     }
 
@@ -100,9 +116,9 @@ public class OwnerServiceImpl implements OwnerService {
         ownerEntity.setActive(postOwnerDto.getActive());
 
         ownerEntity.setCreatedDatetime(LocalDateTime.now());
-        ownerEntity.setCreatedUser(postOwnerDto.getUserId());
+        ownerEntity.setCreatedUser(postOwnerDto.getUserCreateId());
         ownerEntity.setLastUpdatedDatetime(LocalDateTime.now());
-        ownerEntity.setLastUpdatedUser(postOwnerDto.getUserId());
+        ownerEntity.setLastUpdatedUser(postOwnerDto.getUserCreateId());
         return ownerEntity;
     }
 

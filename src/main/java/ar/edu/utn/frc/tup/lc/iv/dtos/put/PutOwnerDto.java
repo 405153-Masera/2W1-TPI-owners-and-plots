@@ -1,5 +1,6 @@
 package ar.edu.utn.frc.tup.lc.iv.dtos.put;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
