@@ -41,5 +41,14 @@ public class OwnerController {
     public ResponseEntity<List<GetOwnerTypeDto>> getOwnerTypes() {
         return ResponseEntity.ok(ownerService.getOwnerTypes());
     }
+    @GetMapping()
+    public ResponseEntity<List<GetOwnerDto>> getOwners(){
+        List<GetOwnerDto> result = ownerService.getAllOwners();
+
+        if(result == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(result);
+    }
 
 }

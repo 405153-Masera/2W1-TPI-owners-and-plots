@@ -16,4 +16,5 @@ public interface OwnerService {
     GetOwnerDto updateOwner(Integer ownerId, PutOwnerDto putOwnerDto);
     List<GetTaxStatusDto> getTaxStatus();
     List<GetOwnerTypeDto> getOwnerTypes();
+    List<GetOwnerDto> getAllOwners();
 }

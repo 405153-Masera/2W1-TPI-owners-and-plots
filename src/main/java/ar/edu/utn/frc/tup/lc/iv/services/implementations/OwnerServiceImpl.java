@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OwnerServiceImpl implements OwnerService {
@@ -155,5 +156,15 @@ public class OwnerServiceImpl implements OwnerService {
             ownerTypeDtos.add(modelMapper.map(ownerTypeEntity, GetOwnerTypeDto.class));
         }
         return ownerTypeDtos;
+    }
+
+    @Override
+    public List<GetOwnerDto> getAllOwners() {
+        List<OwnerEntity> ownerEntities = ownerRepository.findAll();
+        List<GetOwnerDto> getOwnerDtos = ownerEntities.stream()
+                .map(this::mapOwnerEntitytoGet)
+                .collect(Collectors.toList());
+
+        return getOwnerDtos;
     }
 }
