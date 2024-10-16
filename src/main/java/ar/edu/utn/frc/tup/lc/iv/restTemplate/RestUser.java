@@ -29,12 +29,14 @@ public class RestUser {
         userPost.setUsername(postOwnerDto.getUsername());
         userPost.setPassword(postOwnerDto.getPassword());
         userPost.setEmail(postOwnerDto.getEmail());
-        userPost.setPhoneNumber(postOwnerDto.getPhoneNumber());
+        userPost.setPhone_number(postOwnerDto.getPhoneNumber());
         userPost.setDni(postOwnerDto.getDni());
         userPost.setActive(true);
-        userPost.setAvatarUrl(postOwnerDto.getAvatarUrl());
+        userPost.setAvatar_url(postOwnerDto.getAvatarUrl());
         userPost.setRoles(postOwnerDto.getRoles());
         userPost.setDatebirth(postOwnerDto.getDateBirth());
+        userPost.setUserUpdateId(postOwnerDto.getUserCreateId());
+        userPost.setPlot_id(postOwnerDto.getPlotId());
 
         try {
 
@@ -58,14 +60,14 @@ public class RestUser {
         userPost.setUsername(postOwnerDto.getUsername());
         userPost.setPassword(postOwnerDto.getPassword());
         userPost.setEmail(postOwnerDto.getEmail());
-        userPost.setPhoneNumber(postOwnerDto.getPhoneNumber());
+        userPost.setPhone_number(postOwnerDto.getPhoneNumber());
         userPost.setDni(postOwnerDto.getDni());
         userPost.setActive(true);
-        userPost.setAvatarUrl(postOwnerDto.getAvatarUrl());
+        userPost.setAvatar_url(postOwnerDto.getAvatarUrl());
         userPost.setRoles(postOwnerDto.getRoles());
         userPost.setDatebirth(postOwnerDto.getDateBirth());
         userPost.setUserUpdateId(postOwnerDto.getUserCreateId());
-        userPost.setPlotId(postOwnerDto.getPlotId());
+        userPost.setPlot_id(postOwnerDto.getPlotId());
 
         try {
 

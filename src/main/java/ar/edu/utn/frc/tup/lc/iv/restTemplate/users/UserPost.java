@@ -16,12 +16,12 @@ public class UserPost {
     private String username;
     private String password;
     private String email;
-    private String phoneNumber;
+    private String phone_number;
     private String dni;
     private Boolean active;
-    private String avatarUrl;
+    private String avatar_url;
     private LocalDate datebirth;
     private String[] roles ;
     private Integer userUpdateId;
-    private Integer plotId;
+    private Integer plot_id;
 }
