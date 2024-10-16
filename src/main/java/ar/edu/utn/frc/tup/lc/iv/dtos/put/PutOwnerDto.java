@@ -14,6 +14,8 @@ public class PutOwnerDto {
     private String lastname;
     private String dni;
     private String cuitCuil;
+    private String email;
+    private String phoneNumber;
     private LocalDate dateBirth;
     private Integer ownerTypeId;
     private Integer taxStatusId;

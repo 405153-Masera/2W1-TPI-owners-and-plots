@@ -89,6 +89,8 @@ public class OwnerServiceImpl implements OwnerService {
         ownerEntity.setLastname(putOwnerDto.getLastname());
         ownerEntity.setDni(putOwnerDto.getDni());
         ownerEntity.setCuitCuil(putOwnerDto.getCuitCuil());
+        ownerEntity.setEmail(putOwnerDto.getEmail());
+        ownerEntity.setPhoneNumber(putOwnerDto.getPhoneNumber());
         ownerEntity.setDateBirth(putOwnerDto.getDateBirth());
         ownerEntity.setOwnerType(ownerTypeRepository.findById(putOwnerDto.getOwnerTypeId())
                 .orElseThrow(() -> new EntityNotFoundException("OwnerType not found")));
@@ -117,6 +119,8 @@ public class OwnerServiceImpl implements OwnerService {
         ownerEntity.setDateBirth(postOwnerDto.getDateBirth());
         ownerEntity.setBusinessName(postOwnerDto.getBusinessName());
         ownerEntity.setActive(postOwnerDto.getActive());
+        ownerEntity.setEmail(postOwnerDto.getEmail());
+        ownerEntity.setPhoneNumber(postOwnerDto.getPhoneNumber());
 
         ownerEntity.setCreatedDatetime(LocalDateTime.now());
         ownerEntity.setCreatedUser(postOwnerDto.getUserCreateId());
@@ -132,6 +136,8 @@ public class OwnerServiceImpl implements OwnerService {
         getOwnerDto.setSurname(ownerEntity.getLastname());
         getOwnerDto.setDni(ownerEntity.getDni());
         getOwnerDto.setCuitCuil(ownerEntity.getCuitCuil());
+        getOwnerDto.setEmail(ownerEntity.getEmail());
+        getOwnerDto.setPhoneNumber(ownerEntity.getPhoneNumber());
         getOwnerDto.setDateBirth(ownerEntity.getDateBirth());
         getOwnerDto.setOwnerType(ownerEntity.getOwnerType().getDescription());
         getOwnerDto.setTaxStatus(ownerEntity.getTaxStatus().getDescription());
@@ -166,6 +172,8 @@ public class OwnerServiceImpl implements OwnerService {
         List<OwnerDto> ownerDtos = ownerEntities.stream()
                 .map(this::mapOwnerEntityToOwnerDto)
                 .collect(Collectors.toList());
+
+
 
         return ownerDtos;
     }
