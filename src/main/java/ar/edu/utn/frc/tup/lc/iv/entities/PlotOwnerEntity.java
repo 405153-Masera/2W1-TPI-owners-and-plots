@@ -36,5 +36,4 @@ public class PlotOwnerEntity {
 
     @Column(name = "last_updated_user")
     private Integer lastUpdatedUser;
-
 }
