@@ -26,7 +26,7 @@ CREATE TABLE OwnersTypes (
 CREATE TABLE Owners (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255),
-    surname VARCHAR(255),
+    lastname VARCHAR(255),
     dni VARCHAR(255),
     cuit_cuil VARCHAR(255),
     date_birth DATETIME,

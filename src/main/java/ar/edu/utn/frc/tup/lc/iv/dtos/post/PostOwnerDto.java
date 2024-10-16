@@ -30,6 +30,7 @@ public class PostOwnerDto {
     private String avatarUrl;
     @NotNull(message = "Los roles no pueden ser nulos")
     private String[] roles ;
+    private Integer plotId;
 
     private Integer userCreateId;
 }

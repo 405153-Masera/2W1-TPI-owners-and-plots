@@ -178,6 +178,24 @@ public class OwnerServiceImpl implements OwnerService {
         return ownerDtos;
     }
 
+    @Override
+    public List<OwnerDto> getOwnersByPlotId(Integer plotId) {
+        Optional<List<OwnerEntity>> ownerEntitiesOptional = ownerRepository.findByPlotId(plotId);
+
+        if (ownerEntitiesOptional.isEmpty()) {
+            throw new EntityNotFoundException("Owners not found");
+        }
+
+        List<OwnerEntity> ownerEntities = ownerEntitiesOptional.get();
+        List<OwnerDto> ownerDtos = ownerEntities.stream()
+                .map(this::mapOwnerEntityToOwnerDto)
+                .collect(Collectors.toList());
+
+        //Todo: falta agregar los archivos
+
+        return ownerDtos;
+    }
+
     public OwnerDto mapOwnerEntityToOwnerDto(OwnerEntity ownerEntity) {
         OwnerDto ownerDto = new OwnerDto();
         ownerDto.setId(ownerEntity.getId());

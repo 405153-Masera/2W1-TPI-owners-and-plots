@@ -42,6 +42,7 @@ public class OwnerController {
     public ResponseEntity<List<GetOwnerTypeDto>> getOwnerTypes() {
         return ResponseEntity.ok(ownerService.getOwnerTypes());
     }
+
     @GetMapping()
     public ResponseEntity<List<OwnerDto>> getOwners(){
         List<OwnerDto> result = ownerService.getAllOwners();
@@ -52,4 +53,9 @@ public class OwnerController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/plot/{plotId}")
+    public ResponseEntity<List<OwnerDto>> getOwnersByPlotId(@PathVariable Integer plotId) {
+        List<OwnerDto> owners = ownerService.getOwnersByPlotId(plotId);
+        return ResponseEntity.ok(owners);
+    }
 }

@@ -22,4 +22,6 @@ public class UserPost {
     private String avatarUrl;
     private LocalDate datebirth;
     private String[] roles ;
+    private Integer userUpdateId;
+    private Integer plotId;
 }

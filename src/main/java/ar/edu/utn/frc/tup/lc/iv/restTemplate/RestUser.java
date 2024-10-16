@@ -64,6 +64,8 @@ public class RestUser {
         userPost.setAvatarUrl(postOwnerDto.getAvatarUrl());
         userPost.setRoles(postOwnerDto.getRoles());
         userPost.setDatebirth(postOwnerDto.getDateBirth());
+        userPost.setUserUpdateId(postOwnerDto.getUserCreateId());
+        userPost.setPlotId(postOwnerDto.getPlotId());
 
         try {
 
