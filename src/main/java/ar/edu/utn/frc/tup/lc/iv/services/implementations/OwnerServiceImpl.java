@@ -173,7 +173,7 @@ public class OwnerServiceImpl implements OwnerService {
                 .map(this::mapOwnerEntityToOwnerDto)
                 .collect(Collectors.toList());
 
-
+        //Todo: falta agregar los archivos
 
         return ownerDtos;
     }
@@ -185,6 +185,8 @@ public class OwnerServiceImpl implements OwnerService {
         ownerDto.setLastname(ownerEntity.getLastname());
         ownerDto.setDni(ownerEntity.getDni());
         ownerDto.setCuitCuil(ownerEntity.getCuitCuil());
+        ownerDto.setEmail(ownerEntity.getEmail());
+        ownerDto.setPhoneNumber(ownerEntity.getPhoneNumber());
         ownerDto.setDateBirth(ownerEntity.getDateBirth());
         ownerDto.setOwnerType(ownerEntity.getOwnerType().getDescription());
         ownerDto.setBusinessName(ownerEntity.getBusinessName());
