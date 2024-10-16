@@ -103,6 +103,8 @@ public class PlotServiceImpl implements PlotService {
         plotEntity.setBuiltAreaInM2(plotDto.getBuilt_area_in_m2());
         plotEntity.setPlotState(plotStateEntity);
         plotEntity.setPlotType(plotTypeEntity);
+        plotEntity.setLastUpdatedDatetime(LocalDateTime.now());
+        plotEntity.setLastUpdatedUser(plotDto.getUserUpdateId());
         plotEntity = this.plotRepository.save(plotEntity);
         GetPlotDto getPlotDto = new GetPlotDto();
         this.mapPlotEntityToGetPlotDto(plotEntity , getPlotDto);
@@ -136,8 +138,8 @@ public class PlotServiceImpl implements PlotService {
         plotEntity.setTotalAreaInM2(postPlotDto.getTotal_area_in_m2());
         plotEntity.setCreatedDatetime(LocalDateTime.now());
         plotEntity.setLastUpdatedDatetime(LocalDateTime.now());
-        plotEntity.setCreatedUser(1);
-        plotEntity.setLastUpdatedUser(1);
+        plotEntity.setCreatedUser(postPlotDto.getUserCreateId());
+        plotEntity.setLastUpdatedUser(plotEntity.getLastUpdatedUser());
 
         //Mapeamos los estados y tipos
         PlotStateEntity state = plotStateRepository.findById(postPlotDto.getPlot_state_id())

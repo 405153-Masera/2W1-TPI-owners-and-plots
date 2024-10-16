@@ -20,7 +20,7 @@ public class OwnerEntity {
     private Integer id;
 
     private String name;
-    private String surname;
+    private String lastname;
     private String dni;
 
     @Column(name = "cuit_cuil")

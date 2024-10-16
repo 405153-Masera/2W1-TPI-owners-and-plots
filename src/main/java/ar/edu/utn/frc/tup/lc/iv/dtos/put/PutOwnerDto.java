@@ -1,6 +1,5 @@
 package ar.edu.utn.frc.tup.lc.iv.dtos.put;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class PutOwnerDto {
     private String name;
-    private String surname;
+    private String lastname;
     private String dni;
     private String cuitCuil;
     private LocalDate dateBirth;
@@ -20,5 +19,6 @@ public class PutOwnerDto {
     private Integer taxStatusId;
     private String businessName;
     private Boolean active;
-    private Integer userId;
+
+    private Integer userUpdateId;
 }

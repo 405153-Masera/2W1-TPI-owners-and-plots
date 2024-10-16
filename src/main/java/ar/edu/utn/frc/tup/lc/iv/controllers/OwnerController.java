@@ -3,6 +3,7 @@ package ar.edu.utn.frc.tup.lc.iv.controllers;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerTypeDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetTaxStatusDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.OwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
@@ -42,8 +43,8 @@ public class OwnerController {
         return ResponseEntity.ok(ownerService.getOwnerTypes());
     }
     @GetMapping()
-    public ResponseEntity<List<GetOwnerDto>> getOwners(){
-        List<GetOwnerDto> result = ownerService.getAllOwners();
+    public ResponseEntity<List<OwnerDto>> getOwners(){
+        List<OwnerDto> result = ownerService.getAllOwners();
 
         if(result == null) {
             return ResponseEntity.badRequest().build();

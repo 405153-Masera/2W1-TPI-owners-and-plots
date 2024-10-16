@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class PostOwnerDto {
 
     private String name;
-    private String surname;
+    private String lastname;
     private String dni;
     private String cuitCuil;
     private LocalDate dateBirth;
@@ -21,9 +21,8 @@ public class PostOwnerDto {
     private Integer taxStatusId;
     private String businessName;
     private Boolean active;
-    private Integer userCreateId;
 
-    //datos del user
+    //Datos del user
     private String username;
     private String password;
     private String email;
@@ -31,4 +30,6 @@ public class PostOwnerDto {
     private String avatarUrl;
     @NotNull(message = "Los roles no pueden ser nulos")
     private String[] roles ;
+
+    private Integer userCreateId;
 }

@@ -14,4 +14,6 @@ public class PostPlotDto {
     private double built_area_in_m2;
     private int plot_state_id;
     private int plot_type_id;
+
+    private Integer userCreateId;
 }

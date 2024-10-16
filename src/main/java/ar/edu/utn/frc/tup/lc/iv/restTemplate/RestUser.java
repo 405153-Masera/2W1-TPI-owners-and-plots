@@ -25,14 +25,14 @@ public class RestUser {
 
         UserPost userPost = new UserPost();
         userPost.setName(postOwnerDto.getName());
-        userPost.setLastname(postOwnerDto.getSurname());
+        userPost.setLastname(postOwnerDto.getLastname());
         userPost.setUsername(postOwnerDto.getUsername());
         userPost.setPassword(postOwnerDto.getPassword());
         userPost.setEmail(postOwnerDto.getEmail());
-        userPost.setPhone_number(postOwnerDto.getPhoneNumber());
+        userPost.setPhoneNumber(postOwnerDto.getPhoneNumber());
         userPost.setDni(postOwnerDto.getDni());
         userPost.setActive(true);
-        userPost.setAvatar_url(postOwnerDto.getAvatarUrl());
+        userPost.setAvatarUrl(postOwnerDto.getAvatarUrl());
         userPost.setRoles(postOwnerDto.getRoles());
         userPost.setDatebirth(postOwnerDto.getDateBirth());
 
@@ -47,6 +47,35 @@ public class RestUser {
         catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Server error while creating the user" + e.getMessage());
+        }
+    }
+
+    public boolean updateUser(PostOwnerDto postOwnerDto, Integer id) {
+
+        UserPost userPost = new UserPost();
+        userPost.setName(postOwnerDto.getName());
+        userPost.setLastname(postOwnerDto.getLastname());
+        userPost.setUsername(postOwnerDto.getUsername());
+        userPost.setPassword(postOwnerDto.getPassword());
+        userPost.setEmail(postOwnerDto.getEmail());
+        userPost.setPhoneNumber(postOwnerDto.getPhoneNumber());
+        userPost.setDni(postOwnerDto.getDni());
+        userPost.setActive(true);
+        userPost.setAvatarUrl(postOwnerDto.getAvatarUrl());
+        userPost.setRoles(postOwnerDto.getRoles());
+        userPost.setDatebirth(postOwnerDto.getDateBirth());
+
+        try {
+
+            ResponseEntity<Void> response = restTemplate.postForEntity(url + "/" + id, userPost, Void.class);
+            return response.getStatusCode().is2xxSuccessful();
+
+        }catch (HttpClientErrorException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getMessage());
+        }
+        catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Server error while updating the user" + e.getMessage());
         }
     }
 }

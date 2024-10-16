@@ -15,16 +15,17 @@ public class OwnerDto {
 
     private Integer id;
     private String name;
-    private String surname;
+    private String lastname;
     private String dni;
     private String cuitCuil;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate dateBirth;
-    private Integer contactId;
+    private String email;
+    private String phoneNumber;
     private String businessName;
     private Boolean active;
 
-    private OwnerTypeDto ownerType;
+    private String ownerType;
     private List<FileDto> files;
 }

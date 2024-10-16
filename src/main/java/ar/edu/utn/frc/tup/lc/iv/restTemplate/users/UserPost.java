@@ -1,8 +1,5 @@
 package ar.edu.utn.frc.tup.lc.iv.restTemplate.users;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,10 +16,10 @@ public class UserPost {
     private String username;
     private String password;
     private String email;
-    private String phone_number;
+    private String phoneNumber;
     private String dni;
     private Boolean active;
-    private String avatar_url;
+    private String avatarUrl;
     private LocalDate datebirth;
     private String[] roles ;
 }

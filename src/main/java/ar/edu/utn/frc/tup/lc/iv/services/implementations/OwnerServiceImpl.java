@@ -3,6 +3,7 @@ package ar.edu.utn.frc.tup.lc.iv.services.implementations;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerTypeDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetTaxStatusDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.OwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.entities.OwnerEntity;
@@ -12,7 +13,6 @@ import ar.edu.utn.frc.tup.lc.iv.repositories.OwnerRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.OwnerTypeRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.TaxStatusRepository;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.RestUser;
-import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.UserPost;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -86,7 +86,7 @@ public class OwnerServiceImpl implements OwnerService {
         }
         OwnerEntity ownerEntity = ownerEntityOptional.get();
         ownerEntity.setName(putOwnerDto.getName());
-        ownerEntity.setSurname(putOwnerDto.getSurname());
+        ownerEntity.setLastname(putOwnerDto.getLastname());
         ownerEntity.setDni(putOwnerDto.getDni());
         ownerEntity.setCuitCuil(putOwnerDto.getCuitCuil());
         ownerEntity.setDateBirth(putOwnerDto.getDateBirth());
@@ -96,7 +96,9 @@ public class OwnerServiceImpl implements OwnerService {
                 .orElseThrow(() -> new EntityNotFoundException("TaxStatus not found")));
         ownerEntity.setBusinessName(putOwnerDto.getBusinessName());
         ownerEntity.setLastUpdatedDatetime(LocalDateTime.now());
-        ownerEntity.setLastUpdatedUser(putOwnerDto.getUserId());
+        ownerEntity.setLastUpdatedUser(putOwnerDto.getUserUpdateId());
+
+        //Aca se actualiza el usuario
 
         OwnerEntity ownerSaved = ownerRepository.save(ownerEntity);
         GetOwnerDto getOwnerDto = mapOwnerEntitytoGet(ownerSaved);
@@ -109,7 +111,7 @@ public class OwnerServiceImpl implements OwnerService {
     public OwnerEntity mapPostToOwnerEntity(PostOwnerDto postOwnerDto) {
         OwnerEntity ownerEntity = new OwnerEntity();
         ownerEntity.setName(postOwnerDto.getName());
-        ownerEntity.setSurname(postOwnerDto.getSurname());
+        ownerEntity.setLastname(postOwnerDto.getLastname());
         ownerEntity.setDni(postOwnerDto.getDni());
         ownerEntity.setCuitCuil(postOwnerDto.getCuitCuil());
         ownerEntity.setDateBirth(postOwnerDto.getDateBirth());
@@ -127,7 +129,7 @@ public class OwnerServiceImpl implements OwnerService {
         GetOwnerDto getOwnerDto = new GetOwnerDto();
         getOwnerDto.setId(ownerEntity.getId());
         getOwnerDto.setName(ownerEntity.getName());
-        getOwnerDto.setSurname(ownerEntity.getSurname());
+        getOwnerDto.setSurname(ownerEntity.getLastname());
         getOwnerDto.setDni(ownerEntity.getDni());
         getOwnerDto.setCuitCuil(ownerEntity.getCuitCuil());
         getOwnerDto.setDateBirth(ownerEntity.getDateBirth());
@@ -159,12 +161,26 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
-    public List<GetOwnerDto> getAllOwners() {
+    public List<OwnerDto> getAllOwners() {
         List<OwnerEntity> ownerEntities = ownerRepository.findAll();
-        List<GetOwnerDto> getOwnerDtos = ownerEntities.stream()
-                .map(this::mapOwnerEntitytoGet)
+        List<OwnerDto> ownerDtos = ownerEntities.stream()
+                .map(this::mapOwnerEntityToOwnerDto)
                 .collect(Collectors.toList());
 
-        return getOwnerDtos;
+        return ownerDtos;
+    }
+
+    public OwnerDto mapOwnerEntityToOwnerDto(OwnerEntity ownerEntity) {
+        OwnerDto ownerDto = new OwnerDto();
+        ownerDto.setId(ownerEntity.getId());
+        ownerDto.setName(ownerEntity.getName());
+        ownerDto.setLastname(ownerEntity.getLastname());
+        ownerDto.setDni(ownerEntity.getDni());
+        ownerDto.setCuitCuil(ownerEntity.getCuitCuil());
+        ownerDto.setDateBirth(ownerEntity.getDateBirth());
+        ownerDto.setOwnerType(ownerEntity.getOwnerType().getDescription());
+        ownerDto.setBusinessName(ownerEntity.getBusinessName());
+        ownerDto.setActive(ownerEntity.getActive());
+        return ownerDto;
     }
 }
