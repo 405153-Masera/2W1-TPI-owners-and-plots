@@ -1,9 +1,6 @@
 package ar.edu.utn.frc.tup.lc.iv.services.interfaces;
 
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerDto;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerTypeDto;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetTaxStatusDto;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.OwnerDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.*;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutOwnerDto;
 import org.springframework.stereotype.Service;
@@ -18,5 +15,6 @@ public interface OwnerService {
     List<GetTaxStatusDto> getTaxStatus();
     List<GetOwnerTypeDto> getOwnerTypes();
     List<OwnerDto> getAllOwners();
+    List<GetOwnerAndPlot> getOnwersAndPlots();
     List<OwnerDto> getOwnersByPlotId(Integer plotId);
 }

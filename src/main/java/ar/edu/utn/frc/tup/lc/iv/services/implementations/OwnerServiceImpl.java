@@ -1,20 +1,22 @@
 package ar.edu.utn.frc.tup.lc.iv.services.implementations;
 
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerDto;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerTypeDto;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetTaxStatusDto;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.OwnerDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.*;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.entities.OwnerEntity;
 import ar.edu.utn.frc.tup.lc.iv.entities.OwnerTypeEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.PlotOwnerEntity;
 import ar.edu.utn.frc.tup.lc.iv.entities.TaxStatusEntity;
 import ar.edu.utn.frc.tup.lc.iv.repositories.OwnerRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.OwnerTypeRepository;
+import ar.edu.utn.frc.tup.lc.iv.repositories.PlotOwnerRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.TaxStatusRepository;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.RestUser;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,22 +38,26 @@ public class OwnerServiceImpl implements OwnerService {
 
     private final OwnerTypeRepository ownerTypeRepository;
 
+    private final PlotOwnerRepository plotOwnerRepository;
+
     private final ModelMapper modelMapper;
 
     private final RestUser restUser;
 
     @Autowired
     public OwnerServiceImpl(OwnerRepository ownerRepository, TaxStatusRepository taxStatusRepository,
-                            OwnerTypeRepository ownerTypeRepository, ModelMapper modelMapper,
+                            OwnerTypeRepository ownerTypeRepository, PlotOwnerRepository plotOwnerRepository, ModelMapper modelMapper,
                             RestUser restUser) {
         this.ownerRepository = ownerRepository;
         this.taxStatusRepository = taxStatusRepository;
         this.ownerTypeRepository = ownerTypeRepository;
+        this.plotOwnerRepository = plotOwnerRepository;
         this.modelMapper = modelMapper;
         this.restUser = restUser;
     }
 
     @Override
+    @Transactional
     public GetOwnerDto createOwner(PostOwnerDto postOwnerDto) {
 
         OwnerEntity ownerEntity = mapPostToOwnerEntity(postOwnerDto);
@@ -71,10 +77,24 @@ public class OwnerServiceImpl implements OwnerService {
 
         OwnerEntity ownerSaved = ownerRepository.save(ownerEntity);
 
+        //Se guarda la relacion de Owner con Plot
+        createPlotOwnerEntity(ownerSaved, postOwnerDto);
+
         GetOwnerDto getOwnerDto = mapOwnerEntitytoGet(ownerSaved);
         getOwnerDto.setOwnerType(ownerTypeEntity.getDescription());
         getOwnerDto.setTaxStatus(taxStatusEntity.getDescription());
         return getOwnerDto;
+    }
+
+    //Metodo para gaurdar la relacion de Plot con Owner en las tablas
+    public void createPlotOwnerEntity(OwnerEntity ownerEntity, PostOwnerDto postOwnerDto) {
+        PlotOwnerEntity plotOwnerEntity = new PlotOwnerEntity();
+        plotOwnerEntity.setOwner(ownerEntity);
+        plotOwnerEntity.setCreatedUser(postOwnerDto.getUserCreateId());
+        plotOwnerEntity.setCreatedDatetime(LocalDateTime.now());
+        plotOwnerEntity.setLastUpdatedUser(postOwnerDto.getUserCreateId());
+        plotOwnerEntity.setLastUpdatedDatetime(LocalDateTime.now());
+        plotOwnerRepository.save(plotOwnerEntity);
     }
 
     @Override
@@ -89,8 +109,6 @@ public class OwnerServiceImpl implements OwnerService {
         ownerEntity.setLastname(putOwnerDto.getLastname());
         ownerEntity.setDni(putOwnerDto.getDni());
         ownerEntity.setCuitCuil(putOwnerDto.getCuitCuil());
-        ownerEntity.setEmail(putOwnerDto.getEmail());
-        ownerEntity.setPhoneNumber(putOwnerDto.getPhoneNumber());
         ownerEntity.setDateBirth(putOwnerDto.getDateBirth());
         ownerEntity.setOwnerType(ownerTypeRepository.findById(putOwnerDto.getOwnerTypeId())
                 .orElseThrow(() -> new EntityNotFoundException("OwnerType not found")));
@@ -119,9 +137,6 @@ public class OwnerServiceImpl implements OwnerService {
         ownerEntity.setDateBirth(postOwnerDto.getDateBirth());
         ownerEntity.setBusinessName(postOwnerDto.getBusinessName());
         ownerEntity.setActive(postOwnerDto.getActive());
-        ownerEntity.setEmail(postOwnerDto.getEmail());
-        ownerEntity.setPhoneNumber(postOwnerDto.getPhoneNumber());
-
         ownerEntity.setCreatedDatetime(LocalDateTime.now());
         ownerEntity.setCreatedUser(postOwnerDto.getUserCreateId());
         ownerEntity.setLastUpdatedDatetime(LocalDateTime.now());
@@ -133,11 +148,9 @@ public class OwnerServiceImpl implements OwnerService {
         GetOwnerDto getOwnerDto = new GetOwnerDto();
         getOwnerDto.setId(ownerEntity.getId());
         getOwnerDto.setName(ownerEntity.getName());
-        getOwnerDto.setSurname(ownerEntity.getLastname());
+        getOwnerDto.setLastname(ownerEntity.getLastname());
         getOwnerDto.setDni(ownerEntity.getDni());
         getOwnerDto.setCuitCuil(ownerEntity.getCuitCuil());
-        getOwnerDto.setEmail(ownerEntity.getEmail());
-        getOwnerDto.setPhoneNumber(ownerEntity.getPhoneNumber());
         getOwnerDto.setDateBirth(ownerEntity.getDateBirth());
         getOwnerDto.setOwnerType(ownerEntity.getOwnerType().getDescription());
         getOwnerDto.setTaxStatus(ownerEntity.getTaxStatus().getDescription());
@@ -179,6 +192,11 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
+    public List<GetOwnerAndPlot> getOnwersAndPlots() {
+        return List.of();
+    }
+
+    @Override
     public List<OwnerDto> getOwnersByPlotId(Integer plotId) {
         Optional<List<OwnerEntity>> ownerEntitiesOptional = ownerRepository.findByPlotId(plotId);
 
@@ -203,8 +221,6 @@ public class OwnerServiceImpl implements OwnerService {
         ownerDto.setLastname(ownerEntity.getLastname());
         ownerDto.setDni(ownerEntity.getDni());
         ownerDto.setCuitCuil(ownerEntity.getCuitCuil());
-        ownerDto.setEmail(ownerEntity.getEmail());
-        ownerDto.setPhoneNumber(ownerEntity.getPhoneNumber());
         ownerDto.setDateBirth(ownerEntity.getDateBirth());
         ownerDto.setOwnerType(ownerEntity.getOwnerType().getDescription());
         ownerDto.setBusinessName(ownerEntity.getBusinessName());

@@ -26,11 +26,6 @@ public class OwnerEntity {
     @Column(name = "cuit_cuil")
     private String cuitCuil;
 
-    private String email;
-
-    @Column(name = "phone_number")
-    private String phoneNumber;
-
     @Column(name = "date_birth")
     private LocalDate dateBirth;
 

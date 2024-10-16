@@ -14,12 +14,9 @@ public class GetOwnerDto {
 
     private Integer id;
     private String name;
-    private String surname;
+    private String lastname;
     private String dni;
     private String cuitCuil;
-    private String email;
-    private String phoneNumber;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate dateBirth;
     private String ownerType;

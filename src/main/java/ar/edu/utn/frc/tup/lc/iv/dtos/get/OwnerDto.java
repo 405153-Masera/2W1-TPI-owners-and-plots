@@ -18,14 +18,10 @@ public class OwnerDto {
     private String lastname;
     private String dni;
     private String cuitCuil;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate dateBirth;
-    private String email;
-    private String phoneNumber;
     private String businessName;
     private Boolean active;
-
     private String ownerType;
     private List<FileDto> files;
 }
