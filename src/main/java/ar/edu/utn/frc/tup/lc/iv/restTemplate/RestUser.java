@@ -71,7 +71,14 @@ public class RestUser {
 
     }
 
-
+    public void deleteUser(Integer userId){
+        try{
+            restTemplate.delete(url + "/" + userId);
+        }catch (HttpClientErrorException e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Server error while deleting the user: " + e.getMessage());
+        }
+    }
 
 //    public boolean updateUser(PostOwnerDto postOwnerDto, Integer id) {
 //

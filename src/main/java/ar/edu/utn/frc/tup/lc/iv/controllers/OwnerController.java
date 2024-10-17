@@ -66,4 +66,9 @@ public class OwnerController {
     public ResponseEntity<List<GetOwnerAndPlot>> getOwnersPlots() {
         return ResponseEntity.ok(ownerService.getOwersAndPlots());
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteOwner(@PathVariable("id") Integer id){
+        ownerService.deleteOwner(id);
+        return ResponseEntity.noContent().build();
+    }
 }

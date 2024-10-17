@@ -245,6 +245,23 @@ public class OwnerServiceImpl implements OwnerService {
         return ownerDtos;
     }
 
+    @Override
+    @Transactional
+    public void deleteOwner(Integer ownerId) {
+        Optional<OwnerEntity> optionalOwner = ownerRepository.findById(ownerId);
+
+        if(optionalOwner.isEmpty()){
+            throw new EntityNotFoundException("Owner not found with id: " + ownerId);
+        }
+        OwnerEntity ownerEntity = optionalOwner.get();
+        ownerEntity.setActive(false);
+        ownerEntity.setLastUpdatedDatetime(LocalDateTime.now());
+        ownerEntity.setLastUpdatedUser(1);
+        ownerRepository.save(ownerEntity);
+
+        restUser.deleteUser(ownerEntity.getId());
+    }
+
     public OwnerDto mapOwnerEntityToOwnerDto(OwnerEntity ownerEntity) {
         OwnerDto ownerDto = new OwnerDto();
         ownerDto.setId(ownerEntity.getId());
