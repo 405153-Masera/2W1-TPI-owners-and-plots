@@ -15,6 +15,6 @@ public interface OwnerService {
     List<GetTaxStatusDto> getTaxStatus();
     List<GetOwnerTypeDto> getOwnerTypes();
     List<OwnerDto> getAllOwners();
-    List<GetOwnerAndPlot> getOnwersAndPlots();
+    List<GetOwnerAndPlot> getOwersAndPlots();
     List<OwnerDto> getOwnersByPlotId(Integer plotId);
 }

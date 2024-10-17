@@ -1,9 +1,6 @@
 package ar.edu.utn.frc.tup.lc.iv.controllers;
 
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerDto;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerTypeDto;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetTaxStatusDto;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.OwnerDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.*;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
@@ -57,5 +54,10 @@ public class OwnerController {
     public ResponseEntity<List<OwnerDto>> getOwnersByPlotId(@PathVariable Integer plotId) {
         List<OwnerDto> owners = ownerService.getOwnersByPlotId(plotId);
         return ResponseEntity.ok(owners);
+    }
+
+    @GetMapping("/ownersandplots")
+    public ResponseEntity<List<GetOwnerAndPlot>> getOwnersPlots() {
+        return ResponseEntity.ok(ownerService.getOwersAndPlots());
     }
 }

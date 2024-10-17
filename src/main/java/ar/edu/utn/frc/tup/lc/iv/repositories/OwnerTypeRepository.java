@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OwnerTypeRepository extends JpaRepository<OwnerTypeEntity, Integer> {
+
 }

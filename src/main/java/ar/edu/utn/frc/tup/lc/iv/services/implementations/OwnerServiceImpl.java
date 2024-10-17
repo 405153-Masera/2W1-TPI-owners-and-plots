@@ -3,22 +3,19 @@ package ar.edu.utn.frc.tup.lc.iv.services.implementations;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.*;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutOwnerDto;
-import ar.edu.utn.frc.tup.lc.iv.entities.OwnerEntity;
-import ar.edu.utn.frc.tup.lc.iv.entities.OwnerTypeEntity;
-import ar.edu.utn.frc.tup.lc.iv.entities.PlotOwnerEntity;
-import ar.edu.utn.frc.tup.lc.iv.entities.TaxStatusEntity;
-import ar.edu.utn.frc.tup.lc.iv.repositories.OwnerRepository;
-import ar.edu.utn.frc.tup.lc.iv.repositories.OwnerTypeRepository;
-import ar.edu.utn.frc.tup.lc.iv.repositories.PlotOwnerRepository;
-import ar.edu.utn.frc.tup.lc.iv.repositories.TaxStatusRepository;
+import ar.edu.utn.frc.tup.lc.iv.entities.*;
+import ar.edu.utn.frc.tup.lc.iv.repositories.*;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.RestUser;
+import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.GetUserDto;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
+import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -43,17 +40,21 @@ public class OwnerServiceImpl implements OwnerService {
     private final ModelMapper modelMapper;
 
     private final RestUser restUser;
+    private final PlotRepository plotRepository;
+    private final PlotService plotService;
 
     @Autowired
     public OwnerServiceImpl(OwnerRepository ownerRepository, TaxStatusRepository taxStatusRepository,
                             OwnerTypeRepository ownerTypeRepository, PlotOwnerRepository plotOwnerRepository, ModelMapper modelMapper,
-                            RestUser restUser) {
+                            RestUser restUser, PlotRepository plotRepository,PlotService plotService) {
         this.ownerRepository = ownerRepository;
         this.taxStatusRepository = taxStatusRepository;
         this.ownerTypeRepository = ownerTypeRepository;
         this.plotOwnerRepository = plotOwnerRepository;
         this.modelMapper = modelMapper;
         this.restUser = restUser;
+        this.plotRepository = plotRepository;
+        this.plotService = plotService;
     }
 
     @Override
@@ -90,6 +91,9 @@ public class OwnerServiceImpl implements OwnerService {
     public void createPlotOwnerEntity(OwnerEntity ownerEntity, PostOwnerDto postOwnerDto) {
         PlotOwnerEntity plotOwnerEntity = new PlotOwnerEntity();
         plotOwnerEntity.setOwner(ownerEntity);
+        PlotEntity plotEntity = new PlotEntity();
+        plotEntity.setId(postOwnerDto.getPlotId());
+        plotOwnerEntity.setPlot(plotEntity);
         plotOwnerEntity.setCreatedUser(postOwnerDto.getUserCreateId());
         plotOwnerEntity.setCreatedDatetime(LocalDateTime.now());
         plotOwnerEntity.setLastUpdatedUser(postOwnerDto.getUserCreateId());
@@ -192,8 +196,26 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
-    public List<GetOwnerAndPlot> getOnwersAndPlots() {
-        return List.of();
+    public List<GetOwnerAndPlot> getOwersAndPlots() {
+        List<OwnerEntity> ownerEntities = ownerRepository.findAllActives();
+        List<GetOwnerAndPlot> ownerAndPlots = new ArrayList<>();
+        for (OwnerEntity ownerEntity : ownerEntities) {
+            GetOwnerAndPlot getOwnerAndPlot = new GetOwnerAndPlot();
+            PlotOwnerEntity plotOwnerEntity = plotOwnerRepository.findByOwnerId(ownerEntity.getId());
+            PlotEntity plotEntity = plotRepository.findById(plotOwnerEntity.getPlot().getId()).orElse(null);
+
+            OwnerDto ownerDto = mapOwnerEntityToOwnerDto(ownerEntity);
+            GetPlotDto getPlotDto = new GetPlotDto();
+            plotService.mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
+            GetUserDto getUserDto = restUser.getUser(getPlotDto.getId());
+
+            getOwnerAndPlot.setOwner(ownerDto);
+            getOwnerAndPlot.setPlot(getPlotDto);
+            getOwnerAndPlot.setUser(getUserDto);
+
+            ownerAndPlots.add(getOwnerAndPlot);
+        }
+        return ownerAndPlots;
     }
 
     @Override

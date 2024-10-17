@@ -1,9 +1,13 @@
 package ar.edu.utn.frc.tup.lc.iv.restTemplate;
 
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostOwnerDto;
+import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.GetUserDto;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.UserPost;
+import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.modelmapper.internal.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +59,17 @@ public class RestUser {
         }
     }
 
-    
+    public GetUserDto getUser(Integer plotId) {
+
+        ResponseEntity<GetUserDto> response = restTemplate.getForEntity(url + "/plot/" + plotId, GetUserDto.class);
+
+        if(response.getStatusCode().is2xxSuccessful()){
+            return response.getBody();
+        }else {
+            throw  new EntityNotFoundException("No se encontró el usuario");
+        }
+
+    }
 
 
 

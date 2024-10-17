@@ -13,4 +13,7 @@ public interface OwnerRepository extends JpaRepository<OwnerEntity, Integer> {
 
     @Query("SELECT o FROM OwnerEntity o JOIN PlotOwnerEntity po ON o.id = po.owner.id WHERE po.plot.id = :plotId")
     Optional<List<OwnerEntity>> findByPlotId(Integer plotId);
+
+    @Query("SELECT o FROM OwnerEntity o WHERE o.active = true")
+    List<OwnerEntity> findAllActives();
 }

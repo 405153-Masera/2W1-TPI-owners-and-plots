@@ -155,6 +155,7 @@ public class PlotServiceImpl implements PlotService {
         plotRepository.save(plotEntity);
     }
 
+    @Override
     public void mapPlotEntityToGetPlotDto(PlotEntity plotEntity, GetPlotDto getPlotDto) {
         getPlotDto.setPlot_number(plotEntity.getPlotNumber());
         getPlotDto.setBlock_number(plotEntity.getBlockNumber());

@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface PlotRepository extends JpaRepository<PlotEntity, Integer> {
     PlotEntity findByPlotNumber(int plotNumber);
+
 }
