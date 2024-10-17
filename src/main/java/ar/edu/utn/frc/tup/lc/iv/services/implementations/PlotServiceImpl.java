@@ -134,7 +134,14 @@ public class PlotServiceImpl implements PlotService {
         return plotDtos;
     }
 
-
+    public GetPlotDto getPlotById(Integer plotId) {
+        PlotEntity plotEntity = plotRepository.findById(plotId)
+                .orElseThrow(() -> new EntityNotFoundException("Plot not found with id: " + plotId));
+        GetPlotDto getPlotDto = new GetPlotDto();
+        mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
+        return getPlotDto;
+    }
+    
     //Metodo para validar si existe un plot con ese numero
     public void validatePlotNumber(Integer plotNumber) {
         if (plotRepository.findByPlotNumber(plotNumber) != null) {
