@@ -132,6 +132,15 @@ public class OwnerServiceImpl implements OwnerService {
         return getOwnerDto;
     }
 
+    @Override
+    public GetOwnerDto getById(Integer ownerId) {
+        OwnerEntity ownerEntity = ownerRepository.findById(ownerId).orElse(null);
+        if(ownerEntity == null){
+            throw new EntityNotFoundException("Owner not found");
+        }
+        return mapOwnerEntitytoGet(ownerEntity);
+    }
+
     public OwnerEntity mapPostToOwnerEntity(PostOwnerDto postOwnerDto) {
         OwnerEntity ownerEntity = new OwnerEntity();
         ownerEntity.setName(postOwnerDto.getName());

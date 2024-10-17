@@ -30,6 +30,12 @@ public class OwnerController {
         return ResponseEntity.ok(getOwnerDto);
     }
 
+    @GetMapping("/{ownerId}")
+    public ResponseEntity<GetOwnerDto> getOwnerById(@PathVariable Integer ownerId){
+        GetOwnerDto result = ownerService.getById(ownerId);
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping("/taxstatus")
     public ResponseEntity<List<GetTaxStatusDto>> getTaxStatus() {
         return ResponseEntity.ok(ownerService.getTaxStatus());
