@@ -17,6 +17,7 @@ public interface PlotService {
     List<GetPlotTypeDto> getPlotTypes();
     List<GetPlotDto> getAllPlots();
     List<GetPlotDto> getAllPlotsAvailables();
+    GetPlotDto getPlotById(Integer plotId);
     GetPlotDto putPlot(PutPlotDto postPlotDto, Integer plotId);
     void mapPlotEntityToGetPlotDto(PlotEntity plotEntity, GetPlotDto getPlotDto);
 }

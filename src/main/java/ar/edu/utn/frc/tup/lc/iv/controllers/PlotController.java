@@ -49,4 +49,9 @@ public class PlotController {
     public ResponseEntity<List<GetPlotDto>> getAllPlotsAvailables() {
         return ResponseEntity.ok(plotService.getAllPlotsAvailables());
     }
+    @GetMapping("/{plotId}")
+    public ResponseEntity<GetPlotDto> getPlotById(@PathVariable Integer plotId) {
+        return ResponseEntity.ok(plotService.getPlotById(plotId));
+
+    }
 }
