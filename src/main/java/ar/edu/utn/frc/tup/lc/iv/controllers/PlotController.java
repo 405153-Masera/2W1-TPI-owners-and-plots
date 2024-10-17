@@ -44,4 +44,9 @@ public class PlotController {
     public ResponseEntity<List<GetPlotDto>> getPlots() {
         return ResponseEntity.ok(plotService.getAllPlots());
     }
+
+    @GetMapping("/availables")
+    public ResponseEntity<List<GetPlotDto>> getAllPlotsAvailables() {
+        return ResponseEntity.ok(plotService.getAllPlotsAvailables());
+    }
 }

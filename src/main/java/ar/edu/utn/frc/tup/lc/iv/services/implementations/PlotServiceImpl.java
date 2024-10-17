@@ -123,6 +123,18 @@ public class PlotServiceImpl implements PlotService {
         return plotDtos;
     }
 
+    @Override
+    public List<GetPlotDto> getAllPlotsAvailables() {
+        List<PlotEntity> plotEntities = plotRepository.findPlotsAvailables();
+        List<GetPlotDto> plotDtos = new ArrayList<>();
+        for (PlotEntity plotEntity : plotEntities) { GetPlotDto getPlotDto = new GetPlotDto();
+            mapPlotEntityToGetPlotDto(plotEntity, getPlotDto );
+            plotDtos.add(getPlotDto);
+        }
+        return plotDtos;
+    }
+
+
     //Metodo para validar si existe un plot con ese numero
     public void validatePlotNumber(Integer plotNumber) {
         if (plotRepository.findByPlotNumber(plotNumber) != null) {
