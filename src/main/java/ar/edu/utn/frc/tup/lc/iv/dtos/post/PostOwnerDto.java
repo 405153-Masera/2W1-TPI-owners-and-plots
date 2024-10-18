@@ -67,6 +67,8 @@ public class PostOwnerDto {
     @NotNull(message = "Plot ID cannot be null")
     private Integer plotId;
 
+    private Integer telegramId;
+
     // User id
     @NotNull(message = "User creation ID cannot be null")
     private Integer userCreateId;

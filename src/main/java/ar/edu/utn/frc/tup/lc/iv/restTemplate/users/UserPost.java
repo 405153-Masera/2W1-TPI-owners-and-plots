@@ -24,4 +24,5 @@ public class UserPost {
     private String[] roles ;
     private Integer userUpdateId;
     private Integer plot_id;
+    private Integer telegram_id;
 }
