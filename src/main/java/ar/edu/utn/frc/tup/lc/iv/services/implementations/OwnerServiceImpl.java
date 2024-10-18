@@ -71,15 +71,14 @@ public class OwnerServiceImpl implements OwnerService {
                 .orElseThrow(() -> new EntityNotFoundException("TaxStatus not found"));
         ownerEntity.setTaxStatus(taxStatusEntity);
 
+        OwnerEntity ownerSaved = ownerRepository.save(ownerEntity);
+        //Se guarda la relacion de Owner con Plot
+        createPlotOwnerEntity(ownerSaved, postOwnerDto);
+
         //Aca se crea el usuario
         if(!restUser.createUser(postOwnerDto)){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Server error while creating the user");
         }
-
-        OwnerEntity ownerSaved = ownerRepository.save(ownerEntity);
-
-        //Se guarda la relacion de Owner con Plot
-        createPlotOwnerEntity(ownerSaved, postOwnerDto);
 
         GetOwnerDto getOwnerDto = mapOwnerEntitytoGet(ownerSaved);
         getOwnerDto.setOwnerType(ownerTypeEntity.getDescription());
@@ -247,7 +246,7 @@ public class OwnerServiceImpl implements OwnerService {
 
     @Override
     @Transactional
-    public void deleteOwner(Integer ownerId) {
+    public void deleteOwner(Integer ownerId, Integer userIdUpdate) {
         Optional<OwnerEntity> optionalOwner = ownerRepository.findById(ownerId);
 
         if(optionalOwner.isEmpty()){
@@ -256,10 +255,10 @@ public class OwnerServiceImpl implements OwnerService {
         OwnerEntity ownerEntity = optionalOwner.get();
         ownerEntity.setActive(false);
         ownerEntity.setLastUpdatedDatetime(LocalDateTime.now());
-        ownerEntity.setLastUpdatedUser(1);
+        ownerEntity.setLastUpdatedUser(userIdUpdate);
         ownerRepository.save(ownerEntity);
 
-        restUser.deleteUser(ownerEntity.getId());
+        restUser.deleteUser(ownerEntity.getId(), userIdUpdate);
     }
 
     public OwnerDto mapOwnerEntityToOwnerDto(OwnerEntity ownerEntity) {

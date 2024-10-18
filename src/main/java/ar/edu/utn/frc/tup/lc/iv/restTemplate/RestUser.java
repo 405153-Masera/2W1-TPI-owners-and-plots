@@ -71,12 +71,15 @@ public class RestUser {
 
     }
 
-    public void deleteUser(Integer userId){
+    public void deleteUser(Integer userId, Integer userIdUpdate) {
         try{
-            restTemplate.delete(url + "/" + userId);
-        }catch (HttpClientErrorException e){
+            restTemplate.delete(url + "/" + userId + "/" + userIdUpdate);
+        }catch (HttpClientErrorException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getMessage());
+        }
+        catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Server error while deleting the user: " + e.getMessage());
+                    "Server error while creating the user" + e.getMessage());
         }
     }
 
