@@ -19,4 +19,5 @@ public interface OwnerService {
     List<GetOwnerAndPlot> getOwersAndPlots();
     List<OwnerDto> getOwnersByPlotId(Integer plotId);
     void deleteOwner(Integer ownerId, Integer userIdUpdate);
+    GetOwnerAndPlot getOwnerAndPlotById(Integer ownerId);
 }

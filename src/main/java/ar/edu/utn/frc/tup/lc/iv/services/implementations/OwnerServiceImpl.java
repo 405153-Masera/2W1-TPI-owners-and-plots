@@ -86,7 +86,7 @@ public class OwnerServiceImpl implements OwnerService {
         return getOwnerDto;
     }
 
-    //Metodo para gaurdar la relacion de Plot con Owner en las tablas
+    //Metodo para guardar la relacion de Plot con Owner en las tablas
     public void createPlotOwnerEntity(OwnerEntity ownerEntity, PostOwnerDto postOwnerDto) {
         PlotOwnerEntity plotOwnerEntity = new PlotOwnerEntity();
         plotOwnerEntity.setOwner(ownerEntity);
@@ -224,6 +224,29 @@ public class OwnerServiceImpl implements OwnerService {
             ownerAndPlots.add(getOwnerAndPlot);
         }
         return ownerAndPlots;
+    }
+
+    @Override
+    public GetOwnerAndPlot getOwnerAndPlotById(Integer ownerId) {
+        OwnerEntity ownerEntity = ownerRepository.findById(ownerId).orElse(null);
+        if (ownerEntity == null) {
+            return null;
+        }
+
+        GetOwnerAndPlot getOwnerAndPlot = new GetOwnerAndPlot();
+        PlotOwnerEntity plotOwnerEntity = plotOwnerRepository.findByOwnerId(ownerEntity.getId());
+        PlotEntity plotEntity = plotRepository.findById(plotOwnerEntity.getPlot().getId()).orElse(null);
+
+        OwnerDto ownerDto = mapOwnerEntityToOwnerDto(ownerEntity);
+        GetPlotDto getPlotDto = new GetPlotDto();
+        plotService.mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
+        GetUserDto getUserDto = restUser.getUser(getPlotDto.getId());
+
+        getOwnerAndPlot.setOwner(ownerDto);
+        getOwnerAndPlot.setPlot(getPlotDto);
+        getOwnerAndPlot.setUser(getUserDto);
+
+        return getOwnerAndPlot;
     }
 
     @Override

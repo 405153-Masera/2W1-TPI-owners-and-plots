@@ -67,6 +67,15 @@ public class OwnerController {
         return ResponseEntity.ok(ownerService.getOwersAndPlots());
     }
 
+    @GetMapping("/ownersandplots/{ownerId}")
+    public ResponseEntity<GetOwnerAndPlot> getOwnerAndPlotById(@PathVariable Integer ownerId) {
+        GetOwnerAndPlot ownerAndPlot = ownerService.getOwnerAndPlotById(ownerId);
+        if (ownerAndPlot == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(ownerAndPlot);
+    }
+
     @DeleteMapping("/{id}/{userIdUpdate}")
     public ResponseEntity<Void> deleteOwner(@PathVariable("id") Integer ownerId, @PathVariable("userIdUpdate") Integer userIdUpdate) {
         ownerService.deleteOwner(ownerId, userIdUpdate);
