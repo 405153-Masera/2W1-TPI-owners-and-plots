@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "plots")
@@ -49,4 +51,7 @@ public class PlotEntity {
 
     @Column(name = "last_updated_user")
     private Integer lastUpdatedUser;
+
+    @OneToMany(mappedBy = "plot", cascade = CascadeType.ALL)
+    private List<FilePlotEntity> files = new ArrayList<>();
 }

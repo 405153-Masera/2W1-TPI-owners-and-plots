@@ -4,8 +4,11 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -72,4 +75,6 @@ public class PostOwnerDto {
     // User id
     @NotNull(message = "User creation ID cannot be null")
     private Integer userCreateId;
+
+    private List<MultipartFile> files = new ArrayList<>();
 }

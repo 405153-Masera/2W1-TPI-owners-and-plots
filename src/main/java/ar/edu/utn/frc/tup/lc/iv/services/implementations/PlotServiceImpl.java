@@ -5,18 +5,18 @@ import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotStateDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotTypeDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutPlotDto;
-import ar.edu.utn.frc.tup.lc.iv.entities.PlotEntity;
-import ar.edu.utn.frc.tup.lc.iv.entities.PlotStateEntity;
-import ar.edu.utn.frc.tup.lc.iv.entities.PlotTypeEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.*;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotStateRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotTypeRepository;
+import ar.edu.utn.frc.tup.lc.iv.restTemplate.FileManagerClient;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotService;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,19 +26,27 @@ import java.util.List;
 @Service
 public class PlotServiceImpl implements PlotService {
 
-    @Autowired
-    private PlotRepository plotRepository;
+    private final PlotRepository plotRepository;
+
+    private final PlotStateRepository plotStateRepository;
+
+    private final PlotTypeRepository plotTypeRepository;
+
+    private final FileManagerClient fileManagerClient;
+
+    private final ModelMapper modelMapper;
 
     @Autowired
-    private PlotStateRepository plotStateRepository;
-
-    @Autowired
-    private PlotTypeRepository plotTypeRepository;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    public PlotServiceImpl(PlotRepository plotRepository, PlotStateRepository plotStateRepository, PlotTypeRepository plotTypeRepository, FileManagerClient fileManagerClient, ModelMapper modelMapper) {
+        this.plotRepository = plotRepository;
+        this.plotStateRepository = plotStateRepository;
+        this.plotTypeRepository = plotTypeRepository;
+        this.fileManagerClient = fileManagerClient;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
+    @Transactional
     public GetPlotDto createPlot(PostPlotDto postPlotDto) {
         //Validamos si el el plot a crear existe (mismo numero de plot)
         validatePlotNumber(postPlotDto.getPlot_number());
@@ -46,6 +54,9 @@ public class PlotServiceImpl implements PlotService {
         PlotEntity plotEntity = new PlotEntity();
         //Mapeamos con metodo
         mapPlotPostToPlotEntity(plotEntity, postPlotDto);
+
+        uploadFiles(postPlotDto.getFiles() , postPlotDto.getUserCreateId(),plotEntity);
+
         //Guardamos el plot
         PlotEntity savedPlot = plotRepository.save(plotEntity);
         //Mapeamos el entity al GetPlotDto para poder mostrarlo
@@ -55,6 +66,35 @@ public class PlotServiceImpl implements PlotService {
         //Retornamos el getPlotDto
         return getPlotDto;
 
+    }
+
+    public void uploadFiles(List<MultipartFile> files, Integer userId, PlotEntity plotEntity) {
+        if(files != null && !files.isEmpty()){
+
+            for (MultipartFile file : files) {
+
+                String fileUuid = fileManagerClient.uploadFile(file);
+
+                FileEntity fileEntity = new FileEntity();
+                fileEntity.setFileUuid(fileUuid);
+                //Todo: ver el nombre del archivo
+                fileEntity.setName(file.getName());
+                fileEntity.setCreatedDatetime(LocalDateTime.now());
+                fileEntity.setCreatedUser(userId);
+                fileEntity.setLastUpdatedDatetime(LocalDateTime.now());
+                fileEntity.setLastUpdatedUser(userId);
+
+                FilePlotEntity filePlotEntity = new FilePlotEntity();
+                filePlotEntity.setFile(fileEntity);
+                filePlotEntity.setPlot(plotEntity);
+                filePlotEntity.setCreatedDatetime(LocalDateTime.now());
+                filePlotEntity.setCreatedUser(userId);
+                filePlotEntity.setLastUpdatedDatetime(LocalDateTime.now());
+                filePlotEntity.setLastUpdatedUser(userId);
+
+                plotEntity.getFiles().add(filePlotEntity);
+            }
+        }
     }
 
     @Override

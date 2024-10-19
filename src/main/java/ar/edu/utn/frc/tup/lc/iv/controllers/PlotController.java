@@ -8,6 +8,7 @@ import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,8 +31,8 @@ public class PlotController {
         return ResponseEntity.ok(plotService.getPlotTypes());
     }
 
-    @PostMapping()
-    public ResponseEntity<GetPlotDto> postPlot(@RequestBody PostPlotDto plotDto) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<GetPlotDto> postPlot(@ModelAttribute PostPlotDto plotDto) {
         return ResponseEntity.ok(plotService.createPlot(plotDto));
     }
 
