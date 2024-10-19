@@ -45,6 +45,12 @@ public class PlotServiceImpl implements PlotService {
         this.modelMapper = modelMapper;
     }
 
+    /**
+     * Crea un nuevo lote.
+     *
+     * @param postPlotDto datos del lote a guardar.
+     * @return el lote creado.
+     */
     @Override
     @Transactional
     public GetPlotDto createPlot(PostPlotDto postPlotDto) {
@@ -61,7 +67,7 @@ public class PlotServiceImpl implements PlotService {
         PlotEntity savedPlot = plotRepository.save(plotEntity);
         //Mapeamos el entity al GetPlotDto para poder mostrarlo
         GetPlotDto getPlotDto = new GetPlotDto();
-        mapPlotEntityToGetPlotDto(savedPlot , getPlotDto );
+        mapPlotEntityToGetPlotDto(savedPlot, getPlotDto);
 
         //Retornamos el getPlotDto
         return getPlotDto;
@@ -97,6 +103,11 @@ public class PlotServiceImpl implements PlotService {
         }
     }
 
+    /**
+     * Obtiene los estados de los lotes.
+     *
+     * @return lista de estados de los lotes.
+     */
     @Override
     public List<GetPlotStateDto> getPlotStates() {
         List<PlotStateEntity> plotStateEntities = plotStateRepository.findAll();
@@ -107,6 +118,11 @@ public class PlotServiceImpl implements PlotService {
         return plotStateDtos;
     }
 
+    /**
+     * Obtiene los tipos de los lotes.
+     *
+     * @return lista de tipos de los lotes.
+     */
     @Override
     public List<GetPlotTypeDto> getPlotTypes() {
         List<PlotTypeEntity> plotTypeEntities = plotTypeRepository.findAll();
@@ -117,6 +133,14 @@ public class PlotServiceImpl implements PlotService {
         return plotTypeDtos;
     }
 
+    /**
+     * Actualiza un lote.
+     *
+     * @param plotDto datos del lote a actualizar.
+     * @param plotId  id del lote a actualizar.
+     * @throws RuntimeException si el lote no existe, si el estado y tipo del lote no existen.
+     * @return el lote actualizado.
+     */
     @Override
     @Transactional
     //todo SALE ESE ERROR RARO
@@ -151,6 +175,11 @@ public class PlotServiceImpl implements PlotService {
         return getPlotDto;
     }
 
+    /**
+     * Obtiene todos los lotes.
+     *
+     * @return una lista con todos los lotes.
+     */
     @Override
     public List<GetPlotDto> getAllPlots() {
         List<PlotEntity> plotEntities = plotRepository.findAll();
@@ -163,6 +192,11 @@ public class PlotServiceImpl implements PlotService {
         return plotDtos;
     }
 
+    /**
+     * Obtiene todos los lotes disponibles.
+     *
+     * @return una lista con todos los lotes disponibles.
+     */
     @Override
     public List<GetPlotDto> getAllPlotsAvailables() {
         List<PlotEntity> plotEntities = plotRepository.findPlotsAvailables();
@@ -174,6 +208,13 @@ public class PlotServiceImpl implements PlotService {
         return plotDtos;
     }
 
+    /**
+     * Obtiene un lote por su id.
+     *
+     * @param plotId id del lote a buscar.
+     * @throws EntityNotFoundException si el lote no existe.
+     * @return el lote encontrado.
+     */
     public GetPlotDto getPlotById(Integer plotId) {
         PlotEntity plotEntity = plotRepository.findById(plotId)
                 .orElseThrow(() -> new EntityNotFoundException("Plot not found with id: " + plotId));
@@ -181,14 +222,26 @@ public class PlotServiceImpl implements PlotService {
         mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
         return getPlotDto;
     }
-    
-    //Metodo para validar si existe un plot con ese numero
+
+    /**
+     * Valida si un lote existe con el número de lote pasado.
+     *
+     * @param plotNumber número de lote a validar.
+     * @throws IllegalArgumentException si el lote ya existe.
+     */
     public void validatePlotNumber(Integer plotNumber) {
         if (plotRepository.findByPlotNumber(plotNumber) != null) {
             throw new IllegalArgumentException("Error creating plot: Plot already exist.");
         }
     }
 
+    /**
+     * Mapea los datos de un lote a una entidad de lote y la guarda en la base de datos.
+     *
+     * @param plotEntity entidad de lote a mapear.
+     * @param postPlotDto datos del lote a mapear.
+     * @throws EntityNotFoundException si el estado o tipo del lote no existen.
+     */
     public void mapPlotPostToPlotEntity(PlotEntity plotEntity, PostPlotDto postPlotDto) {
         //Seteamos campos basicos
         plotEntity.setPlotNumber(postPlotDto.getPlot_number());
@@ -214,6 +267,12 @@ public class PlotServiceImpl implements PlotService {
         plotRepository.save(plotEntity);
     }
 
+    /**
+     * Mapea los datos de un lote a un dto de lote.
+     *
+     * @param plotEntity entidad de lote a mapear.
+     * @param getPlotDto dto de lote a mapear.
+     */
     @Override
     public void mapPlotEntityToGetPlotDto(PlotEntity plotEntity, GetPlotDto getPlotDto) {
         getPlotDto.setPlot_number(plotEntity.getPlotNumber());
@@ -224,5 +283,4 @@ public class PlotServiceImpl implements PlotService {
         getPlotDto.setPlot_state(plotEntity.getPlotState().getName());
         getPlotDto.setPlot_type(plotEntity.getPlotType().getName());
     }
-
 }
