@@ -11,11 +11,8 @@ import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,6 +23,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Implementación de OwnerService,
+ * contiene toda la logica de propietarios.
+ */
 @Service
 public class OwnerServiceImpl implements OwnerService {
 
@@ -40,7 +41,9 @@ public class OwnerServiceImpl implements OwnerService {
     private final ModelMapper modelMapper;
 
     private final RestUser restUser;
+
     private final PlotRepository plotRepository;
+
     private final PlotService plotService;
 
     @Autowired
@@ -57,6 +60,14 @@ public class OwnerServiceImpl implements OwnerService {
         this.plotService = plotService;
     }
 
+    /**
+     * Crea un propietario y el usuario del propietario.
+     *
+     * @param postOwnerDto el DTO con la información del propietario y su usuario.
+     * @throws EntityNotFoundException si no se encuentra el tipo de propietario o el estado impositivo.
+     * @throws ResponseStatusException si ocurre un error al crear el usuario.
+     * @return el DTO con la información del propietario creado.
+     */
     @Override
     @Transactional
     public GetOwnerDto createOwner(PostOwnerDto postOwnerDto) {
@@ -86,7 +97,12 @@ public class OwnerServiceImpl implements OwnerService {
         return getOwnerDto;
     }
 
-    //Metodo para guardar la relacion de Plot con Owner en las tablas
+    /**
+     * Crea la relación entre un propietario y un lote.
+     *
+     * @param ownerEntity  la entidad del propietario.
+     * @param postOwnerDto el DTO con la información del propietario.
+     */
     public void createPlotOwnerEntity(OwnerEntity ownerEntity, PostOwnerDto postOwnerDto) {
         PlotOwnerEntity plotOwnerEntity = new PlotOwnerEntity();
         plotOwnerEntity.setOwner(ownerEntity);
@@ -100,6 +116,14 @@ public class OwnerServiceImpl implements OwnerService {
         plotOwnerRepository.save(plotOwnerEntity);
     }
 
+    /**
+     * Actualiza un propietario.
+     *
+     * @param ownerId el id del propietario a actualizar.
+     * @param putOwnerDto el DTO con la información del propietario a actualizar.
+     * @throws EntityNotFoundException si no se encuentra el propietario, el tipo de propietario o el estado impositivo.
+     * @return el DTO con la información del propietario actualizado.
+     */
     @Override
     public GetOwnerDto updateOwner(Integer ownerId, PutOwnerDto putOwnerDto) {
         Optional<OwnerEntity> ownerEntityOptional = ownerRepository.findById(ownerId);
@@ -131,6 +155,13 @@ public class OwnerServiceImpl implements OwnerService {
         return getOwnerDto;
     }
 
+    /**
+     * Obtiene un propietario por su id.
+     *
+     * @param ownerId el id del propietario a buscar.
+     * @throws EntityNotFoundException si no se encuentra el propietario.
+     * @return el DTO con la información del propietario.
+     */
     @Override
     public GetOwnerDto getById(Integer ownerId) {
         OwnerEntity ownerEntity = ownerRepository.findById(ownerId).orElse(null);
@@ -140,6 +171,12 @@ public class OwnerServiceImpl implements OwnerService {
         return mapOwnerEntitytoGet(ownerEntity);
     }
 
+    /**
+     * Mapea el DTO de entrada a una entidad Owner.
+     *
+     * @param postOwnerDto el DTO de entrada con la información del propietario.
+     * @return la entidad Owner correspondiente.
+     */
     public OwnerEntity mapPostToOwnerEntity(PostOwnerDto postOwnerDto) {
         OwnerEntity ownerEntity = new OwnerEntity();
         ownerEntity.setName(postOwnerDto.getName());
@@ -156,6 +193,12 @@ public class OwnerServiceImpl implements OwnerService {
         return ownerEntity;
     }
 
+    /**
+     * Mapea una entidad Owner a un DTO de salida.
+     *
+     * @param ownerEntity la entidad Owner a mapear.
+     * @return  el DTO de salida con la información del propietario.
+     */
     public GetOwnerDto mapOwnerEntitytoGet(OwnerEntity ownerEntity) {
         GetOwnerDto getOwnerDto = new GetOwnerDto();
         getOwnerDto.setId(ownerEntity.getId());
@@ -171,6 +214,11 @@ public class OwnerServiceImpl implements OwnerService {
         return getOwnerDto;
     }
 
+    /**
+     * Obtiene los tipos de situación fiscal.
+     *
+     * @return una lista de los tipos de situación fiscal.
+     */
     @Override
     public List<GetTaxStatusDto> getTaxStatus() {
         List<TaxStatusEntity> taxStatusEntities = taxStatusRepository.findAll();
@@ -181,6 +229,11 @@ public class OwnerServiceImpl implements OwnerService {
         return taxStatusDtos;
     }
 
+    /**
+     * Obtiene todos los tipos de propietarios (personas física, jurídica, otros).
+     *
+     * @return una lista con los tipos de propietarios.
+     */
     @Override
     public List<GetOwnerTypeDto> getOwnerTypes() {
         List<OwnerTypeEntity> ownerTypeEntities = ownerTypeRepository.findAll();
@@ -191,6 +244,12 @@ public class OwnerServiceImpl implements OwnerService {
         return ownerTypeDtos;
     }
 
+
+    /**
+     * Obtiene todos los propietarios.
+     *
+     * @return una lista con todos los propietarios.
+     */
     @Override
     public List<OwnerDto> getAllOwners() {
         List<OwnerEntity> ownerEntities = ownerRepository.findAll();
@@ -203,6 +262,11 @@ public class OwnerServiceImpl implements OwnerService {
         return ownerDtos;
     }
 
+    /**
+     * Obtiene todos los propietarios activos, junto con su lote y su usuario.
+     *
+     * @return una lista con todos los propietarios activos, su lote y su usuario.
+     */
     @Override
     public List<GetOwnerAndPlot> getOwersAndPlots() {
         List<OwnerEntity> ownerEntities = ownerRepository.findAllActives();
@@ -226,6 +290,12 @@ public class OwnerServiceImpl implements OwnerService {
         return ownerAndPlots;
     }
 
+    /**
+     * Obtiene un propietario por su id, junto con su lote y su usuario.
+     *
+     * @param ownerId el id del propietario a buscar.
+     * @return el propietario, su lote y su usuario.
+     */
     @Override
     public GetOwnerAndPlot getOwnerAndPlotById(Integer ownerId) {
         OwnerEntity ownerEntity = ownerRepository.findById(ownerId).orElse(null);
@@ -249,6 +319,12 @@ public class OwnerServiceImpl implements OwnerService {
         return getOwnerAndPlot;
     }
 
+    /**
+     * Obtiene los propietarios de un lote.
+     *
+     * @param plotId el id del lote a buscar.
+     * @return una lista con los propietarios del lote.
+     */
     @Override
     public List<OwnerDto> getOwnersByPlotId(Integer plotId) {
         Optional<List<OwnerEntity>> ownerEntitiesOptional = ownerRepository.findByPlotId(plotId);
@@ -267,6 +343,13 @@ public class OwnerServiceImpl implements OwnerService {
         return ownerDtos;
     }
 
+    /**
+     * Baja lógica de un propietario y su usuario.
+     *
+     * @param ownerId el id del propietario a dar de baja.
+     * @param userIdUpdate el id del usuario que da de baja al propietario.
+     * @throws EntityNotFoundException si no se encuentra el propietario
+     */
     @Override
     @Transactional
     public void deleteOwner(Integer ownerId, Integer userIdUpdate) {
@@ -284,6 +367,12 @@ public class OwnerServiceImpl implements OwnerService {
         restUser.deleteUser(ownerEntity.getId(), userIdUpdate);
     }
 
+    /**
+     * Mapea una entidad Owner a un DTO de salida.
+     *
+     * @param ownerEntity la entidad Owner a mapear.
+     * @return  el DTO de salida con la información del propietario.
+     */
     public OwnerDto mapOwnerEntityToOwnerDto(OwnerEntity ownerEntity) {
         OwnerDto ownerDto = new OwnerDto();
         ownerDto.setId(ownerEntity.getId());
