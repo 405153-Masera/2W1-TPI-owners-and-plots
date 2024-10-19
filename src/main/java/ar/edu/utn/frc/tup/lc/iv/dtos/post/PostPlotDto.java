@@ -4,6 +4,10 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @Data
@@ -30,4 +34,6 @@ public class PostPlotDto {
 
     @NotNull(message = "User create id cannot be null")
     private Integer userCreateId;
+
+    private List<MultipartFile> files = new ArrayList<>();
 }

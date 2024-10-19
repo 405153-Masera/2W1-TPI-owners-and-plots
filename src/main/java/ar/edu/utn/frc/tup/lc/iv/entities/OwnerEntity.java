@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "owners")
@@ -52,4 +54,7 @@ public class OwnerEntity {
 
     @Column(name = "last_updated_user")
     private Integer lastUpdatedUser;
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    private List<FileOwnerEntity> files = new ArrayList<>();
 }

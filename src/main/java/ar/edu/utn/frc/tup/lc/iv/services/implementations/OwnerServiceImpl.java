@@ -5,6 +5,7 @@ import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.entities.*;
 import ar.edu.utn.frc.tup.lc.iv.repositories.*;
+import ar.edu.utn.frc.tup.lc.iv.restTemplate.FileManagerClient;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.RestUser;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.GetUserDto;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
@@ -15,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -45,11 +47,12 @@ public class OwnerServiceImpl implements OwnerService {
     private final PlotRepository plotRepository;
 
     private final PlotService plotService;
+    private final FileManagerClient fileManagerClient;
 
     @Autowired
     public OwnerServiceImpl(OwnerRepository ownerRepository, TaxStatusRepository taxStatusRepository,
                             OwnerTypeRepository ownerTypeRepository, PlotOwnerRepository plotOwnerRepository, ModelMapper modelMapper,
-                            RestUser restUser, PlotRepository plotRepository,PlotService plotService) {
+                            RestUser restUser, PlotRepository plotRepository, PlotService plotService, FileManagerClient fileManagerClient) {
         this.ownerRepository = ownerRepository;
         this.taxStatusRepository = taxStatusRepository;
         this.ownerTypeRepository = ownerTypeRepository;
@@ -58,6 +61,7 @@ public class OwnerServiceImpl implements OwnerService {
         this.restUser = restUser;
         this.plotRepository = plotRepository;
         this.plotService = plotService;
+        this.fileManagerClient = fileManagerClient;
     }
 
     /**
@@ -82,9 +86,12 @@ public class OwnerServiceImpl implements OwnerService {
                 .orElseThrow(() -> new EntityNotFoundException("TaxStatus not found"));
         ownerEntity.setTaxStatus(taxStatusEntity);
 
+        uploadFiles(postOwnerDto.getFiles() , postOwnerDto.getUserCreateId(),ownerEntity);
+
         OwnerEntity ownerSaved = ownerRepository.save(ownerEntity);
         //Se guarda la relacion de Owner con Plot
         createPlotOwnerEntity(ownerSaved, postOwnerDto);
+
 
         //Aca se crea el usuario
         if(!restUser.createUser(postOwnerDto)){
@@ -95,6 +102,34 @@ public class OwnerServiceImpl implements OwnerService {
         getOwnerDto.setOwnerType(ownerTypeEntity.getDescription());
         getOwnerDto.setTaxStatus(taxStatusEntity.getDescription());
         return getOwnerDto;
+    }
+
+    public void uploadFiles(List<MultipartFile> files, Integer userId, OwnerEntity ownerEntity) {
+        if(files != null && !files.isEmpty()){
+
+            for (MultipartFile file : files) {
+
+                String fileUuid = fileManagerClient.uploadFile(file);
+
+                FileEntity fileEntity = new FileEntity();
+                fileEntity.setFileUuid(fileUuid);
+                fileEntity.setName(file.getName());
+                fileEntity.setCreatedDatetime(LocalDateTime.now());
+                fileEntity.setCreatedUser(userId);
+                fileEntity.setLastUpdatedDatetime(LocalDateTime.now());
+                fileEntity.setLastUpdatedUser(userId);
+
+                FileOwnerEntity fileOwnerEntity = new FileOwnerEntity();
+                fileOwnerEntity.setFile(fileEntity);
+                fileOwnerEntity.setOwner(ownerEntity);
+                fileOwnerEntity.setCreatedDatetime(LocalDateTime.now());
+                fileOwnerEntity.setCreatedUser(userId);
+                fileOwnerEntity.setLastUpdatedDatetime(LocalDateTime.now());
+                fileOwnerEntity.setLastUpdatedUser(userId);
+
+                ownerEntity.getFiles().add(fileOwnerEntity);
+            }
+        }
     }
 
     /**
