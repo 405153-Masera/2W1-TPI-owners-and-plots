@@ -3,7 +3,6 @@ package ar.edu.utn.frc.tup.lc.iv.controllers;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotStateDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotTypeDto;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetTaxStatusDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotService;
@@ -18,11 +17,23 @@ import java.util.List;
 @RequestMapping("/plots")
 public class PlotController {
 
-    @Autowired
-    private PlotService plotService;
+    /**
+     * Servicio para manejar la lógica de lotes.
+     */
+    private final PlotService plotService;
 
     /**
-     * Obtiene todos los estados de los lotes
+     * Constructor de PlotController.
+     *
+     * @param plotService servicio de lotes.
+     */
+    @Autowired
+    public PlotController(PlotService plotService) {
+        this.plotService = plotService;
+    }
+
+    /**
+     * Obtiene todos los estados de los lotes.
      *
      * @return una lista con los estados de los lotes
      */
@@ -32,7 +43,7 @@ public class PlotController {
     }
 
     /**
-     * Obtiene todos los tipos de lotes
+     * Obtiene todos los tipos de lotes.
      *
      * @return una lista con los tipos de lotes
      */
@@ -40,7 +51,7 @@ public class PlotController {
     public ResponseEntity<List<GetPlotTypeDto>> getPlotTypes() {
         return ResponseEntity.ok(plotService.getPlotTypes());
     }
-  
+
      /**
      * Guarda un nuevo lote.
      *

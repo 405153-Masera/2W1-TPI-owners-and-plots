@@ -32,36 +32,76 @@ import java.util.stream.Collectors;
 @Service
 public class OwnerServiceImpl implements OwnerService {
 
+    /**
+     * Repositorio para manejar Owner entities.
+     */
     private final OwnerRepository ownerRepository;
 
+    /**
+     * Repositorio para manejar TaxStatus entities.
+     */
     private final TaxStatusRepository taxStatusRepository;
 
+    /**
+     * Repositorio para manejar OwnerType entities.
+     */
     private final OwnerTypeRepository ownerTypeRepository;
 
+    /**
+     * Repositorio para manejar PlotOwner entities.
+     */
     private final PlotOwnerRepository plotOwnerRepository;
 
-    private final ModelMapper modelMapper;
+    /**
+     * Mapper para mapear entidades a DTOs.
+     */
+    @Autowired
+    private ModelMapper modelMapper;
 
+    /**
+     * Servicio para manejar la comunicación con el api de usuarios.
+     */
     private final RestUser restUser;
 
+    /**
+     * Repositorio para manejar Plot entities.
+     */
     private final PlotRepository plotRepository;
 
+    /**
+     * Servicio para manejar la lógica de lotes.
+     */
     private final PlotService plotService;
-    private final FileManagerClient fileManagerClient;
 
+    /**
+     * Servicio para manejar la comunicación con el api de archivos.
+     */
+    @Autowired
+    private FileManagerClient fileManagerClient;
+
+    /**
+     * Constructor de OwnerServiceImpl.
+     *
+     * @param ownerRepository el repositorio de propietarios.
+     * @param taxStatusRepository el repositorio de estados impositivos.
+     * @param ownerTypeRepository el repositorio de tipos de propietarios.
+     * @param plotOwnerRepository el repositorio de propietarios de lotes.
+     * @param restUser el servicio para manejar la comunicación con el api de usuarios.
+     * @param plotRepository el repositorio de lotes.
+     * @param plotService el servicio para manejar la lógica de lotes.
+     */
     @Autowired
     public OwnerServiceImpl(OwnerRepository ownerRepository, TaxStatusRepository taxStatusRepository,
-                            OwnerTypeRepository ownerTypeRepository, PlotOwnerRepository plotOwnerRepository, ModelMapper modelMapper,
-                            RestUser restUser, PlotRepository plotRepository, PlotService plotService, FileManagerClient fileManagerClient) {
+                            OwnerTypeRepository ownerTypeRepository, PlotOwnerRepository plotOwnerRepository,
+                            RestUser restUser, PlotRepository plotRepository,
+                            PlotService plotService) {
         this.ownerRepository = ownerRepository;
         this.taxStatusRepository = taxStatusRepository;
         this.ownerTypeRepository = ownerTypeRepository;
         this.plotOwnerRepository = plotOwnerRepository;
-        this.modelMapper = modelMapper;
         this.restUser = restUser;
         this.plotRepository = plotRepository;
         this.plotService = plotService;
-        this.fileManagerClient = fileManagerClient;
     }
 
     /**
@@ -86,7 +126,7 @@ public class OwnerServiceImpl implements OwnerService {
                 .orElseThrow(() -> new EntityNotFoundException("TaxStatus not found"));
         ownerEntity.setTaxStatus(taxStatusEntity);
 
-        uploadFiles(postOwnerDto.getFiles() , postOwnerDto.getUserCreateId(),ownerEntity);
+        uploadFiles(postOwnerDto.getFiles(), postOwnerDto.getUserCreateId(), ownerEntity);
 
         OwnerEntity ownerSaved = ownerRepository.save(ownerEntity);
         //Se guarda la relacion de Owner con Plot
@@ -94,7 +134,7 @@ public class OwnerServiceImpl implements OwnerService {
 
 
         //Aca se crea el usuario
-        if(!restUser.createUser(postOwnerDto)){
+        if (!restUser.createUser(postOwnerDto)) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Server error while creating the user");
         }
 
@@ -104,8 +144,15 @@ public class OwnerServiceImpl implements OwnerService {
         return getOwnerDto;
     }
 
+    /**
+     * Sube los archivos de un propietario.
+     *
+     * @param files los archivos a subir.
+     * @param userId el id del usuario que sube los archivos.
+     * @param ownerEntity la entidad del propietario.
+     */
     public void uploadFiles(List<MultipartFile> files, Integer userId, OwnerEntity ownerEntity) {
-        if(files != null && !files.isEmpty()){
+        if (files != null && !files.isEmpty()) {
 
             for (MultipartFile file : files) {
 
@@ -163,7 +210,7 @@ public class OwnerServiceImpl implements OwnerService {
     public GetOwnerDto updateOwner(Integer ownerId, PutOwnerDto putOwnerDto) {
         Optional<OwnerEntity> ownerEntityOptional = ownerRepository.findById(ownerId);
 
-        if (ownerEntityOptional.isEmpty()){
+        if (ownerEntityOptional.isEmpty()) {
             throw new EntityNotFoundException("Owner not found");
         }
         OwnerEntity ownerEntity = ownerEntityOptional.get();
@@ -200,7 +247,7 @@ public class OwnerServiceImpl implements OwnerService {
     @Override
     public GetOwnerDto getById(Integer ownerId) {
         OwnerEntity ownerEntity = ownerRepository.findById(ownerId).orElse(null);
-        if(ownerEntity == null){
+        if (ownerEntity == null) {
             throw new EntityNotFoundException("Owner not found");
         }
         return mapOwnerEntitytoGet(ownerEntity);
@@ -390,7 +437,7 @@ public class OwnerServiceImpl implements OwnerService {
     public void deleteOwner(Integer ownerId, Integer userIdUpdate) {
         Optional<OwnerEntity> optionalOwner = ownerRepository.findById(ownerId);
 
-        if(optionalOwner.isEmpty()){
+        if (optionalOwner.isEmpty()) {
             throw new EntityNotFoundException("Owner not found with id: " + ownerId);
         }
         OwnerEntity ownerEntity = optionalOwner.get();

@@ -15,8 +15,16 @@ import java.util.List;
 @RequestMapping("/owners")
 public class OwnerController {
 
+    /**
+     * Servicio para manejar la lógica de propietarios.
+     */
     private final OwnerService ownerService;
 
+    /**
+     * Constructor de OwnerController.
+     *
+     * @param ownerService servicio de propietarios.
+     */
     @Autowired
     public OwnerController(OwnerService ownerService) {
         this.ownerService = ownerService;
@@ -54,7 +62,7 @@ public class OwnerController {
      * @return el propietario.
      */
     @GetMapping("/{ownerId}")
-    public ResponseEntity<GetOwnerDto> getOwnerById(@PathVariable Integer ownerId){
+    public ResponseEntity<GetOwnerDto> getOwnerById(@PathVariable Integer ownerId) {
         GetOwnerDto result = ownerService.getById(ownerId);
         return ResponseEntity.ok(result);
     }
@@ -85,10 +93,10 @@ public class OwnerController {
      * @return una lista con todos los propietarios.
      */
     @GetMapping()
-    public ResponseEntity<List<OwnerDto>> getOwners(){
+    public ResponseEntity<List<OwnerDto>> getOwners() {
         List<OwnerDto> result = ownerService.getAllOwners();
 
-        if(result == null) {
+        if (result == null) {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(result);
@@ -131,6 +139,13 @@ public class OwnerController {
         return ResponseEntity.ok(ownerAndPlot);
     }
 
+    /**
+     * Baja lógica de un propietario.
+     *
+     * @param ownerId id del propietario a dar de baja.
+     * @param userIdUpdate id del usuario realiza la baja.
+     * @return respuesta vacía.
+     */
     @DeleteMapping("/{id}/{userIdUpdate}")
     public ResponseEntity<Void> deleteOwner(@PathVariable("id") Integer ownerId, @PathVariable("userIdUpdate") Integer userIdUpdate) {
         ownerService.deleteOwner(ownerId, userIdUpdate);

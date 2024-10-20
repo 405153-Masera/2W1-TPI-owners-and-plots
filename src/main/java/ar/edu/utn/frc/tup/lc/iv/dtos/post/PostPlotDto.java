@@ -14,6 +14,9 @@ import java.util.List;
 @NoArgsConstructor
 public class PostPlotDto {
 
+    /**
+     * Plot number.
+     */
     @NotNull(message = "Plot number cannot be null")
     private int plot_number;
 

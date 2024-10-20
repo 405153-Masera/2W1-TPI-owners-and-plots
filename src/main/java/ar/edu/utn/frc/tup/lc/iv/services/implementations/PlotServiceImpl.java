@@ -5,7 +5,11 @@ import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotStateDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotTypeDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutPlotDto;
-import ar.edu.utn.frc.tup.lc.iv.entities.*;
+import ar.edu.utn.frc.tup.lc.iv.entities.FileEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.FilePlotEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.PlotEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.PlotTypeEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.PlotStateEntity;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotStateRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotTypeRepository;
@@ -18,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,18 +29,44 @@ import java.util.List;
 @Service
 public class PlotServiceImpl implements PlotService {
 
+    /**
+     * Repositorio para manejar Plot entities.
+     */
     private final PlotRepository plotRepository;
 
+    /**
+     * Repositorio para manejar PlotState entities.
+     */
     private final PlotStateRepository plotStateRepository;
 
+    /**
+     * Repositorio para manejar PlotType entities.
+     */
     private final PlotTypeRepository plotTypeRepository;
 
+    /**
+     * Servicio para manejar la cominicaion con el api de archivos.
+     */
     private final FileManagerClient fileManagerClient;
 
+    /**
+     * Servicio para mapear entidades a dtos y viceversa.
+     */
     private final ModelMapper modelMapper;
 
+    /**
+     * Constructor de PlotServiceImpl.
+     *
+     * @param plotRepository Repositorio para manejar Plot entities.
+     * @param plotStateRepository Repositorio para manejar PlotState entities.
+     * @param plotTypeRepository Repositorio para manejar PlotType entities.
+     * @param fileManagerClient Servicio para manejar el restTemplate de archivos.
+     * @param modelMapper Servicio para mapear entidades a dtos y viceversa.
+     */
     @Autowired
-    public PlotServiceImpl(PlotRepository plotRepository, PlotStateRepository plotStateRepository, PlotTypeRepository plotTypeRepository, FileManagerClient fileManagerClient, ModelMapper modelMapper) {
+    public PlotServiceImpl(PlotRepository plotRepository, PlotStateRepository plotStateRepository,
+                           PlotTypeRepository plotTypeRepository, FileManagerClient fileManagerClient,
+                           ModelMapper modelMapper) {
         this.plotRepository = plotRepository;
         this.plotStateRepository = plotStateRepository;
         this.plotTypeRepository = plotTypeRepository;
@@ -61,7 +90,7 @@ public class PlotServiceImpl implements PlotService {
         //Mapeamos con metodo
         mapPlotPostToPlotEntity(plotEntity, postPlotDto);
 
-        uploadFiles(postPlotDto.getFiles() , postPlotDto.getUserCreateId(),plotEntity);
+        uploadFiles(postPlotDto.getFiles(), postPlotDto.getUserCreateId(), plotEntity);
 
         //Guardamos el plot
         PlotEntity savedPlot = plotRepository.save(plotEntity);
@@ -74,9 +103,15 @@ public class PlotServiceImpl implements PlotService {
 
     }
 
+    /**
+     * Sube archivos de un lote.
+     *
+     * @param files lista de archivos a subir.
+     * @param userId id del usuario que sube los archivos.
+     * @param plotEntity entidad del lote al que se le suben los archivos.
+     */
     public void uploadFiles(List<MultipartFile> files, Integer userId, PlotEntity plotEntity) {
-        if(files != null && !files.isEmpty()){
-
+        if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
 
                 String fileUuid = fileManagerClient.uploadFile(file);
@@ -149,17 +184,17 @@ public class PlotServiceImpl implements PlotService {
     public GetPlotDto putPlot(PutPlotDto plotDto, Integer plotId) {
         PlotEntity plotEntity = this.plotRepository.findById(plotId).get();
 
-        if(plotEntity == null){
+        if (plotEntity == null) {
             throw new RuntimeException();
         }
 
         PlotStateEntity plotStateEntity = this.plotStateRepository.findById(plotDto.getPlot_state_id()).get();
-        if(plotStateEntity == null){
+        if (plotStateEntity == null) {
             throw new RuntimeException();
         }
 
         PlotTypeEntity plotTypeEntity = this.plotTypeRepository.findById(plotDto.getPlot_type_id()).get();
-        if(plotTypeEntity == null){
+        if (plotTypeEntity == null) {
             throw new RuntimeException();
         }
 
@@ -171,7 +206,7 @@ public class PlotServiceImpl implements PlotService {
         plotEntity.setLastUpdatedUser(plotDto.getUserUpdateId());
         plotEntity = this.plotRepository.save(plotEntity);
         GetPlotDto getPlotDto = new GetPlotDto();
-        this.mapPlotEntityToGetPlotDto(plotEntity , getPlotDto);
+        this.mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
         return getPlotDto;
     }
 
@@ -186,7 +221,7 @@ public class PlotServiceImpl implements PlotService {
         List<GetPlotDto> plotDtos = new ArrayList<>();
         for (PlotEntity plotEntity : plotEntities) {
             GetPlotDto getPlotDto = new GetPlotDto();
-            mapPlotEntityToGetPlotDto(plotEntity, getPlotDto );
+            mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
             plotDtos.add(getPlotDto);
         }
         return plotDtos;
@@ -201,8 +236,9 @@ public class PlotServiceImpl implements PlotService {
     public List<GetPlotDto> getAllPlotsAvailables() {
         List<PlotEntity> plotEntities = plotRepository.findPlotsAvailables();
         List<GetPlotDto> plotDtos = new ArrayList<>();
-        for (PlotEntity plotEntity : plotEntities) { GetPlotDto getPlotDto = new GetPlotDto();
-            mapPlotEntityToGetPlotDto(plotEntity, getPlotDto );
+        for (PlotEntity plotEntity : plotEntities) {
+            GetPlotDto getPlotDto = new GetPlotDto();
+            mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
             plotDtos.add(getPlotDto);
         }
         return plotDtos;

@@ -1,20 +1,31 @@
 package ar.edu.utn.frc.tup.lc.iv.dtos.get;
 
-import ar.edu.utn.frc.tup.lc.iv.models.Owner;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.GetUserDto;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.util.List;
-
+/**
+ * DTO que representa una respuesta que contiene la información de
+ * un propietario, su lote y su usuario.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetOwnerAndPlot {
+
+    /**
+     * Datos del propietario.
+     */
     private OwnerDto owner;
+
+    /**
+     * Datos del lote del propietario.
+     */
     private GetPlotDto plot;
+
+    /**
+     * Datos del usuario del propietario.
+     */
     private GetUserDto user;
 }
