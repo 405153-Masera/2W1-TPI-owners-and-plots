@@ -9,6 +9,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * La clase {@code PlotEntity} representa la tabla de lotes.
+ * Referencia a la tabla llamada "plots".
+ */
 @Entity
 @Table(name = "plots")
 @Data
