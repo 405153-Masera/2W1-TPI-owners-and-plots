@@ -93,8 +93,8 @@ public class OwnerController {
      * @return una lista con todos los propietarios.
      */
     @GetMapping()
-    public ResponseEntity<List<OwnerDto>> getOwners() {
-        List<OwnerDto> result = ownerService.getAllOwners();
+    public ResponseEntity<List<GetOwnerDto>> getOwners() {
+        List<GetOwnerDto> result = ownerService.getAllOwners();
 
         if (result == null) {
             return ResponseEntity.badRequest().build();

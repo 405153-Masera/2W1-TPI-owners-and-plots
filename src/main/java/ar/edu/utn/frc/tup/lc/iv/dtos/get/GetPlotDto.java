@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * DTO que representa una respuesta que contiene la infromación de
  * un lote.
@@ -47,4 +49,9 @@ public class GetPlotDto {
      * Tipo de lote (casa, negocio, etc).
      */
     private String plot_type;
+
+    /**
+     * Lista de archivos asociados al lote.
+     */
+    private List<FileDto> files;
 }

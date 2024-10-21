@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * DTO que representa una respuesta que contiene la infromación de
@@ -66,4 +67,9 @@ public class GetOwnerDto {
      * Representa sí el propietario está activo o no.
      */
     private Boolean active;
+
+    /**
+     * Lista de archivos asociados al propietario.
+     */
+    private List<FileDto> files;
 }

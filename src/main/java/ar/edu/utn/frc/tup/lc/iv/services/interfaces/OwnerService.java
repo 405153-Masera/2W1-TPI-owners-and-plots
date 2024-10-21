@@ -54,7 +54,7 @@ public interface OwnerService {
      *
      * @return una lista con todos los propietarios.
      */
-    List<OwnerDto> getAllOwners();
+    List<GetOwnerDto> getAllOwners();
 
     /**
      * Obtiene todos los propietarios activos, junto con su lote y su usuario.

@@ -62,9 +62,4 @@ public class OwnerDto {
      * Tipo de propietario (persona física o jurídica).
      */
     private String ownerType;
-
-    /**
-     * Lista de archivos del propietario.
-     */
-    private List<FileDto> files;
 }

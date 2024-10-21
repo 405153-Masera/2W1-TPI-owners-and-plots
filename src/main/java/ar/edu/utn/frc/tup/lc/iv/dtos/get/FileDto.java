@@ -13,7 +13,11 @@ import lombok.NoArgsConstructor;
 public class FileDto {
 
     /**
-     * Identificador único del archivo.
+     * Nombre del archivo.
      */
-    private String fileId;
+    private String name;
+    /**
+     * UUID del archivo.
+     */
+    private String uuid;
 }

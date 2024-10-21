@@ -50,6 +50,11 @@ public class PlotServiceImpl implements PlotService {
     private final FileManagerClient fileManagerClient;
 
     /**
+     * Servicio para manejar la logica de archivos.
+     */
+    private final FileServiceImpl fileService;
+
+    /**
      * Servicio para mapear entidades a dtos y viceversa.
      */
     private final ModelMapper modelMapper;
@@ -61,16 +66,18 @@ public class PlotServiceImpl implements PlotService {
      * @param plotStateRepository Repositorio para manejar PlotState entities.
      * @param plotTypeRepository Repositorio para manejar PlotType entities.
      * @param fileManagerClient Servicio para manejar el restTemplate de archivos.
+     * @param fileService Servicio para manejar la logica de archivos.
      * @param modelMapper Servicio para mapear entidades a dtos y viceversa.
      */
     @Autowired
     public PlotServiceImpl(PlotRepository plotRepository, PlotStateRepository plotStateRepository,
-                           PlotTypeRepository plotTypeRepository, FileManagerClient fileManagerClient,
+                           PlotTypeRepository plotTypeRepository, FileManagerClient fileManagerClient, FileServiceImpl fileService,
                            ModelMapper modelMapper) {
         this.plotRepository = plotRepository;
         this.plotStateRepository = plotStateRepository;
         this.plotTypeRepository = plotTypeRepository;
         this.fileManagerClient = fileManagerClient;
+        this.fileService = fileService;
         this.modelMapper = modelMapper;
     }
 
@@ -100,7 +107,6 @@ public class PlotServiceImpl implements PlotService {
 
         //Retornamos el getPlotDto
         return getPlotDto;
-
     }
 
     /**
@@ -114,12 +120,12 @@ public class PlotServiceImpl implements PlotService {
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
 
-                String fileUuid = fileManagerClient.uploadFile(file);
+                String fileUuid = fileManagerClient.uploadFile(file).getUuid().toString();
 
                 FileEntity fileEntity = new FileEntity();
                 fileEntity.setFileUuid(fileUuid);
                 //Todo: ver el nombre del archivo
-                fileEntity.setName(file.getName());
+                fileEntity.setName(file.getOriginalFilename());
                 fileEntity.setCreatedDatetime(LocalDateTime.now());
                 fileEntity.setCreatedUser(userId);
                 fileEntity.setLastUpdatedDatetime(LocalDateTime.now());
@@ -222,6 +228,7 @@ public class PlotServiceImpl implements PlotService {
         for (PlotEntity plotEntity : plotEntities) {
             GetPlotDto getPlotDto = new GetPlotDto();
             mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
+            getPlotDto.setFiles(fileService.getPlotFiles(plotEntity.getId()));
             plotDtos.add(getPlotDto);
         }
         return plotDtos;
@@ -256,6 +263,7 @@ public class PlotServiceImpl implements PlotService {
                 .orElseThrow(() -> new EntityNotFoundException("Plot not found with id: " + plotId));
         GetPlotDto getPlotDto = new GetPlotDto();
         mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
+        getPlotDto.setFiles(fileService.getPlotFiles(plotEntity.getId()));
         return getPlotDto;
     }
 

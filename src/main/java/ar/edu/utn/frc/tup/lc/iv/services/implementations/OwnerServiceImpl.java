@@ -74,6 +74,12 @@ public class OwnerServiceImpl implements OwnerService {
     private final PlotService plotService;
 
     /**
+     * Servicio para manejar la lógica de archivos.
+     */
+    @Autowired
+    private FileServiceImpl fileService;
+
+    /**
      * Servicio para manejar la comunicación con el api de archivos.
      */
     @Autowired
@@ -156,11 +162,11 @@ public class OwnerServiceImpl implements OwnerService {
 
             for (MultipartFile file : files) {
 
-                String fileUuid = fileManagerClient.uploadFile(file);
+                String fileUuid = fileManagerClient.uploadFile(file).getUuid().toString();
 
                 FileEntity fileEntity = new FileEntity();
                 fileEntity.setFileUuid(fileUuid);
-                fileEntity.setName(file.getName());
+                fileEntity.setName(file.getOriginalFilename());
                 fileEntity.setCreatedDatetime(LocalDateTime.now());
                 fileEntity.setCreatedUser(userId);
                 fileEntity.setLastUpdatedDatetime(LocalDateTime.now());
@@ -250,7 +256,10 @@ public class OwnerServiceImpl implements OwnerService {
         if (ownerEntity == null) {
             throw new EntityNotFoundException("Owner not found");
         }
-        return mapOwnerEntitytoGet(ownerEntity);
+
+        GetOwnerDto getOwnerDto = mapOwnerEntitytoGet(ownerEntity);
+        getOwnerDto.setFiles(fileService.getOwnerFiles(ownerId));
+        return getOwnerDto;
     }
 
     /**
@@ -333,14 +342,15 @@ public class OwnerServiceImpl implements OwnerService {
      * @return una lista con todos los propietarios.
      */
     @Override
-    public List<OwnerDto> getAllOwners() {
+    public List<GetOwnerDto> getAllOwners() {
         List<OwnerEntity> ownerEntities = ownerRepository.findAll();
-        List<OwnerDto> ownerDtos = ownerEntities.stream()
-                .map(this::mapOwnerEntityToOwnerDto)
-                .collect(Collectors.toList());
+        List<GetOwnerDto> ownerDtos = new ArrayList<>();
 
-        //Todo: falta agregar los archivos
-
+        for (OwnerEntity ownerEntity : ownerEntities) {
+            GetOwnerDto getOwnerDto = mapOwnerEntitytoGet(ownerEntity);
+            getOwnerDto.setFiles(fileService.getOwnerFiles(ownerEntity.getId()));
+            ownerDtos.add(getOwnerDto);
+        }
         return ownerDtos;
     }
 
