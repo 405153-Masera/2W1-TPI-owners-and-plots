@@ -13,6 +13,10 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementación de la interfaz FileService,
+ * contiene la lógica de archivos.
+ */
 @Service
 public class FileServiceImpl implements FileService {
 

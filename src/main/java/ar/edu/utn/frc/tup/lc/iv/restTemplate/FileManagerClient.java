@@ -9,7 +9,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 
-
+/**
+ * Servicio que se encarga de realizar las peticiones REST a la API de fileManager.
+ */
 @Service
 public class FileManagerClient {
 

@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * Implementación de OwnerService,
+ * Implementación de la interfaz OwnerService,
  * contiene toda la logica de propietarios.
  */
 @Service

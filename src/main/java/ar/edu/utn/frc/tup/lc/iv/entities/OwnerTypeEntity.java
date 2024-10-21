@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * La clase {@code OwnerTypeEntity} representa la tabla de tipos de propietarios.
+ * La clase {@code OwnerTypeEntity} representa un tipo de propietario.
  * Referencia a la tabla llamada "ownerstypes".
  */
 @Entity

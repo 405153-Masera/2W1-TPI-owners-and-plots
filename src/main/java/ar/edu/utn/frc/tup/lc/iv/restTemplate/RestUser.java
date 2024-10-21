@@ -20,14 +20,33 @@ import org.springframework.web.server.ResponseStatusException;
 @AllArgsConstructor
 public class RestUser {
 
+    /**
+     * Instancia de restTemplate para utilizar dentro de la clase.
+     */
     private final RestTemplate restTemplate;
+
+    /**
+     * Direccion url donde se levanta el microservicio de usuarios.
+     */
     private String url = "http://localhost:8080/users";
 
+    /**
+     * Constructor de la clase.
+     *
+     * @param restTemplate instancia de restTemplate.
+     */
     @Autowired
     public RestUser(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
+    /**
+     * Metodo para crear un usuario.
+     *
+     * @param postOwnerDto DTO con la información del usuario a crear.
+     * @return true si se creo correctamente, false en caso contrario.
+     * @throws ResponseStatusException si hubo un error en la petición.
+     */
     public boolean createUser(PostOwnerDto postOwnerDto) {
 
         UserPost userPost = new UserPost();
@@ -51,34 +70,46 @@ public class RestUser {
             ResponseEntity<Void> response = restTemplate.postForEntity(url, userPost, Void.class);
             return response.getStatusCode().is2xxSuccessful();
 
-        }catch (HttpClientErrorException e) {
+        } catch (HttpClientErrorException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getMessage());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Server error while creating the user" + e.getMessage());
         }
     }
 
+    /**
+     * Metodo para obtener un usuario a través de un lote.
+     *
+     * @param plotId identificador del lote.
+     * @return un DTO con la información del usuario.
+     * @throws EntityNotFoundException si no se encontro el usuario.
+     */
     public GetUserDto getUser(Integer plotId) {
 
         ResponseEntity<GetUserDto> response = restTemplate.getForEntity(url + "/plot/" + plotId, GetUserDto.class);
 
-        if(response.getStatusCode().is2xxSuccessful()){
+        if (response.getStatusCode().is2xxSuccessful()) {
             return response.getBody();
-        }else {
+        } else {
             throw  new EntityNotFoundException("No se encontró el usuario");
         }
 
     }
 
+    /**
+     * Metodo para dar una baja lógica a un usuario.
+     *
+     * @param userId identificador del usuario a dar de baja.
+     * @param userIdUpdate identificador del usuario que realiza la baja.
+     * @throws ResponseStatusException si hubo un error en la petición.
+     */
     public void deleteUser(Integer userId, Integer userIdUpdate) {
-        try{
+        try {
             restTemplate.delete(url + "/" + userId + "/" + userIdUpdate);
-        }catch (HttpClientErrorException e) {
+        } catch (HttpClientErrorException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getMessage());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Server error while creating the user" + e.getMessage());
         }

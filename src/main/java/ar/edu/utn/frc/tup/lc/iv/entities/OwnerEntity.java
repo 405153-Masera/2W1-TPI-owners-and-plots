@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * La clase {@code OwnerEntity} representa la tabla de propietarios.
+ * La clase {@code OwnerEntity} representa un propietario.
  * Referencia a la tabla llamada "owners".
  */
 @Entity

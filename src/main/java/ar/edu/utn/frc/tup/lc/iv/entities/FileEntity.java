@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * La clase {@code FileEntity} representa la tabla de archivos.
+ * La clase {@code FileEntity} representa un archivo.
  * Referencia a la tabla llamada "files".
  */
 @Entity

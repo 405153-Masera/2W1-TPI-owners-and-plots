@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Interfaz que contiene la lógica de propietarios.
+ */
 @Service
 public interface OwnerService {
 

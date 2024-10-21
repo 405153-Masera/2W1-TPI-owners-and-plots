@@ -26,6 +26,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementación de la interfaz PlotService,
+ * contiene toda la lógica de los lotes.
+ */
 @Service
 public class PlotServiceImpl implements PlotService {
 
@@ -119,7 +123,6 @@ public class PlotServiceImpl implements PlotService {
     public void uploadFiles(List<MultipartFile> files, Integer userId, PlotEntity plotEntity) {
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
-
                 String fileUuid = fileManagerClient.uploadFile(file).getUuid().toString();
 
                 FileEntity fileEntity = new FileEntity();
