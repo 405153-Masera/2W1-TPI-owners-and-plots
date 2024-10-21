@@ -12,13 +12,23 @@ last_updated_datetime DATETIME,
 last_updated_user INT
 );
 
+-- Tabla OwnersTypes
+CREATE TABLE OwnersTypes (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    description VARCHAR(255),
+    created_datetime DATETIME,
+    created_user INT,
+    last_updated_datetime DATETIME,
+    last_updated_user INT
+);
+
 -- Tabla Owners
 CREATE TABLE Owners (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255),
-    surname VARCHAR(255),
-    dni INT,
-    cuit_cuil INT,
+    lastname VARCHAR(255),
+    dni VARCHAR(255),
+    cuit_cuil VARCHAR(255),
     date_birth DATETIME,
     tax_status_id INT,
     owner_type_id INT,
@@ -83,16 +93,6 @@ CREATE TABLE PlotOwners (
 );
 
 
--- Tabla OwnersTypes
-CREATE TABLE OwnersTypes (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    description VARCHAR(255),
-    created_datetime DATETIME,
-    created_user INT,
-    last_updated_datetime DATETIME,
-    last_updated_user INT
-);
-
 -- Tabla Files
 CREATE TABLE Files (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -137,9 +137,9 @@ CREATE TABLE Owners_audit (
     id INT,
     version INT,
     name VARCHAR(255),
-    surname VARCHAR(255),
-    dni INT,
-    cuit_cuil INT,
+    lastname VARCHAR(255),
+    dni VARCHAR(255),
+    cuit_cuil VARCHAR(255),
     date_birth DATE,
     tax_status_id INT,
     owner_type_id INT,
@@ -269,232 +269,201 @@ CREATE TABLE OwnersTypes_audit (
 );
 
 
--- Triggers
 DELIMITER $$
-CREATE TRIGGER trg_owners_insert
-AFTER INSERT ON Owners
-FOR EACH ROW
-BEGIN
-    INSERT INTO Owners_audit (id, version, name, surname, dni, cuit_cuil, date_birth, business_name,tax_status_id, owner_type_id, active, created_datetime, created_user, last_updated_datetime, last_updated_user)
-    VALUES (NEW.id, 1, NEW.name, NEW.surname, NEW.dni, NEW.cuit_cuil, NEW.date_birth, NEW.business_name,NEW.tax_status_id,NEW.owner_type_id, NEW.active, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
-END $$ 
 
-DELIMITER $$
-CREATE TRIGGER trg_taxstatus_insert
+CREATE TRIGGER trg_taxstatus_insert 
 AFTER INSERT ON TaxStatus
-FOR EACH ROW
+FOR EACH ROW 
 BEGIN
-    INSERT INTO TaxStatus_audit (id, version, description, created_datetime, created_user, last_updated_datetime, last_updated_user)
-    VALUES (NEW.id, 1, NEW.description, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
-END $$
+    INSERT INTO TaxStatus_audit 
+    (id, version, description, created_datetime, created_user, last_updated_datetime, last_updated_user)
+    VALUES 
+    (NEW.id, 1, NEW.description, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
+END$$
+
+DELIMITER ;
 
 DELIMITER $$
-CREATE TRIGGER trg_taxstatus_update
+
+CREATE TRIGGER trg_taxstatus_update 
 AFTER UPDATE ON TaxStatus
-FOR EACH ROW
+FOR EACH ROW 
 BEGIN
-    DECLARE latest_version INT;
-    SELECT COALESCE(MAX(version), 0) INTO latest_version FROM TaxStatus_audit WHERE id = NEW.id;
-    SET latest_version = IFNULL(latest_version, 0) + 1;
+    DECLARE version_number INT;
+    
+    SELECT IFNULL(MAX(version), 0) + 1 INTO version_number FROM TaxStatus_audit WHERE id = OLD.id;
 
-    INSERT INTO TaxStatus_audit (id, version, description, created_datetime, created_user, last_updated_datetime, last_updated_user)
-    VALUES (NEW.id, latest_version, NEW.description, OLD.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
-END $$
+    INSERT INTO TaxStatus_audit 
+    (id, version, description, created_datetime, created_user, last_updated_datetime, last_updated_user)
+    VALUES 
+    (OLD.id, version_number, OLD.description, OLD.created_datetime, OLD.created_user, OLD.last_updated_datetime, OLD.last_updated_user);
+END$$
+
+DELIMITER ;
 
 DELIMITER $$
-CREATE TRIGGER trg_owners_update
+
+CREATE TRIGGER trg_owners_insert 
+AFTER INSERT ON Owners
+FOR EACH ROW 
+BEGIN
+    INSERT INTO Owners_audit 
+    (id, version, name, lastname, dni, cuit_cuil, date_birth, tax_status_id, owner_type_id, business_name, active, created_datetime, created_user, last_updated_datetime, last_updated_user)
+    VALUES 
+    (NEW.id, 1, NEW.name, NEW.lastname, NEW.dni, NEW.cuit_cuil, NEW.date_birth, NEW.tax_status_id, NEW.owner_type_id, NEW.business_name, NEW.active, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER trg_owners_update 
 AFTER UPDATE ON Owners
-FOR EACH ROW
+FOR EACH ROW 
 BEGIN
-    DECLARE latest_version INT;
-    SELECT MAX(version) INTO latest_version FROM Owners_audit WHERE id = NEW.id;
-    SET latest_version = IFNULL(latest_version, 0) + 1;
+    DECLARE version_number INT;
+    
+    SELECT IFNULL(MAX(version), 0) + 1 INTO version_number FROM Owners_audit WHERE id = OLD.id;
 
-    INSERT INTO Owners_audit (id, version, name, surname, dni, cuit_cuil, date_birth, business_name,tax_status_id, owner_type_id, active, created_datetime, created_user, last_updated_datetime, last_updated_user)
-    VALUES (NEW.id, latest_version, NEW.name, NEW.surname, NEW.dni, NEW.cuit_cuil, NEW.date_birth, NEW.business_name,NEW.tax_status_id,NEW.owner_type_id, NEW.active, OLD.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
-END $$
+    INSERT INTO Owners_audit 
+    (id, version, name, lastname, dni, cuit_cuil, date_birth, tax_status_id, owner_type_id, business_name, active, created_datetime, created_user, last_updated_datetime, last_updated_user)
+    VALUES 
+    (OLD.id, version_number, OLD.name, OLD.lastname, OLD.dni, OLD.cuit_cuil, OLD.date_birth, OLD.tax_status_id, OLD.owner_type_id, OLD.business_name, OLD.active, OLD.created_datetime, OLD.created_user, OLD.last_updated_datetime, OLD.last_updated_user);
+END$$
+
+DELIMITER ;
 
 DELIMITER $$
-CREATE TRIGGER trg_plots_insert
-AFTER INSERT ON Plots
-FOR EACH ROW
-BEGIN
-    INSERT INTO Plots_audit (id, version, plot_number, block_number, plot_state_id, plot_type_id, total_area_in_m2, built_area_in_m2, created_datetime, created_user, last_updated_datetime, last_updated_user)
-    VALUES (NEW.id, 1, NEW.plot_number, NEW.block_number, NEW.plot_state_id, NEW.plot_type_id, NEW.total_area_in_m2, NEW.built_area_in_m2, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
-END $$
 
-DELIMITER $$
-CREATE TRIGGER trg_plots_update
-AFTER UPDATE ON Plots
-FOR EACH ROW
-BEGIN
-    DECLARE latest_version INT;
-    SELECT MAX(version) INTO latest_version FROM Plots_audit WHERE id = NEW.id;
-    SET latest_version = IFNULL(latest_version, 0) + 1;
-
-    INSERT INTO Plots_audit (id, version, plot_number, block_number, plot_state_id, plot_type_id, total_area_in_m2, built_area_in_m2, created_datetime, created_user, last_updated_datetime, last_updated_user)
-    VALUES (NEW.id, latest_version, NEW.plot_number, NEW.block_number, NEW.plot_state_id, NEW.plot_type_id, NEW.total_area_in_m2, NEW.built_area_in_m2, OLD.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
-END $$ 
-
-DELIMITER $$
-CREATE TRIGGER trg_plotowners_insert
-AFTER INSERT ON PlotOwners
-FOR EACH ROW
-BEGIN
-    INSERT INTO PlotOwners_audit (id, version, plot_id, owner_id, created_datetime, created_user, last_updated_datetime, last_updated_user)
-    VALUES (NEW.id, 1, NEW.plot_id, NEW.owner_id, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
-END $$
-
-DELIMITER $$
-CREATE TRIGGER trg_plotowners_update
-AFTER UPDATE ON PlotOwners
-FOR EACH ROW
-BEGIN
-    DECLARE latest_version INT;
-    SELECT MAX(version) INTO latest_version FROM PlotOwners_audit WHERE id = NEW.id;
-    SET latest_version = IFNULL(latest_version, 0) + 1;
-
-    INSERT INTO PlotOwners_audit (id, version, plot_id, owner_id, created_datetime, created_user, last_updated_datetime, last_updated_user)
-    VALUES (NEW.id, latest_version, NEW.plot_id, NEW.owner_id, OLD.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
-END $$
-
-DELIMITER $$
-CREATE TRIGGER trg_plottypes_insert
-AFTER INSERT ON PlotTypes
-FOR EACH ROW
-BEGIN
-    INSERT INTO PlotTypes_audit (id, version, name, created_datetime, created_user, last_updated_datetime, last_updated_user)
-    VALUES (NEW.id, 1, NEW.name, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
-END $$ 
-
-DELIMITER $$
-CREATE TRIGGER trg_plottypes_update
-AFTER UPDATE ON PlotTypes
-FOR EACH ROW
-BEGIN
-    DECLARE latest_version INT;
-    SELECT MAX(version) INTO latest_version FROM PlotTypes_audit WHERE id = NEW.id;
-    SET latest_version = IFNULL(latest_version, 0) + 1;
-
-    INSERT INTO PlotTypes_audit (id, version, name, created_datetime, created_user, last_updated_datetime, last_updated_user)
-    VALUES (NEW.id, latest_version, NEW.name, OLD.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
-END $$ 
-
-DELIMITER $$
-CREATE TRIGGER trg_plotstates_insert
+CREATE TRIGGER trg_plotstates_insert 
 AFTER INSERT ON PlotStates
-FOR EACH ROW
+FOR EACH ROW 
 BEGIN
-    INSERT INTO PlotStates_audit (id, version, name, created_datetime, created_user, last_updated_datetime, last_updated_user)
-    VALUES (NEW.id, 1, NEW.name, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
-END $$ 
+    INSERT INTO PlotStates_audit 
+    (id, version, name, created_datetime, created_user, last_updated_datetime, last_updated_user)
+    VALUES 
+    (NEW.id, 1, NEW.name, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
+END$$
+
+DELIMITER ;
 
 DELIMITER $$
-CREATE TRIGGER trg_plotstates_update
+
+CREATE TRIGGER trg_plotstates_update 
 AFTER UPDATE ON PlotStates
-FOR EACH ROW
+FOR EACH ROW 
 BEGIN
-    DECLARE latest_version INT;
-    SELECT MAX(version) INTO latest_version FROM PlotStates_audit WHERE id = NEW.id;
-    SET latest_version = IFNULL(latest_version, 0) + 1;
+    DECLARE version_number INT;
+    
+    SELECT IFNULL(MAX(version), 0) + 1 INTO version_number FROM PlotStates_audit WHERE id = OLD.id;
 
-    INSERT INTO PlotStates_audit (id, version, name, created_datetime, created_user, last_updated_datetime, last_updated_user)
-    VALUES (NEW.id, latest_version, NEW.name, OLD.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
-END $$ 
+    INSERT INTO PlotStates_audit 
+    (id, version, name, created_datetime, created_user, last_updated_datetime, last_updated_user)
+    VALUES 
+    (OLD.id, version_number, OLD.name, OLD.created_datetime, OLD.created_user, OLD.last_updated_datetime, OLD.last_updated_user);
+END$$
+
+DELIMITER ;
 
 DELIMITER $$
-CREATE TRIGGER trg_ownerstypes_insert
-AFTER INSERT ON OwnersTypes
-FOR EACH ROW
+
+CREATE TRIGGER trg_plottypes_insert 
+AFTER INSERT ON PlotTypes
+FOR EACH ROW 
 BEGIN
-    INSERT INTO OwnersTypes_audit (id, version, description, created_datetime, created_user, last_updated_datetime, last_updated_user)
-    VALUES (NEW.id, 1, NEW.description, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
-END $$ 
+    INSERT INTO PlotTypes_audit 
+    (id, version, name, created_datetime, created_user, last_updated_datetime, last_updated_user)
+    VALUES 
+    (NEW.id, 1, NEW.name, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
+END$$
+
+DELIMITER ;
 
 DELIMITER $$
-CREATE TRIGGER trg_ownerstypes_update
-AFTER UPDATE ON OwnersTypes
-FOR EACH ROW
+
+CREATE TRIGGER trg_plottypes_update 
+AFTER UPDATE ON PlotTypes
+FOR EACH ROW 
 BEGIN
-    DECLARE latest_version INT;
-    SELECT COALESCE(MAX(version), 0) INTO latest_version FROM OwnersTypes_audit WHERE id = NEW.id;
-    SET latest_version = IFNULL(latest_version, 0) + 1;
+    DECLARE version_number INT;
+    
+    SELECT IFNULL(MAX(version), 0) + 1 INTO version_number FROM PlotTypes_audit WHERE id = OLD.id;
 
-    INSERT INTO OwnersTypes_audit (id, version, description, created_datetime, created_user, last_updated_datetime, last_updated_user)
-    VALUES (NEW.id, latest_version, NEW.description, OLD.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
-END $$ 
+    INSERT INTO PlotTypes_audit 
+    (id, version, name, created_datetime, created_user, last_updated_datetime, last_updated_user)
+    VALUES 
+    (OLD.id, version_number, OLD.name, OLD.created_datetime, OLD.created_user, OLD.last_updated_datetime, OLD.last_updated_user);
+END$$
 
--- Trigger para insertar en la auditoría de Files
+DELIMITER ;
+
 DELIMITER $$
-CREATE TRIGGER trg_files_insert
-AFTER INSERT ON Files
-FOR EACH ROW
-BEGIN
-    INSERT INTO Files_audit (id, version, file_uuid, name, created_datetime, created_user, last_updated_datetime, last_updated_user)
-    VALUES (NEW.id, 1, NEW.file_uuid, NEW.name, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
-END $$
 
--- Trigger para actualizar en la auditoría de Files
+CREATE TRIGGER trg_plots_insert 
+AFTER INSERT ON Plots
+FOR EACH ROW 
+BEGIN
+    INSERT INTO Plots_audit 
+    (id, version, plot_number, block_number, plot_state_id, plot_type_id, total_area_in_m2, built_area_in_m2, created_datetime, created_user, last_updated_datetime, last_updated_user)
+    VALUES 
+    (NEW.id, 1, NEW.plot_number, NEW.block_number, NEW.plot_state_id, NEW.plot_type_id, NEW.total_area_in_m2, NEW.built_area_in_m2, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
+END$$
+
+DELIMITER ;
+
 DELIMITER $$
-CREATE TRIGGER trg_files_update
-AFTER UPDATE ON Files
-FOR EACH ROW
+
+CREATE TRIGGER trg_plots_update 
+AFTER UPDATE ON Plots
+FOR EACH ROW 
 BEGIN
-    DECLARE latest_version INT;
-    SELECT MAX(version) INTO latest_version FROM Files_audit WHERE id = NEW.id;
-    SET latest_version = IFNULL(latest_version, 0) + 1;
+    DECLARE version_number INT;
+    
+    SELECT IFNULL(MAX(version), 0) + 1 INTO version_number FROM Plots_audit WHERE id = OLD.id;
 
-    INSERT INTO Files_audit (id, version, file_uuid, name, created_datetime, created_user, last_updated_datetime, last_updated_user)
-    VALUES (NEW.id, latest_version, NEW.file_uuid, NEW.name, OLD.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
-END $$
+    INSERT INTO Plots_audit 
+    (id, version, plot_number, block_number, plot_state_id, plot_type_id, total_area_in_m2, built_area_in_m2, created_datetime, created_user, last_updated_datetime, last_updated_user)
+    VALUES 
+    (OLD.id, version_number, OLD.plot_number, OLD.block_number, OLD.plot_state_id, OLD.plot_type_id, OLD.total_area_in_m2, OLD.built_area_in_m2, OLD.created_datetime, OLD.created_user, OLD.last_updated_datetime, OLD.last_updated_user);
+END$$
 
--- Trigger para insertar en la auditoría de Files_Plots
+DELIMITER ;
+
 DELIMITER $$
-CREATE TRIGGER trg_files_plots_insert
-AFTER INSERT ON Files_Plots
-FOR EACH ROW
-BEGIN
-    INSERT INTO Files_Plots_audit (id, version, file_id, plot_id, created_datetime, created_user, last_updated_datetime, last_updated_user)
-    VALUES (NEW.id, 1, NEW.file_id, NEW.plot_id, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
-END $$
 
--- Trigger para actualizar en la auditoría de Files_Plots
+CREATE TRIGGER trg_plotowners_insert 
+AFTER INSERT ON PlotOwners
+FOR EACH ROW 
+BEGIN
+    INSERT INTO PlotOwners_audit 
+    (id, version, plot_id, owner_id, created_datetime, created_user, last_updated_datetime, last_updated_user)
+    VALUES 
+    (NEW.id, 1, NEW.plot_id, NEW.owner_id, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
+END$$
+
+DELIMITER ;
+
 DELIMITER $$
-CREATE TRIGGER trg_files_plots_update
-AFTER UPDATE ON Files_Plots
-FOR EACH ROW
+
+CREATE TRIGGER trg_plotowners_update 
+AFTER UPDATE ON PlotOwners
+FOR EACH ROW 
 BEGIN
-    DECLARE latest_version INT;
-    SELECT MAX(version) INTO latest_version FROM Files_Plots_audit WHERE id = NEW.id;
-    SET latest_version = IFNULL(latest_version, 0) + 1;
+    DECLARE version_number INT;
+    
+    SELECT IFNULL(MAX(version), 0) + 1 INTO version_number FROM PlotOwners_audit WHERE id = OLD.id;
 
-    INSERT INTO Files_Plots_audit (id, version, file_id, plot_id, created_datetime, created_user, last_updated_datetime, last_updated_user)
-    VALUES (NEW.id, latest_version, NEW.file_id, NEW.plot_id, OLD.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
-END $$
+    INSERT INTO PlotOwners_audit 
+    (id, version, plot_id, owner_id, created_datetime, created_user, last_updated_datetime, last_updated_user)
+    VALUES 
+    (OLD.id, version_number, OLD.plot_id, OLD.owner_id, OLD.created_datetime, OLD.created_user, OLD.last_updated_datetime, OLD.last_updated_user);
+END$$
 
--- Trigger para insertar en la auditoría de Files_Owners
-DELIMITER $$
-CREATE TRIGGER trg_files_owners_insert
-AFTER INSERT ON Files_Owners
-FOR EACH ROW
-BEGIN
-    INSERT INTO Files_Owners_audit (id, version, file_id, owner_id, created_datetime, created_user, last_updated_datetime, last_updated_user)
-    VALUES (NEW.id, 1, NEW.file_id, NEW.owner_id, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
-END $$
+DELIMITER ;
 
--- Trigger para actualizar en la auditoría de Files_Owners
-DELIMITER $$
-CREATE TRIGGER trg_files_owners_update
-AFTER UPDATE ON Files_Owners
-FOR EACH ROW
-BEGIN
-    DECLARE latest_version INT;
-    SELECT MAX(version) INTO latest_version FROM Files_Owners_audit WHERE id = NEW.id;
-    SET latest_version = IFNULL(latest_version, 0) + 1;
 
-    INSERT INTO Files_Owners_audit (id, version, file_id, owner_id, created_datetime, created_user, last_updated_datetime, last_updated_user)
-    VALUES (NEW.id, latest_version, NEW.file_id, NEW.owner_id, OLD.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
-END $$
+
+
 
 INSERT INTO TaxStatus (description)
 VALUES ('IVA Responsable inscripto'),('IVA Responsable no inscripto'),('IVA no Responsable'),('IVA Sujeto Exento'),('Monotributista');
@@ -503,9 +472,11 @@ INSERT INTO OwnersTypes (description)
 VALUES ('Persona Física'), ('Persona Jurídica'),('Otro');
 
 INSERT INTO PlotStates (name)
-VALUES ('Disponible'),('Habitado'),('En construcción')
+VALUES ('Disponible'),('Habitado'),('En construcción');
 
 INSERT INTO PlotTypes (name)
 VALUES ('Comercial'),('Residencial'),('Baldío')
+
+
 
 
