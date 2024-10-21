@@ -233,7 +233,7 @@ public class OwnerServiceImpl implements OwnerService {
         ownerEntity.setLastUpdatedDatetime(LocalDateTime.now());
         ownerEntity.setLastUpdatedUser(putOwnerDto.getUserUpdateId());
 
-        //Aca se actualiza el usuario
+        uploadFiles(putOwnerDto.getFiles(), putOwnerDto.getUserUpdateId(), ownerEntity);
 
         OwnerEntity ownerSaved = ownerRepository.save(ownerEntity);
         GetOwnerDto getOwnerDto = mapOwnerEntitytoGet(ownerSaved);

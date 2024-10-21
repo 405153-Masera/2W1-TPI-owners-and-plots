@@ -23,5 +23,4 @@ public interface FileService {
      * @return una lista de archivos
      */
     List<FileDto> getOwnerFiles(Integer ownerId);
-
 }

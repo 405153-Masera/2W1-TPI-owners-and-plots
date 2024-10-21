@@ -124,7 +124,6 @@ public class PlotServiceImpl implements PlotService {
 
                 FileEntity fileEntity = new FileEntity();
                 fileEntity.setFileUuid(fileUuid);
-                //Todo: ver el nombre del archivo
                 fileEntity.setName(file.getOriginalFilename());
                 fileEntity.setCreatedDatetime(LocalDateTime.now());
                 fileEntity.setCreatedUser(userId);
@@ -184,9 +183,6 @@ public class PlotServiceImpl implements PlotService {
      */
     @Override
     @Transactional
-    //todo SALE ESE ERROR RARO
-    //todo El error que estás viendo en tu operación PUT está relacionado con una limitación en MySQL que evita la
-    // modificación de una tabla que ya está siendo utilizada en un trigger
     public GetPlotDto putPlot(PutPlotDto plotDto, Integer plotId) {
         PlotEntity plotEntity = this.plotRepository.findById(plotId).get();
 
@@ -210,6 +206,9 @@ public class PlotServiceImpl implements PlotService {
         plotEntity.setPlotType(plotTypeEntity);
         plotEntity.setLastUpdatedDatetime(LocalDateTime.now());
         plotEntity.setLastUpdatedUser(plotDto.getUserUpdateId());
+
+        uploadFiles(plotDto.getFiles(), plotDto.getUserUpdateId(), plotEntity);
+
         plotEntity = this.plotRepository.save(plotEntity);
         GetPlotDto getPlotDto = new GetPlotDto();
         this.mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);

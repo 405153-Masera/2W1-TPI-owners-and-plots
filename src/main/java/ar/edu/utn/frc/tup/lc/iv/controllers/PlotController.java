@@ -70,8 +70,8 @@ public class PlotController {
      * @param plotId id del lote a actualizar.
      * @return el lote actualizado.
      */
-    @PutMapping()
-    public ResponseEntity<GetPlotDto> postPlot(@RequestBody PutPlotDto plotDto, @RequestParam Integer plotId) {
+    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<GetPlotDto> postPlot(@ModelAttribute PutPlotDto plotDto, @RequestParam Integer plotId) {
         return ResponseEntity.ok(plotService.putPlot(plotDto, plotId));
     }
 

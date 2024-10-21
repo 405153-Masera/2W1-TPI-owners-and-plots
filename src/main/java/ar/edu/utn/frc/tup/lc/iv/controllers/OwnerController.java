@@ -6,6 +6,7 @@ import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,8 +37,8 @@ public class OwnerController {
      * @param postOwnerDto datos del propietario a guardar.
      * @return el propietario creado.
      */
-    @PostMapping
-    public ResponseEntity<GetOwnerDto> postOwner(@RequestBody PostOwnerDto postOwnerDto) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<GetOwnerDto> postOwner(@ModelAttribute PostOwnerDto postOwnerDto) {
         GetOwnerDto getOwnerDto = ownerService.createOwner(postOwnerDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(getOwnerDto);
     }
@@ -49,8 +50,8 @@ public class OwnerController {
      * @param putOwnerDto datos del propietario a actualizar.
      * @return el propietario actualizado.
      */
-    @PutMapping("/{ownerId}")
-    public ResponseEntity<GetOwnerDto> putOwner(@PathVariable Integer ownerId, @RequestBody PutOwnerDto putOwnerDto) {
+    @PutMapping(value = "/{ownerId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<GetOwnerDto> putOwner(@PathVariable Integer ownerId, @ModelAttribute PutOwnerDto putOwnerDto) {
         GetOwnerDto getOwnerDto = ownerService.updateOwner(ownerId, putOwnerDto);
         return ResponseEntity.ok(getOwnerDto);
     }
