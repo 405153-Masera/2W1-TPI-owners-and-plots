@@ -53,5 +53,6 @@ public class GetPlotDto {
     /**
      * Lista de archivos asociados al lote.
      */
-    private List<FileDto> files;
+    private List<byte[]> files;
+    //private List<FileDto> files;
 }

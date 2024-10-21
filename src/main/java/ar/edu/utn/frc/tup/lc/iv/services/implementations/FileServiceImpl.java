@@ -60,15 +60,19 @@ public class FileServiceImpl implements FileService {
      * @return una lista de archivos
      */
     @Override
-    public List<FileDto> getPlotFiles(Integer plotId) {
+    public List<byte[]> getPlotFiles(Integer plotId) {
         List<FileEntity> filesEntities = fileRepository.findFileByPlotId(plotId);
-        List<FileDto> files = new ArrayList<>();
+        List<byte[]> files = new ArrayList<>();
+        //List<FileDto> files = new ArrayList<>();
         if (filesEntities != null) {
             for (FileEntity file : filesEntities) {
-                FileDto fileDto = new FileDto();
-                fileDto.setName(file.getName());
-                fileDto.setUuid(file.getFileUuid());
-                files.add(fileDto);
+
+                byte[] fileBytes = fileManagerClient.getFile(file.getFileUuid());
+                files.add(fileBytes);
+                //FileDto fileDto = new FileDto();
+                //fileDto.setName(file.getName());
+                //fileDto.setUuid(file.getFileUuid());
+                //files.add(fileDto);
             }
             return files;
         }

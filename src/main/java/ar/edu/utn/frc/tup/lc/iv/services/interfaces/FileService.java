@@ -14,7 +14,7 @@ public interface FileService {
      * @param plotId el id del lote
      * @return una lista de archivos
      */
-    List<FileDto> getPlotFiles(Integer plotId);
+    List<byte[]> getPlotFiles(Integer plotId);
 
     /**
      * Obtiene una lista de archivos.
