@@ -67,7 +67,7 @@ public class RestUser {
 
         try {
 
-            ResponseEntity<Void> response = restTemplate.postForEntity(url, userPost, Void.class);
+            ResponseEntity<Void> response = restTemplate.postForEntity(url + "/post", userPost, Void.class);
             return response.getStatusCode().is2xxSuccessful();
 
         } catch (HttpClientErrorException e) {
