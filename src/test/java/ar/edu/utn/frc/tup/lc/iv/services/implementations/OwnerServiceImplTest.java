@@ -160,10 +160,47 @@ class OwnerServiceImplTest {
 
     @Test
     void getOwersAndPlots() {
+        when(ownerRepositoryMock.findAllActives()).thenReturn(OwnerTestHelper.OWNER_ENTITY_LIST);
+
+        when(plotOwnerRepositoryMock.findByOwnerId(1)).thenReturn(OwnerTestHelper.PLOT_OWNER_ENTITY_1);
+        when(plotOwnerRepositoryMock.findByOwnerId(2)).thenReturn(OwnerTestHelper.PLOT_OWNER_ENTITY_2);
+        when(plotOwnerRepositoryMock.findByOwnerId(3)).thenReturn(OwnerTestHelper.PLOT_OWNER_ENTITY_3);
+
+        when(plotRepositoryMock.findById(1)).thenReturn(Optional.of(OwnerTestHelper.PLOT_ENTITY_1));
+        when(plotRepositoryMock.findById(2)).thenReturn(Optional.of(OwnerTestHelper.PLOT_ENTITY_2));
+        when(plotRepositoryMock.findById(3)).thenReturn(Optional.of(OwnerTestHelper.PLOT_ENTITY_3));
+
+
+        List<GetOwnerAndPlot> result = ownerServiceSpy.getOwersAndPlots();
+
+        assertNotNull(result);
+        assertEquals(3, result.size());
+
+        GetOwnerAndPlot ownerAndPlot1 = result.get(0);
+        assertEquals("Manu", ownerAndPlot1.getOwner().getName());
+        assertEquals(202, ownerAndPlot1.getPlot().getPlot_number());
+
+        GetOwnerAndPlot ownerAndPlot2 = result.get(1);
+        assertEquals("Fabricio", ownerAndPlot2.getOwner().getName());
+        assertEquals(203, ownerAndPlot2.getPlot().getPlot_number());
+
+        verify(ownerRepositoryMock, times(1)).findAllActives();
+        verify(plotOwnerRepositoryMock, times(3)).findByOwnerId(anyInt());
+        verify(plotRepositoryMock, times(3)).findById(anyInt());
+        verify(restUserMock, times(3)).getUser(anyInt());
     }
 
     @Test
     void getOwersAndPlotsException() {
+        when(ownerRepositoryMock.findAllActives()).thenReturn(OwnerTestHelper.OWNER_ENTITY_LIST);
+        PlotOwnerEntity plotOwnerEntity = OwnerTestHelper.PLOT_OWNER_ENTITY_1;
+        when(plotOwnerRepositoryMock.findByOwnerId(1)).thenReturn(plotOwnerEntity);
+        when(plotRepositoryMock.findById(anyInt())).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            this.ownerServiceSpy.getOwersAndPlots();
+        });
+        assertNotNull(exception);
     }
 
     @Test

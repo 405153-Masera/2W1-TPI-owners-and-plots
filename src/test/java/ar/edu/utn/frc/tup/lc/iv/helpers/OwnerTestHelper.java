@@ -205,4 +205,53 @@ public class OwnerTestHelper {
             .lastUpdatedDatetime(LocalDateTime.now())
             .lastUpdatedUser(1)
             .build();
+
+    public static final PlotEntity PLOT_ENTITY_2 = PlotEntity.builder()
+            .id(2)
+            .plotNumber(203)
+            .blockNumber(21)
+            .totalAreaInM2(320.0)
+            .builtAreaInM2(200.0)
+            .plotState(PLOT_STATE_ENTITY)
+            .plotType(PLOT_TYPE_ENTITY)
+            .createdDatetime(LocalDateTime.now())
+            .createdUser(1)
+            .lastUpdatedDatetime(LocalDateTime.now())
+            .lastUpdatedUser(1)
+            .build();
+
+    public static final PlotEntity PLOT_ENTITY_3 = PlotEntity.builder()
+            .id(3)
+            .plotNumber(204)
+            .blockNumber(22)
+            .totalAreaInM2(350.0)
+            .builtAreaInM2(220.0)
+            .plotState(PLOT_STATE_ENTITY)
+            .plotType(PLOT_TYPE_ENTITY)
+            .createdDatetime(LocalDateTime.now())
+            .createdUser(1)
+            .lastUpdatedDatetime(LocalDateTime.now())
+            .lastUpdatedUser(1)
+            .build();
+
+    public static final PlotOwnerEntity PLOT_OWNER_ENTITY_2 = PlotOwnerEntity.builder()
+            .id(2)
+            .plot(PLOT_ENTITY_2)
+            .owner(OWNER_ENTITY_2)
+            .createdDatetime(LocalDateTime.now())
+            .createdUser(1)
+            .lastUpdatedDatetime(LocalDateTime.now())
+            .lastUpdatedUser(1)
+            .build();
+
+    public static final PlotOwnerEntity PLOT_OWNER_ENTITY_3 = PlotOwnerEntity.builder()
+            .id(3)
+            .plot(PLOT_ENTITY_3)
+            .owner(OWNER_ENTITY_3)
+            .createdDatetime(LocalDateTime.now())
+            .createdUser(1)
+            .lastUpdatedDatetime(LocalDateTime.now())
+            .lastUpdatedUser(1)
+            .build();
+
 }
