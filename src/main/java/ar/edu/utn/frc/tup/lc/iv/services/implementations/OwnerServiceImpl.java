@@ -373,7 +373,9 @@ public class OwnerServiceImpl implements OwnerService {
             GetOwnerAndPlot getOwnerAndPlot = new GetOwnerAndPlot();
             PlotOwnerEntity plotOwnerEntity = plotOwnerRepository.findByOwnerId(ownerEntity.getId());
             PlotEntity plotEntity = plotRepository.findById(plotOwnerEntity.getPlot().getId()).orElse(null);
-
+            if(plotEntity == null){
+                throw new RuntimeException();
+            }
             OwnerDto ownerDto = mapOwnerEntityToOwnerDto(ownerEntity);
             GetPlotDto getPlotDto = new GetPlotDto();
             plotService.mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);

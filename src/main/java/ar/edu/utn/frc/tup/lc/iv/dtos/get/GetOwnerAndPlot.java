@@ -2,6 +2,7 @@ package ar.edu.utn.frc.tup.lc.iv.dtos.get;
 
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.GetUserDto;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class GetOwnerAndPlot {
 
     /**

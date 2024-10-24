@@ -1,12 +1,17 @@
 package ar.edu.utn.frc.tup.lc.iv.services.implementations;
 
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.FileDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerAndPlot;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetTaxStatusDto;
 import ar.edu.utn.frc.tup.lc.iv.entities.OwnerEntity;
 import ar.edu.utn.frc.tup.lc.iv.entities.OwnerTypeEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.PlotOwnerEntity;
 import ar.edu.utn.frc.tup.lc.iv.entities.TaxStatusEntity;
+import ar.edu.utn.frc.tup.lc.iv.helpers.OwnerTestHelper;
 import ar.edu.utn.frc.tup.lc.iv.repositories.OwnerRepository;
+import ar.edu.utn.frc.tup.lc.iv.repositories.PlotOwnerRepository;
+import ar.edu.utn.frc.tup.lc.iv.repositories.PlotRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.TaxStatusRepository;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.RestUser;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.FileService;
@@ -23,9 +28,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class OwnerServiceImplTest {
+
     @MockBean
     private RestUser restUserMock;
 
@@ -37,6 +45,12 @@ class OwnerServiceImplTest {
 
     @MockBean
     private OwnerRepository ownerRepositoryMock;
+
+    @MockBean
+    private PlotOwnerRepository plotOwnerRepositoryMock;
+
+    @MockBean
+    private PlotRepository plotRepositoryMock;
 
     @SpyBean
     private OwnerService ownerServiceSpy;
@@ -62,14 +76,14 @@ class OwnerServiceImplTest {
         List<FileDto> fileDtoList = new ArrayList<>();
         fileDtoList.add(new FileDto("foto de perfil", "123456789"));
 
-        Mockito.when(ownerRepositoryMock.findById(12)).thenReturn(Optional.of(ownerEntity));
-        Mockito.when(fileServiceMock.getOwnerFiles(12)).thenReturn(fileDtoList);
+        when(ownerRepositoryMock.findById(12)).thenReturn(Optional.of(ownerEntity));
+        when(fileServiceMock.getOwnerFiles(12)).thenReturn(fileDtoList);
 
         //Then
         GetOwnerDto result = ownerServiceSpy.getById(12);
 
-        Mockito.verify(ownerRepositoryMock, Mockito.times(1)).findById(12);
-        Mockito.verify(fileServiceMock, Mockito.times(1)).getOwnerFiles(12);
+        verify(ownerRepositoryMock, times(1)).findById(12);
+        verify(fileServiceMock, times(1)).getOwnerFiles(12);
 
         assertEquals(ownerEntity.getId(), result.getId());
         assertEquals(ownerEntity.getName(), result.getName());
@@ -78,7 +92,7 @@ class OwnerServiceImplTest {
 
     @Test
     void getById_EntityNotFound() {
-        Mockito.when(ownerRepositoryMock.findById(10)).thenReturn(Optional.empty());
+        when(ownerRepositoryMock.findById(10)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> ownerServiceSpy.getById(10));
     }
@@ -96,13 +110,13 @@ class OwnerServiceImplTest {
         taxStatusEntities.add(taxStatusEntity);
 
         //When
-        Mockito.when(taxStatusRepositoryMock.findAll()).thenReturn(taxStatusEntities);
+        when(taxStatusRepositoryMock.findAll()).thenReturn(taxStatusEntities);
 
         //Then
         List<GetTaxStatusDto> response = ownerServiceSpy.getTaxStatus();
         assertEquals(taxStatusEntities.size(), response.size());
         assertEquals(taxStatusEntities.get(0).getDescription(), response.get(0).getDescription());
-        Mockito.verify(taxStatusRepositoryMock, Mockito.times(1)).findAll();
+        verify(taxStatusRepositoryMock, times(1)).findAll();
     }
 
 
@@ -131,8 +145,8 @@ class OwnerServiceImplTest {
         ownerEntities.add(ownerEntity);
 
         //When
-        Mockito.when(ownerRepositoryMock.findAll()).thenReturn(ownerEntities);
-        Mockito.when(fileServiceMock.getOwnerFiles(1)).thenReturn(fileDtoList);
+        when(ownerRepositoryMock.findAll()).thenReturn(ownerEntities);
+        when(fileServiceMock.getOwnerFiles(1)).thenReturn(fileDtoList);
 
         //Then
         List<GetOwnerDto> result = ownerServiceSpy.getAllOwners();
@@ -140,12 +154,16 @@ class OwnerServiceImplTest {
         assertEquals(ownerEntities.size(), result.size());
         assertEquals(ownerEntities.get(0).getName(), result.get(0).getName());
 
-        Mockito.verify(ownerRepositoryMock, Mockito.times(1)).findAll();
-        Mockito.verify(fileServiceMock, Mockito.times(3)).getOwnerFiles(1);
+        verify(ownerRepositoryMock, times(1)).findAll();
+        verify(fileServiceMock, times(3)).getOwnerFiles(1);
     }
 
     @Test
     void getOwersAndPlots() {
+    }
+
+    @Test
+    void getOwersAndPlotsException() {
     }
 
     @Test
@@ -170,22 +188,22 @@ class OwnerServiceImplTest {
         ownerEntity.setTaxStatus(taxStatusEntity);
 
         //When
-        Mockito.when(ownerRepositoryMock.findById(12)).thenReturn(Optional.of(ownerEntity));
+        when(ownerRepositoryMock.findById(12)).thenReturn(Optional.of(ownerEntity));
 
         //Then
         ownerServiceSpy.deleteOwner(12, 1);
 
-        Mockito.verify(ownerRepositoryMock, Mockito.times(1)).save(ownerEntity);
-        Mockito.verify(restUserMock, Mockito.times(1)).deleteUser(12, 1);
+        verify(ownerRepositoryMock, times(1)).save(ownerEntity);
+        verify(restUserMock, times(1)).deleteUser(12, 1);
     }
 
     @Test
     void deleteOwner_EntityNotFound() {
-        Mockito.when(ownerRepositoryMock.findById(12)).thenReturn(Optional.empty());
+        when(ownerRepositoryMock.findById(12)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> ownerServiceSpy.deleteOwner(12, 1));
-        Mockito.verify(ownerRepositoryMock, Mockito.times(1)).findById(12);
-        Mockito.verify(ownerRepositoryMock, Mockito.times(0)).save(Mockito.any(OwnerEntity.class));
-        Mockito.verify(restUserMock, Mockito.times(0)).deleteUser(12, 1);
+        verify(ownerRepositoryMock, times(1)).findById(12);
+        verify(ownerRepositoryMock, times(0)).save(Mockito.any(OwnerEntity.class));
+        verify(restUserMock, times(0)).deleteUser(12, 1);
     }
 }
