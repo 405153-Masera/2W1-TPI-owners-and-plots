@@ -20,17 +20,17 @@ public class OwnerController {
     /**
      * Servicio para manejar la lógica de propietarios.
      */
-    private final OwnerService ownerService;
+    @Autowired
+    private OwnerService ownerService;
 
     /**
      * Constructor de OwnerController.
      *
      * @param ownerService servicio de propietarios.
      */
-    @Autowired
-    public OwnerController(OwnerService ownerService) {
-        this.ownerService = ownerService;
-    }
+//    public OwnerController(OwnerService ownerService) {
+//        this.ownerService = ownerService;
+//    }
 
     /**
      * Guarda un nuevo propietario.

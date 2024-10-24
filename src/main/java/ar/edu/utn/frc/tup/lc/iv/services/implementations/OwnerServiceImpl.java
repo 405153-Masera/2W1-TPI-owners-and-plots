@@ -8,6 +8,7 @@ import ar.edu.utn.frc.tup.lc.iv.repositories.*;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.FileManagerClient;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.RestUser;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.GetUserDto;
+import ar.edu.utn.frc.tup.lc.iv.services.interfaces.FileService;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotService;
 import jakarta.persistence.EntityNotFoundException;
@@ -35,22 +36,26 @@ public class OwnerServiceImpl implements OwnerService {
     /**
      * Repositorio para manejar Owner entities.
      */
-    private final OwnerRepository ownerRepository;
+    @Autowired
+    private OwnerRepository ownerRepository;
 
     /**
      * Repositorio para manejar TaxStatus entities.
      */
-    private final TaxStatusRepository taxStatusRepository;
+    @Autowired
+    private TaxStatusRepository taxStatusRepository;
 
     /**
      * Repositorio para manejar OwnerType entities.
      */
-    private final OwnerTypeRepository ownerTypeRepository;
+    @Autowired
+    private OwnerTypeRepository ownerTypeRepository;
 
     /**
      * Repositorio para manejar PlotOwner entities.
      */
-    private final PlotOwnerRepository plotOwnerRepository;
+    @Autowired
+    private PlotOwnerRepository plotOwnerRepository;
 
     /**
      * Mapper para mapear entidades a DTOs.
@@ -61,23 +66,26 @@ public class OwnerServiceImpl implements OwnerService {
     /**
      * Servicio para manejar la comunicación con el api de usuarios.
      */
-    private final RestUser restUser;
+    @Autowired
+    private RestUser restUser;
 
     /**
      * Repositorio para manejar Plot entities.
      */
-    private final PlotRepository plotRepository;
+    @Autowired
+    private PlotRepository plotRepository;
 
     /**
      * Servicio para manejar la lógica de lotes.
      */
-    private final PlotService plotService;
+    @Autowired
+    private PlotService plotService;
 
     /**
      * Servicio para manejar la lógica de archivos.
      */
     @Autowired
-    private FileServiceImpl fileService;
+    private FileService fileService;
 
     /**
      * Servicio para manejar la comunicación con el api de archivos.
@@ -96,19 +104,19 @@ public class OwnerServiceImpl implements OwnerService {
      * @param plotRepository el repositorio de lotes.
      * @param plotService el servicio para manejar la lógica de lotes.
      */
-    @Autowired
-    public OwnerServiceImpl(OwnerRepository ownerRepository, TaxStatusRepository taxStatusRepository,
-                            OwnerTypeRepository ownerTypeRepository, PlotOwnerRepository plotOwnerRepository,
-                            RestUser restUser, PlotRepository plotRepository,
-                            PlotService plotService) {
-        this.ownerRepository = ownerRepository;
-        this.taxStatusRepository = taxStatusRepository;
-        this.ownerTypeRepository = ownerTypeRepository;
-        this.plotOwnerRepository = plotOwnerRepository;
-        this.restUser = restUser;
-        this.plotRepository = plotRepository;
-        this.plotService = plotService;
-    }
+//    @Autowired
+//    public OwnerServiceImpl(OwnerRepository ownerRepository, TaxStatusRepository taxStatusRepository,
+//                            OwnerTypeRepository ownerTypeRepository, PlotOwnerRepository plotOwnerRepository,
+//                            RestUser restUser, PlotRepository plotRepository,
+//                            PlotService plotService) {
+//        this.ownerRepository = ownerRepository;
+//        this.taxStatusRepository = taxStatusRepository;
+//        this.ownerTypeRepository = ownerTypeRepository;
+//        this.plotOwnerRepository = plotOwnerRepository;
+//        this.restUser = restUser;
+//        this.plotRepository = plotRepository;
+//        this.plotService = plotService;
+//    }
 
     /**
      * Crea un propietario y el usuario del propietario.
@@ -252,10 +260,8 @@ public class OwnerServiceImpl implements OwnerService {
      */
     @Override
     public GetOwnerDto getById(Integer ownerId) {
-        OwnerEntity ownerEntity = ownerRepository.findById(ownerId).orElse(null);
-        if (ownerEntity == null) {
-            throw new EntityNotFoundException("Owner not found");
-        }
+        OwnerEntity ownerEntity = ownerRepository.findById(ownerId).orElseThrow(() ->
+                new EntityNotFoundException("Owner not found"));
 
         GetOwnerDto getOwnerDto = mapOwnerEntitytoGet(ownerEntity);
         getOwnerDto.setFiles(fileService.getOwnerFiles(ownerId));
@@ -445,12 +451,10 @@ public class OwnerServiceImpl implements OwnerService {
     @Override
     @Transactional
     public void deleteOwner(Integer ownerId, Integer userIdUpdate) {
-        Optional<OwnerEntity> optionalOwner = ownerRepository.findById(ownerId);
+        OwnerEntity ownerEntity = ownerRepository.findById(ownerId).orElseThrow(()->
+                new EntityNotFoundException("Owner not found with id: " + ownerId)
+        );
 
-        if (optionalOwner.isEmpty()) {
-            throw new EntityNotFoundException("Owner not found with id: " + ownerId);
-        }
-        OwnerEntity ownerEntity = optionalOwner.get();
         ownerEntity.setActive(false);
         ownerEntity.setLastUpdatedDatetime(LocalDateTime.now());
         ownerEntity.setLastUpdatedUser(userIdUpdate);

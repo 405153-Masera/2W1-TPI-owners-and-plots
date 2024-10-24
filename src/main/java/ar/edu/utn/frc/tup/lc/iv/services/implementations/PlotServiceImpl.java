@@ -14,6 +14,7 @@ import ar.edu.utn.frc.tup.lc.iv.repositories.PlotRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotStateRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotTypeRepository;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.FileManagerClient;
+import ar.edu.utn.frc.tup.lc.iv.services.interfaces.FileService;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotService;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -36,32 +37,38 @@ public class PlotServiceImpl implements PlotService {
     /**
      * Repositorio para manejar Plot entities.
      */
-    private final PlotRepository plotRepository;
+    @Autowired
+    private PlotRepository plotRepository;
 
     /**
      * Repositorio para manejar PlotState entities.
      */
-    private final PlotStateRepository plotStateRepository;
+    @Autowired
+    private PlotStateRepository plotStateRepository;
 
     /**
      * Repositorio para manejar PlotType entities.
      */
-    private final PlotTypeRepository plotTypeRepository;
+    @Autowired
+    private PlotTypeRepository plotTypeRepository;
 
     /**
      * Servicio para manejar la cominicaion con el api de archivos.
      */
-    private final FileManagerClient fileManagerClient;
+    @Autowired
+    private FileManagerClient fileManagerClient;
 
     /**
      * Servicio para manejar la logica de archivos.
      */
-    private final FileServiceImpl fileService;
+    @Autowired
+    private FileService fileService;
 
     /**
      * Servicio para mapear entidades a dtos y viceversa.
      */
-    private final ModelMapper modelMapper;
+    @Autowired
+    private ModelMapper modelMapper;
 
     /**
      * Constructor de PlotServiceImpl.
@@ -73,17 +80,17 @@ public class PlotServiceImpl implements PlotService {
      * @param fileService Servicio para manejar la logica de archivos.
      * @param modelMapper Servicio para mapear entidades a dtos y viceversa.
      */
-    @Autowired
-    public PlotServiceImpl(PlotRepository plotRepository, PlotStateRepository plotStateRepository,
-                           PlotTypeRepository plotTypeRepository, FileManagerClient fileManagerClient, FileServiceImpl fileService,
-                           ModelMapper modelMapper) {
-        this.plotRepository = plotRepository;
-        this.plotStateRepository = plotStateRepository;
-        this.plotTypeRepository = plotTypeRepository;
-        this.fileManagerClient = fileManagerClient;
-        this.fileService = fileService;
-        this.modelMapper = modelMapper;
-    }
+//    @Autowired
+//    public PlotServiceImpl(PlotRepository plotRepository, PlotStateRepository plotStateRepository,
+//                           PlotTypeRepository plotTypeRepository, FileManagerClient fileManagerClient, FileService fileService,
+//                           ModelMapper modelMapper) {
+//        this.plotRepository = plotRepository;
+//        this.plotStateRepository = plotStateRepository;
+//        this.plotTypeRepository = plotTypeRepository;
+//        this.fileManagerClient = fileManagerClient;
+//        this.fileService = fileService;
+//        this.modelMapper = modelMapper;
+//    }
 
     /**
      * Crea un nuevo lote.

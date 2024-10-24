@@ -23,22 +23,26 @@ public class FileServiceImpl implements FileService {
     /**
      * Repositorio para manejar File entities.
      */
-    private final FileRepository fileRepository;
+    @Autowired
+    private FileRepository fileRepository;
 
     /**
      * Repositorio para manejar FilePlot entities.
      */
-    private final FilePlotRepository filePlotRepository;
+    @Autowired
+    private FilePlotRepository filePlotRepository;
 
     /**
      * Repositorio para manejar FileOwner entities.
      */
-    private final FileOwnerRepository fileOwnerRepository;
+    @Autowired
+    private FileOwnerRepository fileOwnerRepository;
 
     /**
      * Servicio para manejar la comunicación con el api de archivos.
      */
-    private final FileManagerClient fileManagerClient;
+    @Autowired
+    private FileManagerClient fileManagerClient;
 
     /**
      * Constructor de FileServiceImpl.
@@ -48,14 +52,14 @@ public class FileServiceImpl implements FileService {
      * @param fileOwnerRepository el repositorio de archivos de propietario
      * @param fileManagerClient el servicio de archivos
      */
-    @Autowired
-    public FileServiceImpl(FileRepository fileRepository, FilePlotRepository filePlotRepository,
-                           FileOwnerRepository fileOwnerRepository, FileManagerClient fileManagerClient) {
-        this.fileRepository = fileRepository;
-        this.filePlotRepository = filePlotRepository;
-        this.fileOwnerRepository = fileOwnerRepository;
-        this.fileManagerClient = fileManagerClient;
-    }
+//    @Autowired
+//    public FileServiceImpl(FileRepository fileRepository, FilePlotRepository filePlotRepository,
+//                           FileOwnerRepository fileOwnerRepository, FileManagerClient fileManagerClient) {
+//        this.fileRepository = fileRepository;
+//        this.filePlotRepository = filePlotRepository;
+//        this.fileOwnerRepository = fileOwnerRepository;
+//        this.fileManagerClient = fileManagerClient;
+//    }
 
     /**
      * Obtiene una lista de archivos.
