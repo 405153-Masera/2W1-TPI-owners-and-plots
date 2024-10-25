@@ -1,9 +1,6 @@
 package ar.edu.utn.frc.tup.lc.iv.controllers;
 
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerAndPlot;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerDto;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerTypeDto;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetTaxStatusDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.*;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
@@ -61,11 +58,11 @@ class OwnerControllerTest {
     void putOwner() throws Exception {
         Integer ownerId = 1;
         PutOwnerDto putOwnerDto = new PutOwnerDto();
-        putOwnerDto.setName("John Doe Updated");
+        putOwnerDto.setName("Carlos Updated");
 
         GetOwnerDto getOwnerDto = new GetOwnerDto();
         getOwnerDto.setId(ownerId);
-        getOwnerDto.setName("John Doe Updated");
+        getOwnerDto.setName("Carlos Updated");
 
         Mockito.when(ownerService.updateOwner(Mockito.eq(ownerId), Mockito.any(PutOwnerDto.class))).thenReturn(getOwnerDto);
 
@@ -74,7 +71,7 @@ class OwnerControllerTest {
                         .flashAttr("putOwnerDto", putOwnerDto))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(ownerId))
-                .andExpect(jsonPath("$.name").value("John Doe Updated"));
+                .andExpect(jsonPath("$.name").value("Carlos Updated"));
     }
 
     @Test
@@ -142,11 +139,11 @@ class OwnerControllerTest {
     void getOwners() throws Exception {
         GetOwnerDto owner1 = new GetOwnerDto();
         owner1.setId(1);
-        owner1.setName("John Doe");
+        owner1.setName("Carlos ");
 
         GetOwnerDto owner2 = new GetOwnerDto();
         owner2.setId(2);
-        owner2.setName("Jane Doe");
+        owner2.setName("Mateo");
 
         List<GetOwnerDto> mockOwners = List.of(owner1, owner2);
 
@@ -155,13 +152,33 @@ class OwnerControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/owners"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].name").value("John Doe"))
+                .andExpect(jsonPath("$[0].name").value("Carlos "))
                 .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[1].name").value("Jane Doe"));
+                .andExpect(jsonPath("$[1].name").value("Mateo"));
     }
 
     @Test
-    void getOwnersByPlotId() {
+    void getOwnersByPlotId() throws Exception {
+        Integer plotId = 1;
+
+        OwnerDto owner1 = new OwnerDto();
+        owner1.setId(1);
+        owner1.setName("Carlos");
+
+        OwnerDto owner2 = new OwnerDto();
+        owner2.setId(2);
+        owner2.setName("Mateo");
+
+        List<OwnerDto> mockOwners = List.of(owner1, owner2);
+
+        Mockito.when(ownerService.getOwnersByPlotId(plotId)).thenReturn(mockOwners);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/owners/plot/{plotId}", plotId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].name").value("Carlos"))
+                .andExpect(jsonPath("$[1].id").value(2))
+                .andExpect(jsonPath("$[1].name").value("Mateo"));
     }
 
     @Test
