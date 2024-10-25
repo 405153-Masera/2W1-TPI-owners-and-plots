@@ -56,6 +56,36 @@ class OwnerServiceImplTest {
     }
 
     @Test
+    void updateOwner_TaxStatusEntityNotFoundException() {
+        
+    }
+
+    @Test
+    void updateOwner_OwnerTypeEntityNotFoundException() {
+        //Given
+        OwnerTypeEntity ownerTypeEntity  = new OwnerTypeEntity();
+        ownerTypeEntity.setId(2);
+        TaxStatusEntity taxStatusEntity = new TaxStatusEntity();
+
+        OwnerEntity ownerEntity = new OwnerEntity();
+        ownerEntity.setId(12);
+        ownerEntity.setName("Bruno");
+        ownerEntity.setLastname("Diaz");
+        ownerEntity.setOwnerType(ownerTypeEntity);
+        ownerEntity.setTaxStatus(taxStatusEntity);
+
+        //When
+        Mockito.when(ownerTypeRepositoryMock.findById(12)).thenReturn(Optional.of(ownerTypeEntity));
+        Mockito.when(ownerTypeRepositoryMock.findById(2)).thenReturn(Optional.empty());
+
+        //Then
+        assertThrows(EntityNotFoundException.class, () -> ownerServiceSpy.updateOwner(12, new PutOwnerDto()));
+        Mockito.verify(ownerRepositoryMock, Mockito.times(1)).findById(12);
+        Mockito.verify(taxStatusRepositoryMock, Mockito.times(0)).findById(1);
+        Mockito.verify(ownerRepositoryMock, Mockito.times(0)).save(new OwnerEntity());
+    }
+
+    @Test
     void updateOwner_OwnerEntityNotFoundException() {
         //When
         Mockito.when(ownerRepositoryMock.findById(10)).thenReturn(Optional.empty());
