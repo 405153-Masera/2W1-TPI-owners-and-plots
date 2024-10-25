@@ -1,6 +1,7 @@
 package ar.edu.utn.frc.tup.lc.iv.services.implementations;
 
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.*;
+import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.entities.*;
 import ar.edu.utn.frc.tup.lc.iv.helpers.OwnerTestHelper;
 import ar.edu.utn.frc.tup.lc.iv.repositories.*;
@@ -52,6 +53,18 @@ class OwnerServiceImplTest {
 
     @Test
     void updateOwner() {
+    }
+
+    @Test
+    void updateOwner_OwnerEntityNotFoundException() {
+        //When
+        Mockito.when(ownerRepositoryMock.findById(10)).thenReturn(Optional.empty());
+
+        //Then
+        assertThrows(EntityNotFoundException.class, () -> ownerServiceSpy.updateOwner(10, new PutOwnerDto()));
+        Mockito.verify(ownerRepositoryMock, Mockito.times(0)).findById(1);
+        Mockito.verify(taxStatusRepositoryMock, Mockito.times(0)).findById(1);
+        Mockito.verify(ownerRepositoryMock, Mockito.times(0)).save(new OwnerEntity());
     }
 
     @Test
