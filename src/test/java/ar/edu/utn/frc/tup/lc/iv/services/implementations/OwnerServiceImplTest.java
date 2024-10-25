@@ -1,19 +1,14 @@
 package ar.edu.utn.frc.tup.lc.iv.services.implementations;
 
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.FileDto;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerAndPlot;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerDto;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetTaxStatusDto;
-import ar.edu.utn.frc.tup.lc.iv.entities.OwnerEntity;
-import ar.edu.utn.frc.tup.lc.iv.entities.OwnerTypeEntity;
-import ar.edu.utn.frc.tup.lc.iv.entities.PlotOwnerEntity;
-import ar.edu.utn.frc.tup.lc.iv.entities.TaxStatusEntity;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.*;
+import ar.edu.utn.frc.tup.lc.iv.entities.*;
 import ar.edu.utn.frc.tup.lc.iv.helpers.OwnerTestHelper;
 import ar.edu.utn.frc.tup.lc.iv.repositories.OwnerRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotOwnerRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.TaxStatusRepository;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.RestUser;
+import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.GetUserDto;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.FileService;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
 import jakarta.persistence.EntityNotFoundException;
@@ -204,7 +199,72 @@ class OwnerServiceImplTest {
     }
 
     @Test
-    void getOwnerAndPlotById() {
+    void getOwnerAndPlotById_Success() {
+        // Given
+        OwnerTypeEntity ownerTypeEntity = new OwnerTypeEntity();
+        TaxStatusEntity taxStatusEntity = new TaxStatusEntity();
+
+        OwnerEntity ownerEntity = new OwnerEntity();
+        ownerEntity.setId(1);
+        ownerEntity.setName("Manolo");
+        ownerEntity.setTaxStatus(taxStatusEntity);
+        ownerEntity.setOwnerType(ownerTypeEntity);
+
+        PlotStateEntity plotStateEntity = new PlotStateEntity();
+        plotStateEntity.setName("Activo");
+
+        PlotTypeEntity plotTypeEntity = new PlotTypeEntity();
+        plotTypeEntity.setName("Comercial");
+
+        PlotEntity plotEntity = new PlotEntity();
+        plotEntity.setId(10);
+        plotEntity.setPlotState(plotStateEntity);
+        plotEntity.setPlotType(plotTypeEntity);
+        plotEntity.setBlockNumber(2);
+        plotEntity.setPlotNumber(152);
+        plotEntity.setBuiltAreaInM2(500.0);
+        plotEntity.setTotalAreaInM2(500.0);
+
+        PlotOwnerEntity plotOwnerEntity = new PlotOwnerEntity();
+        plotOwnerEntity.setId(2);
+        plotOwnerEntity.setPlot(plotEntity);
+
+        GetUserDto getUserDto = new GetUserDto();
+        getUserDto.setId(1);
+        getUserDto.setName("Manolo");
+
+        GetPlotDto getPlotDto = new GetPlotDto();
+        getPlotDto.setId(10);
+        getPlotDto.setBuilt_area_in_m2(500);
+        getPlotDto.setTotal_area_in_m2(500);
+
+        // When
+        Mockito.when(ownerRepositoryMock.findById(1)).thenReturn(Optional.of(ownerEntity));
+        Mockito.when(plotOwnerRepositoryMock.findByOwnerId(1)).thenReturn(plotOwnerEntity);
+        Mockito.when(plotRepositoryMock.findById(10)).thenReturn(Optional.of(plotEntity));
+        Mockito.when(restUserMock.getUser(10)).thenReturn(getUserDto);
+
+        // Then
+        GetOwnerAndPlot result = ownerServiceSpy.getOwnerAndPlotById(1);
+
+        assertNotNull(result);
+        assertEquals(plotEntity.getId(), result.getPlot().getId());
+        assertEquals(ownerEntity.getName(), result.getOwner().getName());
+        assertEquals(getUserDto.getName(), result.getUser().getName());
+    }
+
+    @Test
+    void getOwnerAndPlotById_Null(){
+        //When
+        Mockito.when(ownerRepositoryMock.findById(10)).thenReturn(Optional.empty());
+
+        //Then
+        GetOwnerAndPlot result = ownerServiceSpy.getOwnerAndPlotById(10);
+
+        assertNull(result);
+        Mockito.verify(plotOwnerRepositoryMock, Mockito.times(0)).findByOwnerId(anyInt());
+        Mockito.verify(plotRepositoryMock, Mockito.times(0)).findById(anyInt());
+        Mockito.verify(restUserMock, Mockito.times(0)).getUser(anyInt());
     }
 
     @Test
