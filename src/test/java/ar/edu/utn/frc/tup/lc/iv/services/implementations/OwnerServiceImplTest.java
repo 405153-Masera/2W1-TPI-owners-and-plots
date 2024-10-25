@@ -3,10 +3,7 @@ package ar.edu.utn.frc.tup.lc.iv.services.implementations;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.*;
 import ar.edu.utn.frc.tup.lc.iv.entities.*;
 import ar.edu.utn.frc.tup.lc.iv.helpers.OwnerTestHelper;
-import ar.edu.utn.frc.tup.lc.iv.repositories.OwnerRepository;
-import ar.edu.utn.frc.tup.lc.iv.repositories.PlotOwnerRepository;
-import ar.edu.utn.frc.tup.lc.iv.repositories.PlotRepository;
-import ar.edu.utn.frc.tup.lc.iv.repositories.TaxStatusRepository;
+import ar.edu.utn.frc.tup.lc.iv.repositories.*;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.RestUser;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.GetUserDto;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.FileService;
@@ -37,6 +34,9 @@ class OwnerServiceImplTest {
 
     @MockBean
     private FileService fileServiceMock;
+
+    @MockBean
+    private OwnerTypeRepository ownerTypeRepositoryMock;
 
     @MockBean
     private OwnerRepository ownerRepositoryMock;
@@ -117,6 +117,25 @@ class OwnerServiceImplTest {
 
     @Test
     void getOwnerTypes() {
+        //Given
+        List<OwnerTypeEntity> ownerTypeEntities = new ArrayList<>();
+
+        OwnerTypeEntity ownerTypeEntity = new OwnerTypeEntity();
+        ownerTypeEntity.setId(10);
+        ownerTypeEntity.setDescription("Judirico");
+
+        ownerTypeEntities.add(ownerTypeEntity);
+        ownerTypeEntities.add(ownerTypeEntity);
+
+        //When
+        Mockito.when(ownerTypeRepositoryMock.findAll()).thenReturn(ownerTypeEntities);
+
+        //Then
+        List<GetOwnerTypeDto> result = ownerServiceSpy.getOwnerTypes();
+
+        assertNotNull(result);
+        assertEquals(ownerTypeEntities.size(), result.size());
+        assertEquals("Judirico", result.get(0).getDescription());
     }
 
     @Test
@@ -269,6 +288,15 @@ class OwnerServiceImplTest {
 
     @Test
     void getOwnersByPlotId() {
+    }
+
+    @Test
+    void getOwnersByPlotId_EntityNotFound() {
+        //When
+        Mockito.when(ownerRepositoryMock.findByPlotId(10)).thenReturn(Optional.empty());
+
+        //Then
+        assertThrows(EntityNotFoundException.class, ()-> ownerServiceSpy.getOwnersByPlotId(10));
     }
 
     @Test
