@@ -412,9 +412,7 @@ public class OwnerServiceImpl implements OwnerService {
 
         OwnerDto ownerDto = mapOwnerEntityToOwnerDto(ownerEntity);
         GetPlotDto getPlotDto = new GetPlotDto();
-        System.out.println("----------------------------------");
         plotService.mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
-        System.out.println("----------------------------------");
         GetUserDto getUserDto = restUser.getUser(getPlotDto.getId());
 
         getOwnerAndPlot.setOwner(ownerDto);
