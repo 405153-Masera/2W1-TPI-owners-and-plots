@@ -87,7 +87,7 @@ public class RestUser {
      */
     public GetUserDto getUser(Integer plotId) {
 
-        ResponseEntity<GetUserDto> response = restTemplate.getForEntity(url + "/plot/" + plotId, GetUserDto.class);
+        ResponseEntity<GetUserDto> response = restTemplate.getForEntity(url + "/get/owner/" + plotId, GetUserDto.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
             return response.getBody();
@@ -105,9 +105,9 @@ public class RestUser {
      * @throws ResponseStatusException si hubo un error en la petición.
      */
     public void deleteUser(Integer userId, Integer userIdUpdate) {
-        try {
-            restTemplate.delete(url + "/" + userId + "/" + userIdUpdate);
-        } catch (HttpClientErrorException e) {
+        try{
+            restTemplate.delete(url + "/delete/" + userId + "/" + userIdUpdate);
+        }catch (HttpClientErrorException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getMessage());
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,

@@ -63,4 +63,9 @@ public class OwnerDto {
      * Tipo de propietario (persona física o jurídica).
      */
     private String ownerType;
+
+    /**
+     * Situcación fiscal del propietario.
+     */
+    private String taxStatus;
 }

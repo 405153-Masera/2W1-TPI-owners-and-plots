@@ -482,6 +482,7 @@ public class OwnerServiceImpl implements OwnerService {
         ownerDto.setOwnerType(ownerEntity.getOwnerType().getDescription());
         ownerDto.setBusinessName(ownerEntity.getBusinessName());
         ownerDto.setActive(ownerEntity.getActive());
+        ownerDto.setTaxStatus(ownerEntity.getTaxStatus().getDescription());
         return ownerDto;
     }
 }
