@@ -96,6 +96,6 @@ public class PlotEntity {
     /**
      * Lista de archivos asociados al lote.
      */
-    @OneToMany(mappedBy = "plot", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "plot", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FilePlotEntity> files = new ArrayList<>();
 }

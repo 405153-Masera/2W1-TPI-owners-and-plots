@@ -220,6 +220,7 @@ public class OwnerServiceImpl implements OwnerService {
      * @throws EntityNotFoundException si no se encuentra el propietario, el tipo de propietario o el estado impositivo.
      * @return el DTO con la información del propietario actualizado.
      */
+    @Transactional
     @Override
     public GetOwnerDto updateOwner(Integer ownerId, PutOwnerDto putOwnerDto) {
         Optional<OwnerEntity> ownerEntityOptional = ownerRepository.findById(ownerId);
@@ -240,6 +241,9 @@ public class OwnerServiceImpl implements OwnerService {
         ownerEntity.setBusinessName(putOwnerDto.getBusinessName());
         ownerEntity.setLastUpdatedDatetime(LocalDateTime.now());
         ownerEntity.setLastUpdatedUser(putOwnerDto.getUserUpdateId());
+
+        ownerEntity.getFiles().clear();
+        ownerRepository.save(ownerEntity);
 
         uploadFiles(putOwnerDto.getFiles(), putOwnerDto.getUserUpdateId(), ownerEntity);
 

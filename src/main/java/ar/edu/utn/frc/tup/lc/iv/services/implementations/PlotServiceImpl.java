@@ -217,6 +217,8 @@ public class PlotServiceImpl implements PlotService {
         plotEntity.setLastUpdatedDatetime(LocalDateTime.now());
         plotEntity.setLastUpdatedUser(plotDto.getUserUpdateId());
 
+        plotEntity.getFiles().clear();
+        plotRepository.save(plotEntity);
         uploadFiles(plotDto.getFiles(), plotDto.getUserUpdateId(), plotEntity);
 
         plotEntity = this.plotRepository.save(plotEntity);

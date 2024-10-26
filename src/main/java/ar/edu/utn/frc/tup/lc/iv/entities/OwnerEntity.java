@@ -111,6 +111,6 @@ public class OwnerEntity {
     /**
      * Lista de los archivos que tiene el propietario.
      */
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FileOwnerEntity> files = new ArrayList<>();
 }
