@@ -28,7 +28,7 @@ public class RestUser {
     /**
      * Direccion url donde se levanta el microservicio de usuarios.
      */
-    private String url = "http://localhost:8080/users";
+    private String url = "http://localhost:9060/users";
 
     /**
      * Constructor de la clase.
