@@ -45,6 +45,11 @@ public class UserPost {
     private String phone_number;
 
     /**
+     * Tipo de DNI del usuario.
+     */
+    private Integer dni_type_id;
+
+    /**
      * Número de DNI del usuario.
      */
     private String dni;

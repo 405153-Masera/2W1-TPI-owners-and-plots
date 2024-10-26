@@ -64,6 +64,7 @@ public class RestUser {
         userPost.setUserUpdateId(postOwnerDto.getUserCreateId());
         userPost.setPlot_id(postOwnerDto.getPlotId());
         userPost.setTelegram_id(postOwnerDto.getTelegramId());
+        userPost.setDni_type_id(1);
 
         try {
 
