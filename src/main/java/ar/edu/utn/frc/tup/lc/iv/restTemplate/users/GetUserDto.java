@@ -54,6 +54,11 @@ public class GetUserDto {
     private String phone_number;
 
     /**
+     * Tipo de DNI del usuario.
+     */
+    private String dni_type;
+
+    /**
      * Número de DNI del usuario.
      */
     private String dni;

@@ -90,6 +90,8 @@ public class RestUser {
 
         ResponseEntity<GetUserDto> response = restTemplate.getForEntity(url + "/get/owner/" + plotId, GetUserDto.class);
 
+        System.out.println(response.getBody());
+
         if (response.getStatusCode().is2xxSuccessful()) {
             return response.getBody();
         } else {
