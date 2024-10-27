@@ -49,6 +49,12 @@ public class GetOwnerDto {
     private LocalDate dateBirth;
 
     /**
+     * Fecha de creación.
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate create_date;
+
+    /**
      * Tipo de propietario (persona física o jurídica).
      */
     private String ownerType;
