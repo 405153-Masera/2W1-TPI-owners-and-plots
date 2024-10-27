@@ -1,4 +1,4 @@
-package ar.edu.utn.frc.tup.lc.iv.services.implementation;
+package ar.edu.utn.frc.tup.lc.iv.services.implementations;
 
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotStateDto;
@@ -10,7 +10,6 @@ import ar.edu.utn.frc.tup.lc.iv.entities.PlotTypeEntity;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotStateRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotTypeRepository;
-import ar.edu.utn.frc.tup.lc.iv.services.implementations.PlotServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
