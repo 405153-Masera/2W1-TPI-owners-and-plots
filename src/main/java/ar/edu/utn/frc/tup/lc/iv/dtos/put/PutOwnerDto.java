@@ -21,79 +21,84 @@ public class PutOwnerDto {
     /**
      * Nombre del propietario.
      */
-    @NotBlank(message = "Name cannot be blank")
-    @Size(min = 1, max = 50, message = "Name must be between 1 and 50 characters")
+    @NotBlank(message = "El nombre no puede estar vacío")
+    @Size(min = 3, max = 50, message = "El nombre debe tener entre 3 y 50 caracteres")
     private String name;
 
     /**
      * Apellido del propietario.
      */
-    @NotBlank(message = "Last name cannot be blank")
-    @Size(min = 1, max = 50, message = "Lastname must be between 1 and 50 characters")
+    @NotBlank(message = "El apellido no puede estar vacío")
+    @Size(min = 3, max = 50, message = "El apellido debe tener entre 3 y 50 caracteres")
     private String lastname;
 
     /**
      * DNI del propietario.
      */
-    @NotBlank(message = "DNI cannot be blank")
+    @NotBlank(message = "El DNI no puede estar vacío")
+    @Size(min = 8, message = "El DNI debe tener al menos 8 caracteres")
+    @Pattern(regexp = "\\d+", message = "El DNI debe contener solo números")
     private String dni;
 
     /**
      * CUIT/CUIL del propietario.
      */
-    @NotBlank(message = "CUIT/CUIL cannot be blank")
+    @NotBlank(message = "CUIT/CUIL no puede estar vacío")
+    @Size(min = 11, max = 20, message = "El CUIT/CUIL debe tener entre 11 y 20 caracteres")
+    @Pattern(regexp = "\\d+", message = "El CUIT/CUIL debe contener solo números")
     private String cuitCuil;
 
     /**
      * Correo electrónico del usuario utilizado en el login que se
      * actualiza en el microservicio de contactos.
      */
-    @NotBlank(message = "Email cannot be blank")
-    @Email(message = "Email format is invalid")
+    @NotBlank(message = "El correo electrónico no puede estar vacío")
+    @Email(message = "El formato del correo electrónico es inválido")
     private String email;
 
     /**
      * Teléfono del usuario que se actualiza en el microservicio de contactos.
      */
-    @NotBlank(message = "Phone number cannot be blank")
-    @Pattern(regexp = "\\d+", message = "Phone number must be numeric")
+    @NotBlank(message = "El número de teléfono no puede estar vacío")
+    @Size(min = 10, max = 20, message = "El número de teléfono debe tener entre 8 y 20 caracteres")
+    @Pattern(regexp = "\\d+", message = "El número de teléfono debe ser numérico")
     private String phoneNumber;
 
     /**
      * Fecha de nacimiento del propietario.
      */
-    @Past(message = "Date of birth must be in the past")
+    @Past(message = "La fecha de nacimiento debe ser anterior a la fecha actual")
     private LocalDate dateBirth;
 
     /**
      * Identificador del tipo de propietario.
      */
-    @NotNull(message = "Owner type cannot be null")
+    @NotNull(message = "El tipo de propietario no puede ser nulo")
     private Integer ownerTypeId;
 
     /**
      * Identificador de la situación fiscal.
      */
-    @NotNull(message = "Tax status cannot be null")
+    @NotNull(message = "La situación fiscal no puede ser nulo")
     private Integer taxStatusId;
 
     /**
      * Nombre del negocio del propietario.
      */
-    @Size(min = 1, max = 50, message = "Business name must be between 1 and 50 characters")
+    @Size(max = 50, message = "El nombre del negocio debe tener como máximo 50 caracteres")
     private String businessName;
 
     /**
      * Representa sí el propietario está activo o no.
      */
-    @NotNull(message = "Active status cannot be null")
+    @NotNull(message = "El estado no puede ser nulo")
     private Boolean active;
 
 
     /**
      * Identificador del usuario que actualiza el propietario.
      */
-    @NotNull(message = "User update ID cannot be null")
+    @NotNull(message = "El ID del usuario creador no puede ser nulo")
     private Integer userUpdateId;
 
     /**

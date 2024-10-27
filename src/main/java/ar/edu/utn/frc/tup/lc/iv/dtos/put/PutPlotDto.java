@@ -25,31 +25,31 @@ public class PutPlotDto {
     /**
      * Metros cuadrados totales del lote.
      */
-    @NotNull(message = "Total area in m2 cannot be null")
+    @NotNull(message = "Tota area en metros cuadrados no puede ser nula")
     private double total_area_in_m2;
 
     /**
      * Metros cuadrados construidos del lote.
      */
-    @NotNull(message = "Built area in m2 cannot be null")
+    @NotNull(message = "Area construida en metros cuadrados no puede ser nula")
     private double built_area_in_m2;
 
     /**
      * Identificador del estado del lote.
      */
-    @NotNull(message = "Plot state id cannot be null")
+    @NotNull(message = "El estado del lote no puede ser nulo")
     private int plot_state_id;
 
     /**
      * Identificador del tipo de lote.
      */
-    @NotNull(message = "Plot type id cannot be null")
+    @NotNull(message = "El tipo de lote no puede ser nulo")
     private int plot_type_id;
 
     /**
      * Identificador del usuario que actualiza el lote.
      */
-    @NotNull(message = "User update id cannot be null")
+    @NotNull(message = "El ID del usuario creador no puede ser nulo")
     private Integer userUpdateId;
 
     /**
