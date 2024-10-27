@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * DTO que representa una respuesta que contiene la infromación de
@@ -68,4 +69,9 @@ public class OwnerDto {
      * Situcación fiscal del propietario.
      */
     private String taxStatus;
+
+    /**
+     * Lista de archivos asociados al propietario.
+     */
+    private List<FileDto> files;
 }
