@@ -125,7 +125,7 @@ public class PostOwnerDto {
      * Identificador de lote asociada al propietario y al usuario.
      */
     @NotNull(message = "El ID del lote no puede ser nulo")
-    private Integer plotId;
+    private Integer[] plotId;
 
     /**
      * Identificador de la plataforma telegram utilizada en notificaciones.

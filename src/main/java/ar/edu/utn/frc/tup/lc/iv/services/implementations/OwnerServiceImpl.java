@@ -122,7 +122,8 @@ public class OwnerServiceImpl implements OwnerService {
      * Crea un propietario y el usuario del propietario.
      *
      * @param postOwnerDto el DTO con la información del propietario y su usuario.
-     * @throws EntityNotFoundException si no se encuentra el tipo de propietario o el estado impositivo.
+     * @throws EntityNotFoundException si no se encuentra el tipo de propietario ,el estado impositivo
+     * o el lote asignado.
      * @throws ResponseStatusException si ocurre un error al crear el usuario.
      * @return el DTO con la información del propietario creado.
      */
@@ -143,9 +144,19 @@ public class OwnerServiceImpl implements OwnerService {
         uploadFiles(postOwnerDto.getFiles(), postOwnerDto.getUserCreateId(), ownerEntity);
 
         OwnerEntity ownerSaved = ownerRepository.save(ownerEntity);
-        //Se guarda la relacion de Owner con Plot
-        createPlotOwnerEntity(ownerSaved, postOwnerDto);
 
+        Integer[] plots = postOwnerDto.getPlotId();
+        //Se guarda la relacion de Owner con Plot
+        for (Integer plot : plots) {
+            PlotEntity plotEntity = plotRepository.findById(plot)
+                    .orElseThrow(() -> new EntityNotFoundException("Plot not found with id: " + plot));
+            if (plotEntity != null) {
+                createPlotOwnerEntity(ownerSaved,postOwnerDto,plot);
+            }
+            else {
+                throw new EntityNotFoundException("Plot not found with id: " + plot);
+            }
+        }
 
         //Aca se crea el usuario
         if (!restUser.createUser(postOwnerDto)) {
@@ -199,11 +210,11 @@ public class OwnerServiceImpl implements OwnerService {
      * @param ownerEntity  la entidad del propietario.
      * @param postOwnerDto el DTO con la información del propietario.
      */
-    public void createPlotOwnerEntity(OwnerEntity ownerEntity, PostOwnerDto postOwnerDto) {
+    public void createPlotOwnerEntity(OwnerEntity ownerEntity, PostOwnerDto postOwnerDto, Integer plotId) {
         PlotOwnerEntity plotOwnerEntity = new PlotOwnerEntity();
         plotOwnerEntity.setOwner(ownerEntity);
         PlotEntity plotEntity = new PlotEntity();
-        plotEntity.setId(postOwnerDto.getPlotId());
+        plotEntity.setId(plotId);
         plotOwnerEntity.setPlot(plotEntity);
         plotOwnerEntity.setCreatedUser(postOwnerDto.getUserCreateId());
         plotOwnerEntity.setCreatedDatetime(LocalDateTime.now());
