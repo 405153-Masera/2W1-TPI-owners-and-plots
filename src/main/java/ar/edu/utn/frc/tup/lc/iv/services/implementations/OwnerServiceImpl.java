@@ -387,18 +387,28 @@ public class OwnerServiceImpl implements OwnerService {
         List<GetOwnerAndPlot> ownerAndPlots = new ArrayList<>();
         for (OwnerEntity ownerEntity : ownerEntities) {
             GetOwnerAndPlot getOwnerAndPlot = new GetOwnerAndPlot();
-            PlotOwnerEntity plotOwnerEntity = plotOwnerRepository.findByOwnerId(ownerEntity.getId());
-            PlotEntity plotEntity = plotRepository.findById(plotOwnerEntity.getPlot().getId()).orElse(null);
-            if(plotEntity == null){
+
+            List<PlotOwnerEntity> plotOwnerEntity = plotOwnerRepository.findByOwnerId(ownerEntity.getId());
+
+            List<PlotEntity> plotEntities = new ArrayList<>();
+            List<GetPlotDto> getPlotDtos = new ArrayList<>();
+
+            for (PlotOwnerEntity plotOwner : plotOwnerEntity){
+                PlotEntity plotEntity = plotRepository.findById(plotOwner.getPlot().getId()).orElse(null);
+                GetPlotDto getPlotDto = new GetPlotDto();
+                plotService.mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
+                getPlotDtos.add(getPlotDto);
+            }
+
+            if(plotEntities == null){
                 throw new RuntimeException();
             }
             OwnerDto ownerDto = mapOwnerEntityToOwnerDto(ownerEntity);
-            GetPlotDto getPlotDto = new GetPlotDto();
-            plotService.mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
-            GetUserDto getUserDto = restUser.getUser(getPlotDto.getId());
+
+            GetUserDto getUserDto = restUser.getUser(getPlotDtos.get(0).getId());
 
             getOwnerAndPlot.setOwner(ownerDto);
-            getOwnerAndPlot.setPlot(getPlotDto);
+            getOwnerAndPlot.setPlot(getPlotDtos);
             getOwnerAndPlot.setUser(getUserDto);
 
             ownerAndPlots.add(getOwnerAndPlot);
@@ -421,25 +431,33 @@ public class OwnerServiceImpl implements OwnerService {
         }
 
         GetOwnerAndPlot getOwnerAndPlot = new GetOwnerAndPlot();
-        PlotOwnerEntity plotOwnerEntity = plotOwnerRepository.findByOwnerId(ownerEntity.getId());
-        PlotEntity plotEntity = plotRepository.findById(plotOwnerEntity.getPlot().getId()).orElse(null);
 
+        List<PlotOwnerEntity> plotOwnerEntity = plotOwnerRepository.findByOwnerId(ownerEntity.getId());
 
+        List<PlotEntity> plotEntities = new ArrayList<>();
+        List<GetPlotDto> getPlotDtos = new ArrayList<>();
 
+        for (PlotOwnerEntity plotOwner : plotOwnerEntity){
+            PlotEntity plotEntity = plotRepository.findById(plotOwner.getPlot().getId()).orElse(null);
+            GetPlotDto getPlotDto = new GetPlotDto();
+            plotService.mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
+            getPlotDtos.add(getPlotDto);
+        }
+
+        if(plotEntities == null){
+            throw new RuntimeException();
+        }
         OwnerDto ownerDto = mapOwnerEntityToOwnerDto(ownerEntity);
-        ownerDto.setFiles(fileService.getOwnerFiles(ownerId));
 
-        GetPlotDto getPlotDto = new GetPlotDto();
-        plotService.mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
-
-        GetUserDto getUserDto = restUser.getUser(getPlotDto.getId());
+        GetUserDto getUserDto = restUser.getUser(getPlotDtos.get(0).getId());
 
         getOwnerAndPlot.setOwner(ownerDto);
-        getOwnerAndPlot.setPlot(getPlotDto);
+        getOwnerAndPlot.setPlot(getPlotDtos);
         getOwnerAndPlot.setUser(getUserDto);
 
         return getOwnerAndPlot;
     }
+
 
     /**
      * Obtiene los propietarios de un lote.

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * DTO que representa una respuesta que contiene la información de
  * un propietario, su lote y su usuario.
@@ -24,7 +26,7 @@ public class GetOwnerAndPlot {
     /**
      * Datos del lote del propietario.
      */
-    private GetPlotDto plot;
+    private List<GetPlotDto> plot;
 
     /**
      * Datos del usuario del propietario.

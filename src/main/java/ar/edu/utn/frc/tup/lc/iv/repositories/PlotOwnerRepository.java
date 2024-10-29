@@ -4,6 +4,8 @@ import ar.edu.utn.frc.tup.lc.iv.entities.PlotOwnerEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Conecta la aplicación con la base de datos para manejar la tabla intermedia plotowners.
  */
@@ -16,5 +18,5 @@ public interface PlotOwnerRepository extends JpaRepository<PlotOwnerEntity, Inte
      * @param ownerId el id de un propietario.
      * @return un {@link PlotOwnerEntity}
      */
-    PlotOwnerEntity findByOwnerId(int ownerId);
+    List<PlotOwnerEntity> findByOwnerId(int ownerId);
 }
