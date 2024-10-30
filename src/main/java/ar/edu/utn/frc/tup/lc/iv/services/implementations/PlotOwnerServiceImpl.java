@@ -5,7 +5,8 @@ import ar.edu.utn.frc.tup.lc.iv.entities.PlotOwnerEntity;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotOwnerRepository;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotOwnerService;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
@@ -13,9 +14,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Data
+@RequiredArgsConstructor
 public class PlotOwnerServiceImpl implements PlotOwnerService {
-    @Autowired
-    private PlotOwnerRepository plotOwnerRepository;
+
+    /**
+     * Repositorio para manejar la entidad PlotOwnerEntity.
+     */
+    private final PlotOwnerRepository plotOwnerRepository;
+
+    /**
+     * Devuelve una lista de GetPlotOwnerDto que contiene los identificadores
+     * de los propietarios y los lotes.
+     *
+     * @return una lista de GetPlotOwnerDto.
+     */
     @Override
     public List<GetPlotOwnerDto> getAllPlotOwner() {
         List<PlotOwnerEntity> plotOwnerEntities = plotOwnerRepository.findAll();

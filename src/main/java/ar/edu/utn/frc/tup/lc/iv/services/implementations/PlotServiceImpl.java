@@ -20,7 +20,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,12 +53,12 @@ public class PlotServiceImpl implements PlotService {
     private final PlotTypeRepository plotTypeRepository;
 
     /**
-     * Servicio para manejar la cominicaion con el api de archivos.
+     * Servicio para manejar la comunicación con el api de archivos.
      */
     private final FileManagerClient fileManagerClient;
 
     /**
-     * Servicio para manejar la logica de archivos.
+     * Servicio para manejar la lógica de archivos.
      */
     private final FileService fileService;
 
@@ -269,7 +268,7 @@ public class PlotServiceImpl implements PlotService {
     }
 
     /**
-     * Valida si un lote existe con el número de lote pasado.
+     * Válida si un lote existe con el número de lote pasado.
      *
      * @param plotNumber número de lote a validar.
      * @throws IllegalArgumentException si el lote ya existe.
@@ -289,8 +288,6 @@ public class PlotServiceImpl implements PlotService {
     public PlotEntity mapPlotPostToPlotEntity(PostPlotDto postPlotDto) {
         PlotEntity plotEntity = new PlotEntity();
         mapPlotPostToPlotEntity(plotEntity, postPlotDto);
-
-        //Seteamos estados y tipos
         plotEntity.setPlotType(getPlotType(postPlotDto.getPlot_type_id()));
         plotEntity.setPlotState(getPlotState(postPlotDto.getPlot_state_id()));
         return plotEntity;

@@ -10,6 +10,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class GetPlotOwnerDto {
+
+    /**
+     * Identificador del lote.
+     */
     private Integer plot_id;
+
+    /**
+     * Identificador del dueño del lote.
+     */
     private Integer owner_id;
 }
