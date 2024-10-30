@@ -93,7 +93,7 @@ public class GetUserDto {
     /**
      * Identificador del lote asignado al usuario.
      */
-    private Integer plot_id;
+    private Integer[] plot_id;
 
     /**
      * Identificador de la plataforma telegram utilizada en notificaciones.
