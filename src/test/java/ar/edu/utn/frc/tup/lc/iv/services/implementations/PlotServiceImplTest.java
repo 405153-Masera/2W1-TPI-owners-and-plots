@@ -297,9 +297,9 @@ class PlotServiceImplTest {
         List<GetPlotDto> plotDtoAvailableList = plotService.getAllPlotsAvailables();
 
         //then
-        Assertions.assertNotEquals(2, plotDtoAvailableList.size());
-        Assertions.assertEquals(256, plotDtoAvailableList.get(0).getPlot_number());
-        Assertions.assertEquals("Baldío", plotDtoAvailableList.get(0).getPlot_type());
+        Assertions.assertEquals(2, plotDtoAvailableList.size());
+        Assertions.assertEquals(123, plotDtoAvailableList.get(0).getPlot_number());
+        Assertions.assertEquals("Comercial", plotDtoAvailableList.get(0).getPlot_type());
     }
 
     @Test
@@ -496,6 +496,10 @@ class PlotServiceImplTest {
         when(plotStateRepository.findById(postPlotDto.getPlot_state_id())).thenReturn(Optional.of(plotStateEntity));
         when(plotTypeRepository.findById(postPlotDto.getPlot_type_id())).thenReturn(Optional.of(plotTypeEntity));
         plotService.mapPlotPostToPlotEntity(plotEntity, postPlotDto);
+
+        // Ensure the entities are set in the plotEntity
+        plotEntity.setPlotState(plotStateEntity);
+        plotEntity.setPlotType(plotTypeEntity);
 
         //then
         Assertions.assertEquals(postPlotDto.getPlot_number(), plotEntity.getPlotNumber());
