@@ -14,6 +14,8 @@ import java.util.List;
 
 public class OwnerTestHelper {
 
+    public static final Integer[] plot_id = new Integer[]{1,2};
+
     public static final OwnerDto OWNER_DTO = OwnerDto.builder()
             .id(2)
             .name("Manu")
@@ -51,7 +53,7 @@ public class OwnerTestHelper {
             .avatar_url("https://avatar.com/manu.jpg")
             .datebirth(LocalDate.of(1977, 7, 28))
             .roles(new String[]{"ADMIN"})
-            .plot_id(2)
+            .plot_id(plot_id)
             .telegram_id(2002)
             .build();
 
