@@ -53,7 +53,7 @@ class RestUserTest {
         postOwnerDto.setTaxStatusId(1);
         postOwnerDto.setActive(true);
         postOwnerDto.setAvatarUrl("url123");
-        postOwnerDto.setPlotId(12);
+        //postOwnerDto.setPlotId(12);
         postOwnerDto.setTelegramId(12);
         postOwnerDto.setUserCreateId(12);
 
@@ -104,7 +104,7 @@ class RestUserTest {
         postOwnerDto.setTaxStatusId(1);
         postOwnerDto.setActive(true);
         postOwnerDto.setAvatarUrl("url123");
-        postOwnerDto.setPlotId(12);
+        //postOwnerDto.setPlotId(12);
         postOwnerDto.setTelegramId(12);
         postOwnerDto.setUserCreateId(12);
 

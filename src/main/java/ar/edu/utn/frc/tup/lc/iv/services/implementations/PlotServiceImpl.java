@@ -17,6 +17,8 @@ import ar.edu.utn.frc.tup.lc.iv.restTemplate.FileManagerClient;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.FileService;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotService;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,65 +34,39 @@ import java.util.List;
  * contiene toda la lógica de los lotes.
  */
 @Service
+@Data
+@RequiredArgsConstructor
 public class PlotServiceImpl implements PlotService {
 
     /**
      * Repositorio para manejar Plot entities.
      */
-    @Autowired
-    private PlotRepository plotRepository;
+    private final PlotRepository plotRepository;
 
     /**
      * Repositorio para manejar PlotState entities.
      */
-    @Autowired
-    private PlotStateRepository plotStateRepository;
+    private final PlotStateRepository plotStateRepository;
 
     /**
      * Repositorio para manejar PlotType entities.
      */
-    @Autowired
-    private PlotTypeRepository plotTypeRepository;
+    private final PlotTypeRepository plotTypeRepository;
 
     /**
      * Servicio para manejar la cominicaion con el api de archivos.
      */
-    @Autowired
-    private FileManagerClient fileManagerClient;
+    private final FileManagerClient fileManagerClient;
 
     /**
      * Servicio para manejar la logica de archivos.
      */
-    @Autowired
-    private FileService fileService;
+    private final FileService fileService;
 
     /**
      * Servicio para mapear entidades a dtos y viceversa.
      */
-    @Autowired
-    private ModelMapper modelMapper;
-
-    /**
-     * Constructor de PlotServiceImpl.
-     *
-     * @param plotRepository Repositorio para manejar Plot entities.
-     * @param plotStateRepository Repositorio para manejar PlotState entities.
-     * @param plotTypeRepository Repositorio para manejar PlotType entities.
-     * @param fileManagerClient Servicio para manejar el restTemplate de archivos.
-     * @param fileService Servicio para manejar la logica de archivos.
-     * @param modelMapper Servicio para mapear entidades a dtos y viceversa.
-     */
-//    @Autowired
-//    public PlotServiceImpl(PlotRepository plotRepository, PlotStateRepository plotStateRepository,
-//                           PlotTypeRepository plotTypeRepository, FileManagerClient fileManagerClient, FileService fileService,
-//                           ModelMapper modelMapper) {
-//        this.plotRepository = plotRepository;
-//        this.plotStateRepository = plotStateRepository;
-//        this.plotTypeRepository = plotTypeRepository;
-//        this.fileManagerClient = fileManagerClient;
-//        this.fileService = fileService;
-//        this.modelMapper = modelMapper;
-//    }
+    private final ModelMapper modelMapper;
 
     /**
      * Crea un nuevo lote.
@@ -101,22 +77,14 @@ public class PlotServiceImpl implements PlotService {
     @Override
     @Transactional
     public GetPlotDto createPlot(PostPlotDto postPlotDto) {
-        //Validamos si el el plot a crear existe (mismo numero de plot)
         validatePlotNumber(postPlotDto.getPlot_number());
-        //Creamos la entity
-        PlotEntity plotEntity = new PlotEntity();
-        //Mapeamos con metodo
-        mapPlotPostToPlotEntity(plotEntity, postPlotDto);
 
+        PlotEntity plotEntity = mapPlotPostToPlotEntity(postPlotDto);
         uploadFiles(postPlotDto.getFiles(), postPlotDto.getUserCreateId(), plotEntity);
-
-        //Guardamos el plot
         PlotEntity savedPlot = plotRepository.save(plotEntity);
-        //Mapeamos el entity al GetPlotDto para poder mostrarlo
+
         GetPlotDto getPlotDto = new GetPlotDto();
         mapPlotEntityToGetPlotDto(savedPlot, getPlotDto);
-
-        //Retornamos el getPlotDto
         return getPlotDto;
     }
 
@@ -130,28 +98,42 @@ public class PlotServiceImpl implements PlotService {
     public void uploadFiles(List<MultipartFile> files, Integer userId, PlotEntity plotEntity) {
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
-                String fileUuid = fileManagerClient.uploadFile(file).getUuid().toString();
-
-                FileEntity fileEntity = new FileEntity();
-                fileEntity.setFileUuid(fileUuid);
-                fileEntity.setName(file.getOriginalFilename());
-                fileEntity.setCreatedDatetime(LocalDateTime.now());
-                fileEntity.setCreatedUser(userId);
-                fileEntity.setLastUpdatedDatetime(LocalDateTime.now());
-                fileEntity.setLastUpdatedUser(userId);
-
-                FilePlotEntity filePlotEntity = new FilePlotEntity();
-                filePlotEntity.setFile(fileEntity);
-                filePlotEntity.setPlot(plotEntity);
-                filePlotEntity.setCreatedDatetime(LocalDateTime.now());
-                filePlotEntity.setCreatedUser(userId);
-                filePlotEntity.setLastUpdatedDatetime(LocalDateTime.now());
-                filePlotEntity.setLastUpdatedUser(userId);
-
+                FilePlotEntity filePlotEntity = createFilePlotEntity(file, userId, plotEntity);
                 plotEntity.getFiles().add(filePlotEntity);
             }
         }
     }
+
+    /**
+     * Crea una entidad de archivo de lote.
+     *
+     * @param file archivo a subir.
+     * @param userId id del usuario que sube el archivo.
+     * @param plotEntity entidad del lote al que se le sube el archivo.
+     * @return entidad de archivo de lote creada.
+     */
+    public FilePlotEntity createFilePlotEntity(MultipartFile file, Integer userId, PlotEntity plotEntity) {
+        String fileUuid = fileManagerClient.uploadFile(file).getUuid().toString();
+
+        FileEntity fileEntity = new FileEntity();
+        fileEntity.setFileUuid(fileUuid);
+        fileEntity.setName(file.getOriginalFilename());
+        fileEntity.setCreatedDatetime(LocalDateTime.now());
+        fileEntity.setCreatedUser(userId);
+        fileEntity.setLastUpdatedDatetime(LocalDateTime.now());
+        fileEntity.setLastUpdatedUser(userId);
+
+        FilePlotEntity filePlotEntity = new FilePlotEntity();
+        filePlotEntity.setFile(fileEntity);
+        filePlotEntity.setPlot(plotEntity);
+        filePlotEntity.setCreatedDatetime(LocalDateTime.now());
+        filePlotEntity.setCreatedUser(userId);
+        filePlotEntity.setLastUpdatedDatetime(LocalDateTime.now());
+        filePlotEntity.setLastUpdatedUser(userId);
+
+        return filePlotEntity;
+    }
+
 
     /**
      * Obtiene los estados de los lotes.
@@ -194,37 +176,44 @@ public class PlotServiceImpl implements PlotService {
     @Override
     @Transactional
     public GetPlotDto putPlot(PutPlotDto plotDto, Integer plotId) {
-        PlotEntity plotEntity = this.plotRepository.findById(plotId).get();
-
-        if (plotEntity == null) {
-            throw new RuntimeException();
-        }
-
-        PlotStateEntity plotStateEntity = this.plotStateRepository.findById(plotDto.getPlot_state_id()).get();
-        if (plotStateEntity == null) {
-            throw new RuntimeException();
-        }
-
-        PlotTypeEntity plotTypeEntity = this.plotTypeRepository.findById(plotDto.getPlot_type_id()).get();
-        if (plotTypeEntity == null) {
-            throw new RuntimeException();
-        }
-
-        plotEntity.setTotalAreaInM2(plotDto.getTotal_area_in_m2());
-        plotEntity.setBuiltAreaInM2(plotDto.getBuilt_area_in_m2());
-        plotEntity.setPlotState(plotStateEntity);
-        plotEntity.setPlotType(plotTypeEntity);
-        plotEntity.setLastUpdatedDatetime(LocalDateTime.now());
-        plotEntity.setLastUpdatedUser(plotDto.getUserUpdateId());
-
-        plotEntity.getFiles().clear();
+        PlotEntity plotEntity = getPlotEntityById(plotId);
+        updatePlotFields(plotEntity, plotDto);
         plotRepository.save(plotEntity);
+
         uploadFiles(plotDto.getFiles(), plotDto.getUserUpdateId(), plotEntity);
 
         plotEntity = this.plotRepository.save(plotEntity);
         GetPlotDto getPlotDto = new GetPlotDto();
         this.mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
         return getPlotDto;
+    }
+
+    /**
+     * Encuentra un lote por su id.
+     *
+     * @param plotId id del lote a buscar.
+     * @throws EntityNotFoundException si el lote no existe.
+     * @return el lote encontrado.
+     */
+    public PlotEntity getPlotEntityById(Integer plotId) {
+        return plotRepository.findById(plotId)
+                .orElseThrow(() -> new EntityNotFoundException("Plot not found with id: " + plotId));
+    }
+
+    /**
+     * Actualiza los campos de un lote.
+     *
+     * @param plotEntity lote a actualizar.
+     * @param plotDto datos del lote a actualizar.
+     */
+    public void updatePlotFields(PlotEntity plotEntity, PutPlotDto plotDto) {
+        plotEntity.setTotalAreaInM2(plotDto.getTotal_area_in_m2());
+        plotEntity.setBuiltAreaInM2(plotDto.getBuilt_area_in_m2());
+        plotEntity.setPlotState(getPlotState(plotDto.getPlot_state_id()));
+        plotEntity.setPlotType(getPlotType(plotDto.getPlot_type_id()));
+        plotEntity.setLastUpdatedDatetime(LocalDateTime.now());
+        plotEntity.setLastUpdatedUser(plotDto.getUserUpdateId());
+        plotEntity.getFiles().clear();
     }
 
     /**
@@ -257,6 +246,7 @@ public class PlotServiceImpl implements PlotService {
         for (PlotEntity plotEntity : plotEntities) {
             GetPlotDto getPlotDto = new GetPlotDto();
             mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
+            getPlotDto.setFiles(fileService.getPlotFiles(plotEntity.getId()));
             plotDtos.add(getPlotDto);
         }
         return plotDtos;
@@ -291,14 +281,28 @@ public class PlotServiceImpl implements PlotService {
     }
 
     /**
-     * Mapea los datos de un lote a una entidad de lote y la guarda en la base de datos.
+     * Mapea los datos de un lote a una entidad de lote.
+     *
+     * @param postPlotDto datos del lote a mapear.
+     * @return entidad de lote mapeada.
+     */
+    public PlotEntity mapPlotPostToPlotEntity(PostPlotDto postPlotDto) {
+        PlotEntity plotEntity = new PlotEntity();
+        mapPlotPostToPlotEntity(plotEntity, postPlotDto);
+
+        //Seteamos estados y tipos
+        plotEntity.setPlotType(getPlotType(postPlotDto.getPlot_type_id()));
+        plotEntity.setPlotState(getPlotState(postPlotDto.getPlot_state_id()));
+        return plotEntity;
+    }
+
+    /**
+     * Mapea los datos post dto de un lote a una entidad de lote.
      *
      * @param plotEntity entidad de lote a mapear.
      * @param postPlotDto datos del lote a mapear.
-     * @throws EntityNotFoundException si el estado o tipo del lote no existen.
      */
     public void mapPlotPostToPlotEntity(PlotEntity plotEntity, PostPlotDto postPlotDto) {
-        //Seteamos campos basicos
         plotEntity.setPlotNumber(postPlotDto.getPlot_number());
         plotEntity.setBlockNumber(postPlotDto.getBlock_number());
         plotEntity.setBuiltAreaInM2(postPlotDto.getBuilt_area_in_m2());
@@ -307,19 +311,30 @@ public class PlotServiceImpl implements PlotService {
         plotEntity.setLastUpdatedDatetime(LocalDateTime.now());
         plotEntity.setCreatedUser(postPlotDto.getUserCreateId());
         plotEntity.setLastUpdatedUser(plotEntity.getLastUpdatedUser());
+    }
 
-        //Mapeamos los estados y tipos
-        PlotStateEntity state = plotStateRepository.findById(postPlotDto.getPlot_state_id())
-                .orElseThrow(() -> new EntityNotFoundException("PlotState not found with id: " + postPlotDto.getPlot_state_id()));
-        PlotTypeEntity type = plotTypeRepository.findById(postPlotDto.getPlot_type_id())
-                .orElseThrow(() -> new EntityNotFoundException("PlotType not found with id: " + postPlotDto.getPlot_type_id()));
+    /**
+     * Obtiene un estado de lote por su id.
+     *
+     * @param id id del estado de lote a buscar.
+     * @throws EntityNotFoundException si el estado de lote no existe.
+     * @return el estado de lote encontrado.
+     */
+    public PlotStateEntity getPlotState(Integer id) {
+        return plotStateRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("PlotState not found with id: " + id));
+    }
 
-        //Seteamos estados y tipos
-        plotEntity.setPlotType(type);
-        plotEntity.setPlotState(state);
-
-        //Guardamos en el repositorio
-        plotRepository.save(plotEntity);
+    /**
+     * Obtiene un tipo de lote por su id.
+     *
+     * @param id id del tipo de lote a buscar.
+     * @throws EntityNotFoundException si el tipo de lote no existe.
+     * @return el tipo de lote encontrado.
+     */
+    public PlotTypeEntity getPlotType(Integer id) {
+        return plotTypeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("PlotType not found with id: " + id));
     }
 
     /**

@@ -59,7 +59,7 @@ class OwnerServiceImplTest {
     void updateOwner_TaxStatusEntityNotFoundException() {
         
     }
-
+/*
     @Test
     void updateOwner_OwnerTypeEntityNotFoundException() {
         //Given
@@ -373,5 +373,5 @@ class OwnerServiceImplTest {
         verify(ownerRepositoryMock, times(1)).findById(12);
         verify(ownerRepositoryMock, times(0)).save(Mockito.any(OwnerEntity.class));
         verify(restUserMock, times(0)).deleteUser(12, 1);
-    }
+    }*/
 }

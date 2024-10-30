@@ -57,7 +57,7 @@ public class OwnerTestHelper {
 
     public static final GetOwnerAndPlot GET_OWNER_AND_PLOT_1 = GetOwnerAndPlot.builder()
             .owner(OWNER_DTO)
-            .plot(GET_PLOT_DTO_1)
+            //.plot(GET_PLOT_DTO_1)
             .user(GET_USER_DTO)
             .build();
 
