@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -59,7 +60,7 @@ class OwnerServiceImplTest {
     void updateOwner_TaxStatusEntityNotFoundException() {
         
     }
-/*
+
     @Test
     void updateOwner_OwnerTypeEntityNotFoundException() {
         //Given
@@ -99,8 +100,8 @@ class OwnerServiceImplTest {
 
     @Test
     void getById_Success() {
-        //Given
-        OwnerTypeEntity ownerTypeEntity  = new OwnerTypeEntity();
+        // Given
+        OwnerTypeEntity ownerTypeEntity = new OwnerTypeEntity();
         TaxStatusEntity taxStatusEntity = new TaxStatusEntity();
 
         OwnerEntity ownerEntity = new OwnerEntity();
@@ -109,15 +110,16 @@ class OwnerServiceImplTest {
         ownerEntity.setLastname("Diaz");
         ownerEntity.setOwnerType(ownerTypeEntity);
         ownerEntity.setTaxStatus(taxStatusEntity);
+        ownerEntity.setCreatedDatetime(LocalDateTime.now()); // Inicializa el campo aquí
 
-        //When
+        // When
         List<FileDto> fileDtoList = new ArrayList<>();
         fileDtoList.add(new FileDto("foto de perfil", "123456789"));
 
         when(ownerRepositoryMock.findById(12)).thenReturn(Optional.of(ownerEntity));
         when(fileServiceMock.getOwnerFiles(12)).thenReturn(fileDtoList);
 
-        //Then
+        // Then
         GetOwnerDto result = ownerServiceSpy.getById(12);
 
         verify(ownerRepositoryMock, times(1)).findById(12);
@@ -183,8 +185,8 @@ class OwnerServiceImplTest {
 
     @Test
     void getAllOwners() {
-        //Given
-        OwnerTypeEntity ownerTypeEntity  = new OwnerTypeEntity();
+        // Given
+        OwnerTypeEntity ownerTypeEntity = new OwnerTypeEntity();
         TaxStatusEntity taxStatusEntity = new TaxStatusEntity();
         List<FileDto> fileDtoList = new ArrayList<>();
         fileDtoList.add(new FileDto("foto de perfil", "123456789"));
@@ -196,16 +198,17 @@ class OwnerServiceImplTest {
         ownerEntity.setName("Manolo");
         ownerEntity.setTaxStatus(taxStatusEntity);
         ownerEntity.setOwnerType(ownerTypeEntity);
+        ownerEntity.setCreatedDatetime(LocalDateTime.now()); // Inicializa el campo aquí
 
         ownerEntities.add(ownerEntity);
         ownerEntities.add(ownerEntity);
         ownerEntities.add(ownerEntity);
 
-        //When
+        // When
         when(ownerRepositoryMock.findAll()).thenReturn(ownerEntities);
         when(fileServiceMock.getOwnerFiles(1)).thenReturn(fileDtoList);
 
-        //Then
+        // Then
         List<GetOwnerDto> result = ownerServiceSpy.getAllOwners();
 
         assertEquals(ownerEntities.size(), result.size());
@@ -219,14 +222,13 @@ class OwnerServiceImplTest {
     void getOwersAndPlots() {
         when(ownerRepositoryMock.findAllActives()).thenReturn(OwnerTestHelper.OWNER_ENTITY_LIST);
 
-        when(plotOwnerRepositoryMock.findByOwnerId(1)).thenReturn(OwnerTestHelper.PLOT_OWNER_ENTITY_1);
-        when(plotOwnerRepositoryMock.findByOwnerId(2)).thenReturn(OwnerTestHelper.PLOT_OWNER_ENTITY_2);
-        when(plotOwnerRepositoryMock.findByOwnerId(3)).thenReturn(OwnerTestHelper.PLOT_OWNER_ENTITY_3);
+        when(plotOwnerRepositoryMock.findByOwnerId(1)).thenReturn(List.of(OwnerTestHelper.PLOT_OWNER_ENTITY_1));
+        when(plotOwnerRepositoryMock.findByOwnerId(2)).thenReturn(List.of(OwnerTestHelper.PLOT_OWNER_ENTITY_2));
+        when(plotOwnerRepositoryMock.findByOwnerId(3)).thenReturn(List.of(OwnerTestHelper.PLOT_OWNER_ENTITY_3));
 
         when(plotRepositoryMock.findById(1)).thenReturn(Optional.of(OwnerTestHelper.PLOT_ENTITY_1));
         when(plotRepositoryMock.findById(2)).thenReturn(Optional.of(OwnerTestHelper.PLOT_ENTITY_2));
         when(plotRepositoryMock.findById(3)).thenReturn(Optional.of(OwnerTestHelper.PLOT_ENTITY_3));
-
 
         List<GetOwnerAndPlot> result = ownerServiceSpy.getOwersAndPlots();
 
@@ -235,11 +237,11 @@ class OwnerServiceImplTest {
 
         GetOwnerAndPlot ownerAndPlot1 = result.get(0);
         assertEquals("Manu", ownerAndPlot1.getOwner().getName());
-        assertEquals(202, ownerAndPlot1.getPlot().getPlot_number());
+        assertEquals(202, ownerAndPlot1.getPlot().get(0).getPlot_number());
 
         GetOwnerAndPlot ownerAndPlot2 = result.get(1);
         assertEquals("Fabricio", ownerAndPlot2.getOwner().getName());
-        assertEquals(203, ownerAndPlot2.getPlot().getPlot_number());
+        assertEquals(203, ownerAndPlot2.getPlot().get(0).getPlot_number());
 
         verify(ownerRepositoryMock, times(1)).findAllActives();
         verify(plotOwnerRepositoryMock, times(3)).findByOwnerId(anyInt());
@@ -250,19 +252,20 @@ class OwnerServiceImplTest {
     @Test
     void getOwersAndPlotsException() {
         when(ownerRepositoryMock.findAllActives()).thenReturn(OwnerTestHelper.OWNER_ENTITY_LIST);
-        PlotOwnerEntity plotOwnerEntity = OwnerTestHelper.PLOT_OWNER_ENTITY_1;
-        when(plotOwnerRepositoryMock.findByOwnerId(1)).thenReturn(plotOwnerEntity);
+
+        List<PlotOwnerEntity> plotOwnerEntities = List.of(OwnerTestHelper.PLOT_OWNER_ENTITY_1);
+        when(plotOwnerRepositoryMock.findByOwnerId(1)).thenReturn(plotOwnerEntities);
+
         when(plotRepositoryMock.findById(anyInt())).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            this.ownerServiceSpy.getOwersAndPlots();
+            ownerServiceSpy.getOwersAndPlots();
         });
         assertNotNull(exception);
     }
 
     @Test
     void getOwnerAndPlotById_Success() {
-        // Given
         OwnerTypeEntity ownerTypeEntity = new OwnerTypeEntity();
         TaxStatusEntity taxStatusEntity = new TaxStatusEntity();
 
@@ -290,19 +293,15 @@ class OwnerServiceImplTest {
         PlotOwnerEntity plotOwnerEntity = new PlotOwnerEntity();
         plotOwnerEntity.setId(2);
         plotOwnerEntity.setPlot(plotEntity);
+        plotOwnerEntity.setOwner(ownerEntity);
 
         GetUserDto getUserDto = new GetUserDto();
         getUserDto.setId(1);
         getUserDto.setName("Manolo");
 
-        GetPlotDto getPlotDto = new GetPlotDto();
-        getPlotDto.setId(10);
-        getPlotDto.setBuilt_area_in_m2(500);
-        getPlotDto.setTotal_area_in_m2(500);
-
         // When
         Mockito.when(ownerRepositoryMock.findById(1)).thenReturn(Optional.of(ownerEntity));
-        Mockito.when(plotOwnerRepositoryMock.findByOwnerId(1)).thenReturn(plotOwnerEntity);
+        Mockito.when(plotOwnerRepositoryMock.findByOwnerId(1)).thenReturn(List.of(plotOwnerEntity));
         Mockito.when(plotRepositoryMock.findById(10)).thenReturn(Optional.of(plotEntity));
         Mockito.when(restUserMock.getUser(10)).thenReturn(getUserDto);
 
@@ -310,7 +309,7 @@ class OwnerServiceImplTest {
         GetOwnerAndPlot result = ownerServiceSpy.getOwnerAndPlotById(1);
 
         assertNotNull(result);
-        assertEquals(plotEntity.getId(), result.getPlot().getId());
+        assertEquals(plotEntity.getId(), result.getPlot().get(0).getId());
         assertEquals(ownerEntity.getName(), result.getOwner().getName());
         assertEquals(getUserDto.getName(), result.getUser().getName());
     }
@@ -373,5 +372,5 @@ class OwnerServiceImplTest {
         verify(ownerRepositoryMock, times(1)).findById(12);
         verify(ownerRepositoryMock, times(0)).save(Mockito.any(OwnerEntity.class));
         verify(restUserMock, times(0)).deleteUser(12, 1);
-    }*/
+    }
 }
