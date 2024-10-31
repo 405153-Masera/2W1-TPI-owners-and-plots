@@ -13,8 +13,9 @@ import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,99 +32,64 @@ import java.util.stream.Collectors;
  * contiene toda la logica de propietarios.
  */
 @Service
+@Data
+@RequiredArgsConstructor
 public class OwnerServiceImpl implements OwnerService {
 
     /**
      * Repositorio para manejar Owner entities.
      */
-    @Autowired
-    private OwnerRepository ownerRepository;
+    private final OwnerRepository ownerRepository;
 
     /**
      * Repositorio para manejar TaxStatus entities.
      */
-    @Autowired
-    private TaxStatusRepository taxStatusRepository;
+    private final TaxStatusRepository taxStatusRepository;
 
     /**
      * Repositorio para manejar OwnerType entities.
      */
-    @Autowired
-    private OwnerTypeRepository ownerTypeRepository;
+    private final OwnerTypeRepository ownerTypeRepository;
 
     /**
      * Repositorio para manejar PlotOwner entities.
      */
-    @Autowired
-    private PlotOwnerRepository plotOwnerRepository;
+    private final PlotOwnerRepository plotOwnerRepository;
 
     /**
      * Mapper para mapear entidades a DTOs.
      */
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     /**
      * Servicio para manejar la comunicación con el api de usuarios.
      */
-    @Autowired
-    private RestUser restUser;
+    private final RestUser restUser;
 
     /**
      * Repositorio para manejar Plot entities.
      */
-    @Autowired
-    private PlotRepository plotRepository;
+    private final PlotRepository plotRepository;
 
     /**
      * Servicio para manejar la lógica de lotes.
      */
-    @Autowired
-    private PlotService plotService;
+    private final PlotService plotService;
 
     /**
      * Servicio para manejar la lógica de archivos.
      */
-    @Autowired
-    private FileService fileService;
+    private final FileService fileService;
 
     /**
      * Servicio para manejar la comunicación con el api de archivos.
      */
-    @Autowired
-    private FileManagerClient fileManagerClient;
-
-    /**
-     * Constructor de OwnerServiceImpl.
-     *
-     * @param ownerRepository el repositorio de propietarios.
-     * @param taxStatusRepository el repositorio de estados impositivos.
-     * @param ownerTypeRepository el repositorio de tipos de propietarios.
-     * @param plotOwnerRepository el repositorio de propietarios de lotes.
-     * @param restUser el servicio para manejar la comunicación con el api de usuarios.
-     * @param plotRepository el repositorio de lotes.
-     * @param plotService el servicio para manejar la lógica de lotes.
-     */
-//    @Autowired
-//    public OwnerServiceImpl(OwnerRepository ownerRepository, TaxStatusRepository taxStatusRepository,
-//                            OwnerTypeRepository ownerTypeRepository, PlotOwnerRepository plotOwnerRepository,
-//                            RestUser restUser, PlotRepository plotRepository,
-//                            PlotService plotService) {
-//        this.ownerRepository = ownerRepository;
-//        this.taxStatusRepository = taxStatusRepository;
-//        this.ownerTypeRepository = ownerTypeRepository;
-//        this.plotOwnerRepository = plotOwnerRepository;
-//        this.restUser = restUser;
-//        this.plotRepository = plotRepository;
-//        this.plotService = plotService;
-//    }
+    private final FileManagerClient fileManagerClient;
 
     /**
      * Crea un propietario y el usuario del propietario.
      *
      * @param postOwnerDto el DTO con la información del propietario y su usuario.
-     * @throws EntityNotFoundException si no se encuentra el tipo de propietario ,el estado impositivo
-     * o el lote asignado.
      * @throws ResponseStatusException si ocurre un error al crear el usuario.
      * @return el DTO con la información del propietario creado.
      */
@@ -131,42 +97,83 @@ public class OwnerServiceImpl implements OwnerService {
     @Transactional
     public GetOwnerDto createOwner(PostOwnerDto postOwnerDto) {
 
-        OwnerEntity ownerEntity = mapPostToOwnerEntity(postOwnerDto);
-
-        OwnerTypeEntity ownerTypeEntity = ownerTypeRepository.findById(postOwnerDto.getOwnerTypeId())
-                .orElseThrow(() -> new EntityNotFoundException("OwnerType not found"));
-        ownerEntity.setOwnerType(ownerTypeEntity);
-
-        TaxStatusEntity taxStatusEntity = taxStatusRepository.findById(postOwnerDto.getTaxStatusId())
-                .orElseThrow(() -> new EntityNotFoundException("TaxStatus not found"));
-        ownerEntity.setTaxStatus(taxStatusEntity);
-
+        OwnerEntity ownerEntity = createOwnerEntity(postOwnerDto);
         uploadFiles(postOwnerDto.getFiles(), postOwnerDto.getUserCreateId(), ownerEntity);
-
         OwnerEntity ownerSaved = ownerRepository.save(ownerEntity);
-
-        Integer[] plots = postOwnerDto.getPlotId();
-        //Se guarda la relacion de Owner con Plot
-        for (Integer plot : plots) {
-            PlotEntity plotEntity = plotRepository.findById(plot)
-                    .orElseThrow(() -> new EntityNotFoundException("Plot not found with id: " + plot));
-            if (plotEntity != null) {
-                createPlotOwnerEntity(ownerSaved,postOwnerDto,plot);
-            }
-            else {
-                throw new EntityNotFoundException("Plot not found with id: " + plot);
-            }
-        }
+        assignPlots(ownerSaved, postOwnerDto);
 
         //Aca se crea el usuario
         if (!restUser.createUser(postOwnerDto)) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Server error while creating the user");
         }
 
-        GetOwnerDto getOwnerDto = mapOwnerEntitytoGet(ownerSaved);
-        getOwnerDto.setOwnerType(ownerTypeEntity.getDescription());
-        getOwnerDto.setTaxStatus(taxStatusEntity.getDescription());
-        return getOwnerDto;
+        return createGetOwnerDto(ownerSaved);
+    }
+
+    /**
+     * Crea una entidad Owner a partir de un DTO.
+     *
+     * @param postOwnerDto el DTO con la información del propietario.
+     * @return la entidad creada.
+     */
+    public OwnerEntity createOwnerEntity(PostOwnerDto postOwnerDto) {
+        OwnerEntity ownerEntity = mapPostToOwnerEntity(postOwnerDto);
+        ownerEntity.setOwnerType(findOwnerType(postOwnerDto.getOwnerTypeId()));
+        ownerEntity.setTaxStatus(findTaxStatus(postOwnerDto.getTaxStatusId()));
+        return ownerEntity;
+    }
+
+    /**
+     * Obtiene un tipo de propietario por su id.
+     *
+     * @param ownerTypeId el id del tipo de propietario a buscar.
+     * @throws EntityNotFoundException si no se encuentra el tipo de propietario.
+     * @return el tipo de propietario.
+     */
+    public OwnerTypeEntity findOwnerType(Integer ownerTypeId) {
+        return ownerTypeRepository.findById(ownerTypeId)
+                .orElseThrow(() -> new EntityNotFoundException("OwnerType not found"));
+    }
+
+    /**
+     * Obtiene una situación fiscal por su id.
+     *
+     * @param taxStatusId el id de la situación fiscal a buscar.
+     * @throws EntityNotFoundException si no se encuentra la situación fiscal.
+     * @return la situación fiscal.
+     */
+    public TaxStatusEntity findTaxStatus(Integer taxStatusId) {
+        return taxStatusRepository.findById(taxStatusId)
+                .orElseThrow(() -> new EntityNotFoundException("TaxStatus not found"));
+    }
+
+    /**
+     * Asigna lotes a un propietario.
+     *
+     * @param owner el propietario al que se le asignarán los lotes.
+     * @param postOwnerDto el DTO con la información del propietario.
+     * @throws EntityNotFoundException si no se encuentra el lote.
+     */
+    public void assignPlots(OwnerEntity owner, PostOwnerDto postOwnerDto) {
+        for (Integer plotId : postOwnerDto.getPlotId()) {
+            if (plotRepository.findById(plotId).isEmpty()) {
+                throw new EntityNotFoundException("Plot not found with id: " + plotId);
+            }
+            createPlotOwnerEntity(owner, postOwnerDto, plotId);
+        }
+    }
+
+    /**
+     * Crea un DTO con la información de un propietario.
+     *
+     * @param owner el propietario a mapear.
+     * @return el DTO con la información del propietario.
+     */
+    public GetOwnerDto createGetOwnerDto(OwnerEntity owner) {
+        GetOwnerDto dto = mapOwnerEntitytoGet(owner);
+        dto.setOwnerType(owner.getOwnerType().getDescription());
+        dto.setTaxStatus(owner.getTaxStatus().getDescription());
+        return dto;
     }
 
     /**
@@ -178,30 +185,52 @@ public class OwnerServiceImpl implements OwnerService {
      */
     public void uploadFiles(List<MultipartFile> files, Integer userId, OwnerEntity ownerEntity) {
         if (files != null && !files.isEmpty()) {
-
-            for (MultipartFile file : files) {
-
-                String fileUuid = fileManagerClient.uploadFile(file).getUuid().toString();
-
-                FileEntity fileEntity = new FileEntity();
-                fileEntity.setFileUuid(fileUuid);
-                fileEntity.setName(file.getOriginalFilename());
-                fileEntity.setCreatedDatetime(LocalDateTime.now());
-                fileEntity.setCreatedUser(userId);
-                fileEntity.setLastUpdatedDatetime(LocalDateTime.now());
-                fileEntity.setLastUpdatedUser(userId);
-
-                FileOwnerEntity fileOwnerEntity = new FileOwnerEntity();
-                fileOwnerEntity.setFile(fileEntity);
-                fileOwnerEntity.setOwner(ownerEntity);
-                fileOwnerEntity.setCreatedDatetime(LocalDateTime.now());
-                fileOwnerEntity.setCreatedUser(userId);
-                fileOwnerEntity.setLastUpdatedDatetime(LocalDateTime.now());
-                fileOwnerEntity.setLastUpdatedUser(userId);
-
+            files.forEach(file -> {
+                FileEntity fileEntity = createFileEntity(file, userId);
+                FileOwnerEntity fileOwnerEntity = createFileOwnerEntity(fileEntity, ownerEntity, userId);
                 ownerEntity.getFiles().add(fileOwnerEntity);
-            }
+            });
         }
+    }
+
+    /**
+     * Crea un FileEntity que representa un archivo.
+     *
+     * @param file el archivo a subir.
+     * @param userId el id del usuario que guarda el archivo.
+     * @return la entidad creada.
+     */
+    public FileEntity createFileEntity(MultipartFile file, Integer userId) {
+        String fileUuid = fileManagerClient.uploadFile(file).getUuid().toString();
+
+        FileEntity fileEntity = new FileEntity();
+        fileEntity.setFileUuid(fileUuid);
+        fileEntity.setName(file.getOriginalFilename());
+        fileEntity.setCreatedDatetime(LocalDateTime.now());
+        fileEntity.setCreatedUser(userId);
+        fileEntity.setLastUpdatedDatetime(LocalDateTime.now());
+        fileEntity.setLastUpdatedUser(userId);
+
+        return fileEntity;
+    }
+
+    /**
+     * Crea una entidad FileOwner que representa la relación entre un archivo y un propietario.
+     *
+     * @param fileEntity la entidad del archivo.
+     * @param ownerEntity la entidad del propietario.
+     * @param userId el id del usuario que crea la relación.
+     * @return la entidad creada.
+     */
+    private FileOwnerEntity createFileOwnerEntity(FileEntity fileEntity, OwnerEntity ownerEntity, Integer userId) {
+        FileOwnerEntity fileOwnerEntity = new FileOwnerEntity();
+        fileOwnerEntity.setFile(fileEntity);
+        fileOwnerEntity.setOwner(ownerEntity);
+        fileOwnerEntity.setCreatedUser(userId);
+        fileOwnerEntity.setCreatedDatetime(LocalDateTime.now());
+        fileOwnerEntity.setLastUpdatedUser(userId);
+        fileOwnerEntity.setLastUpdatedDatetime(LocalDateTime.now());
+        return fileOwnerEntity;
     }
 
     /**
@@ -209,6 +238,7 @@ public class OwnerServiceImpl implements OwnerService {
      *
      * @param ownerEntity  la entidad del propietario.
      * @param postOwnerDto el DTO con la información del propietario.
+     * @param plotId el id del lote.
      */
     public void createPlotOwnerEntity(OwnerEntity ownerEntity, PostOwnerDto postOwnerDto, Integer plotId) {
         PlotOwnerEntity plotOwnerEntity = new PlotOwnerEntity();
@@ -228,42 +258,50 @@ public class OwnerServiceImpl implements OwnerService {
      *
      * @param ownerId el id del propietario a actualizar.
      * @param putOwnerDto el DTO con la información del propietario a actualizar.
-     * @throws EntityNotFoundException si no se encuentra el propietario, el tipo de propietario o el estado impositivo.
      * @return el DTO con la información del propietario actualizado.
      */
     @Transactional
     @Override
     public GetOwnerDto updateOwner(Integer ownerId, PutOwnerDto putOwnerDto) {
-        Optional<OwnerEntity> ownerEntityOptional = ownerRepository.findById(ownerId);
-
-        if (ownerEntityOptional.isEmpty()) {
-            throw new EntityNotFoundException("Owner not found");
-        }
-        OwnerEntity ownerEntity = ownerEntityOptional.get();
-        ownerEntity.setName(putOwnerDto.getName());
-        ownerEntity.setLastname(putOwnerDto.getLastname());
-        ownerEntity.setDni(putOwnerDto.getDni());
-        ownerEntity.setCuitCuil(putOwnerDto.getCuitCuil());
-        ownerEntity.setDateBirth(putOwnerDto.getDateBirth());
-        ownerEntity.setOwnerType(ownerTypeRepository.findById(putOwnerDto.getOwnerTypeId())
-                .orElseThrow(() -> new EntityNotFoundException("OwnerType not found")));
-        ownerEntity.setTaxStatus(taxStatusRepository.findById(putOwnerDto.getTaxStatusId())
-                .orElseThrow(() -> new EntityNotFoundException("TaxStatus not found")));
-        ownerEntity.setBusinessName(putOwnerDto.getBusinessName());
-        ownerEntity.setLastUpdatedDatetime(LocalDateTime.now());
-        ownerEntity.setLastUpdatedUser(putOwnerDto.getUserUpdateId());
-
+        OwnerEntity ownerEntity = findOwnerById(ownerId);
+        updateOwnerFields(ownerEntity, putOwnerDto);
         ownerEntity.getFiles().clear();
         ownerRepository.save(ownerEntity);
-
         uploadFiles(putOwnerDto.getFiles(), putOwnerDto.getUserUpdateId(), ownerEntity);
 
         OwnerEntity ownerSaved = ownerRepository.save(ownerEntity);
-        GetOwnerDto getOwnerDto = mapOwnerEntitytoGet(ownerSaved);
-        getOwnerDto.setOwnerType(ownerSaved.getOwnerType().getDescription());
-        getOwnerDto.setTaxStatus(ownerSaved.getTaxStatus().getDescription());
+        return createGetOwnerDto(ownerSaved);
+    }
 
-        return getOwnerDto;
+    /**
+     * Obtiene un propietario por su id.
+     *
+     * @param ownerId el id del propietario a buscar.
+     * @throws EntityNotFoundException si no se encuentra el propietario.
+     * @return la entidad del propietario.
+     */
+    private OwnerEntity findOwnerById(Integer ownerId) {
+        return ownerRepository.findById(ownerId)
+                .orElseThrow(() -> new EntityNotFoundException("Owner not found"));
+    }
+
+    /**
+     * Actualiza los campos de un propietario.
+     *
+     * @param owner el propietario a actualizar.
+     * @param dto el DTO con la información del propietario a actualizar.
+     */
+    public void updateOwnerFields(OwnerEntity owner, PutOwnerDto dto) {
+        owner.setName(dto.getName());
+        owner.setLastname(dto.getLastname());
+        owner.setDni(dto.getDni());
+        owner.setCuitCuil(dto.getCuitCuil());
+        owner.setDateBirth(dto.getDateBirth());
+        owner.setOwnerType(findOwnerType(dto.getOwnerTypeId()));
+        owner.setTaxStatus(findTaxStatus(dto.getTaxStatusId()));
+        owner.setBusinessName(dto.getBusinessName());
+        owner.setLastUpdatedDatetime(LocalDateTime.now());
+        owner.setLastUpdatedUser(dto.getUserUpdateId());
     }
 
     /**
@@ -393,14 +431,14 @@ public class OwnerServiceImpl implements OwnerService {
             List<PlotEntity> plotEntities = new ArrayList<>();
             List<GetPlotDto> getPlotDtos = new ArrayList<>();
 
-            for (PlotOwnerEntity plotOwner : plotOwnerEntity){
+            for (PlotOwnerEntity plotOwner : plotOwnerEntity) {
                 PlotEntity plotEntity = plotRepository.findById(plotOwner.getPlot().getId()).orElse(null);
                 GetPlotDto getPlotDto = new GetPlotDto();
                 plotService.mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
                 getPlotDtos.add(getPlotDto);
             }
 
-            if(plotEntities == null){
+            if (plotEntities == null) {
                 throw new RuntimeException();
             }
             OwnerDto ownerDto = mapOwnerEntityToOwnerDto(ownerEntity);
@@ -437,14 +475,14 @@ public class OwnerServiceImpl implements OwnerService {
         List<PlotEntity> plotEntities = new ArrayList<>();
         List<GetPlotDto> getPlotDtos = new ArrayList<>();
 
-        for (PlotOwnerEntity plotOwner : plotOwnerEntity){
+        for (PlotOwnerEntity plotOwner : plotOwnerEntity) {
             PlotEntity plotEntity = plotRepository.findById(plotOwner.getPlot().getId()).orElse(null);
             GetPlotDto getPlotDto = new GetPlotDto();
             plotService.mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
             getPlotDtos.add(getPlotDto);
         }
 
-        if(plotEntities == null){
+        if (plotEntities == null) {
             throw new RuntimeException();
         }
         OwnerDto ownerDto = mapOwnerEntityToOwnerDto(ownerEntity);
@@ -493,7 +531,7 @@ public class OwnerServiceImpl implements OwnerService {
     @Override
     @Transactional
     public void deleteOwner(Integer ownerId, Integer userIdUpdate) {
-        OwnerEntity ownerEntity = ownerRepository.findById(ownerId).orElseThrow(()->
+        OwnerEntity ownerEntity = ownerRepository.findById(ownerId).orElseThrow(() ->
                 new EntityNotFoundException("Owner not found with id: " + ownerId)
         );
 
