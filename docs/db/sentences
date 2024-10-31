@@ -1,9 +1,11 @@
 
+
 CREATE DATABASE IF NOT EXISTS OwnersPlots;
 USE OwnersPlots;
 
+
 -- Tabla DniTypes
-CREATE TABLE DniTypes (
+CREATE TABLE dni_types (
 id INT PRIMARY KEY AUTO_INCREMENT,
 description VARCHAR(255),
 created_datetime DATETIME,
@@ -50,7 +52,7 @@ CREATE TABLE Owners (
     last_updated_user INT,
     FOREIGN KEY (tax_status_id) REFERENCES TaxStatus(id),
     FOREIGN KEY (owner_type_id) REFERENCES OwnersTypes(id),
-    FOREIGN KEY (dni_type_id) REFERENCES DniTypes(id)
+    FOREIGN KEY (dni_type_id) REFERENCES dni_types(id)
 );
 
 -- Tabla PlotStates
@@ -255,10 +257,9 @@ CREATE TABLE Files_Owners_audit (
     last_updated_user INT
 );
 
---Tabla de auditoría para DniTypes
-CREATE TABLE DniTypes_audit (
+CREATE TABLE dni_types_audit (
 version_id INT PRIMARY KEY AUTO_INCREMENT,
-id,
+id INT,
 version INT,
 description VARCHAR(255),
 created_datetime DATETIME,
@@ -310,25 +311,24 @@ DELIMITER ;
 DELIMITER $$
 
 CREATE TRIGGER trg_dnitypes_insert 
-AFTER INSERT ON DniTypes_audit
+AFTER INSERT ON dni_types
 FOR EACH ROW 
 BEGIN
-    INSERT INTO DniTypes_audit 
+    INSERT INTO dni_types_audit 
     (id, version, description, created_datetime, created_user, last_updated_datetime, last_updated_user)
     VALUES 
     (NEW.id, 1, NEW.description, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
 END$$
 
--- Trigger para actualizar en la auditoría de dni_type
 CREATE TRIGGER trg_dni_type_update
-    AFTER UPDATE ON dni_type
+    AFTER UPDATE ON dni_types
     FOR EACH ROW
 BEGIN
     DECLARE latest_version INT;
-    SELECT MAX(version) INTO latest_version FROM dni_type_audit WHERE id = NEW.id;
+    SELECT MAX(version) INTO latest_version FROM dni_types_audit WHERE id = NEW.id;
     SET latest_version = IFNULL(latest_version, 0) + 1;
 
-    INSERT INTO dni_type_audit (id, version, description, created_datetime, last_updated_datetime, created_user, last_updated_user)
+    INSERT INTO dni_types_audit (id, version, description, created_datetime, last_updated_datetime, created_user, last_updated_user)
     VALUES (NEW.id, latest_version, NEW.description, NEW.created_datetime, NEW.last_updated_datetime, NEW.created_user, NEW.last_updated_user);
 END $$
 
@@ -359,9 +359,9 @@ AFTER INSERT ON Owners
 FOR EACH ROW 
 BEGIN
     INSERT INTO Owners_audit 
-    (id, version, name, lastname, dni, cuit_cuil, date_birth, tax_status_id, owner_type_id, business_name, active, created_datetime, created_user, last_updated_datetime, last_updated_user)
+    (id, version, name, lastname, dni, dni_type_id, date_birth, tax_status_id, owner_type_id, business_name, active, created_datetime, created_user, last_updated_datetime, last_updated_user)
     VALUES 
-    (NEW.id, 1, NEW.name, NEW.lastname, NEW.dni, NEW.cuit_cuil, NEW.date_birth, NEW.tax_status_id, NEW.owner_type_id, NEW.business_name, NEW.active, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
+    (NEW.id, 1, NEW.name, NEW.lastname, NEW.dni,NEW.dni_type_id, NEW.date_birth, NEW.tax_status_id, NEW.owner_type_id, NEW.business_name, NEW.active, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
 END$$
 
 DELIMITER ;
@@ -377,9 +377,9 @@ BEGIN
     SELECT IFNULL(MAX(version), 0) + 1 INTO version_number FROM Owners_audit WHERE id = OLD.id;
 
     INSERT INTO Owners_audit 
-    (id, version, name, lastname, dni, cuit_cuil, date_birth, tax_status_id, owner_type_id, business_name, active, created_datetime, created_user, last_updated_datetime, last_updated_user)
+    (id, version, name, lastname, dni, dni_type_id, date_birth, tax_status_id, owner_type_id, business_name, active, created_datetime, created_user, last_updated_datetime, last_updated_user)
     VALUES 
-    (OLD.id, version_number, OLD.name, OLD.lastname, OLD.dni, OLD.cuit_cuil, OLD.date_birth, OLD.tax_status_id, OLD.owner_type_id, OLD.business_name, OLD.active, OLD.created_datetime, OLD.created_user, OLD.last_updated_datetime, OLD.last_updated_user);
+    (OLD.id, version_number, OLD.name, OLD.lastname, OLD.dni, OLD.dni_type_id, OLD.date_birth, OLD.tax_status_id, OLD.owner_type_id, OLD.business_name, OLD.active, OLD.created_datetime, OLD.created_user, OLD.last_updated_datetime, OLD.last_updated_user);
 END$$
 
 DELIMITER ;
@@ -529,15 +529,9 @@ INSERT INTO PlotTypes (name)
 VALUES ('Comercial'),('Residencial'),('Baldío');
 
 -- Insertar tipos de DNI
-INSERT INTO dni_type (description, created_datetime, last_updated_datetime, created_user, last_updated_user)
+INSERT INTO dni_types (description, created_datetime, last_updated_datetime, created_user, last_updated_user)
 VALUES
     ('DNI', NOW(), NOW(), 1, 1),
-    ('Pasaporte', NOW(), NOW(), 1, 1);
+    ('Pasaporte', NOW(), NOW(), 1, 1),
     ('CUIT/CUIL', NOW(), NOW(), 1, 1);
-
-
-
-
-
-
 
