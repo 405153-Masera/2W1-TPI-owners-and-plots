@@ -77,6 +77,8 @@ public class PlotServiceImpl implements PlotService {
     @Transactional
     public GetPlotDto createPlot(PostPlotDto postPlotDto) {
         validatePlotNumber(postPlotDto.getPlot_number());
+        validateBuiltArea(postPlotDto);
+        validateWasteland(postPlotDto);
 
         PlotEntity plotEntity = mapPlotPostToPlotEntity(postPlotDto);
         uploadFiles(postPlotDto.getFiles(), postPlotDto.getUserCreateId(), plotEntity);
@@ -85,6 +87,31 @@ public class PlotServiceImpl implements PlotService {
         GetPlotDto getPlotDto = new GetPlotDto();
         mapPlotEntityToGetPlotDto(savedPlot, getPlotDto);
         return getPlotDto;
+    }
+
+    /**
+     * Válida si el lote es de tipo valdio , no tenga metros construidos.
+     *
+     * @param postPlotDto Dto de solicitud de alta de lote.
+     * @throws IllegalArgumentException si es de tipo baldio y tiene metros construidos.
+     */
+    private void validateWasteland(PostPlotDto postPlotDto) {
+        if (postPlotDto.getPlot_type_id() == 3 && postPlotDto.getBuilt_area_in_m2() > 0){
+            throw new IllegalArgumentException("Error , a westland plot cannot have a built area");
+        }
+    }
+
+    /**
+     * Válida si el area construida es menor al area total del lote.
+     *
+     * @param postPlotDto Dto de solicitud de alta de lote.
+     * @throws IllegalArgumentException si el area construida es mayor al area total.
+     */
+    private void validateBuiltArea(PostPlotDto postPlotDto) {
+        if (postPlotDto.getBuilt_area_in_m2() > postPlotDto.getTotal_area_in_m2()) {
+            throw new IllegalArgumentException("Error , built area is bigger than total area");
+        }
+
     }
 
     /**
