@@ -2,6 +2,16 @@
 CREATE DATABASE IF NOT EXISTS OwnersPlots;
 USE OwnersPlots;
 
+-- Tabla DniTypes
+CREATE TABLE DniTypes (
+id INT PRIMARY KEY AUTO_INCREMENT,
+description VARCHAR(255),
+created_datetime DATETIME,
+created_user INT,
+last_updated_datetime DATETIME,
+last_updated_user INT
+);
+
 -- Tabla Tax_Status
 CREATE TABLE TaxStatus (
 id INT PRIMARY KEY AUTO_INCREMENT,
@@ -27,8 +37,8 @@ CREATE TABLE Owners (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255),
     lastname VARCHAR(255),
+    dni_type_id INT,
     dni VARCHAR(255),
-    cuit_cuil VARCHAR(255),
     date_birth DATETIME,
     tax_status_id INT,
     owner_type_id INT,
@@ -39,7 +49,8 @@ CREATE TABLE Owners (
     last_updated_datetime DATETIME,
     last_updated_user INT,
     FOREIGN KEY (tax_status_id) REFERENCES TaxStatus(id),
-    FOREIGN KEY (owner_type_id) REFERENCES OwnersTypes(id)
+    FOREIGN KEY (owner_type_id) REFERENCES OwnersTypes(id),
+    FOREIGN KEY (dni_type_id) REFERENCES DniTypes(id)
 );
 
 -- Tabla PlotStates
@@ -139,7 +150,7 @@ CREATE TABLE Owners_audit (
     name VARCHAR(255),
     lastname VARCHAR(255),
     dni VARCHAR(255),
-    cuit_cuil VARCHAR(255),
+    dni_type_id INT,
     date_birth DATE,
     tax_status_id INT,
     owner_type_id INT,
@@ -244,6 +255,19 @@ CREATE TABLE Files_Owners_audit (
     last_updated_user INT
 );
 
+--Tabla de auditoría para DniTypes
+CREATE TABLE DniTypes_audit (
+version_id INT PRIMARY KEY AUTO_INCREMENT,
+id,
+version INT,
+description VARCHAR(255),
+created_datetime DATETIME,
+created_user INT,
+last_updated_datetime DATETIME,
+last_updated_user INT
+);
+
+
 -- Tabla de auditoría para TaxStatus
 CREATE TABLE TaxStatus_audit (
     version_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -280,6 +304,33 @@ BEGIN
     VALUES 
     (NEW.id, 1, NEW.description, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
 END$$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER trg_dnitypes_insert 
+AFTER INSERT ON DniTypes_audit
+FOR EACH ROW 
+BEGIN
+    INSERT INTO DniTypes_audit 
+    (id, version, description, created_datetime, created_user, last_updated_datetime, last_updated_user)
+    VALUES 
+    (NEW.id, 1, NEW.description, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
+END$$
+
+-- Trigger para actualizar en la auditoría de dni_type
+CREATE TRIGGER trg_dni_type_update
+    AFTER UPDATE ON dni_type
+    FOR EACH ROW
+BEGIN
+    DECLARE latest_version INT;
+    SELECT MAX(version) INTO latest_version FROM dni_type_audit WHERE id = NEW.id;
+    SET latest_version = IFNULL(latest_version, 0) + 1;
+
+    INSERT INTO dni_type_audit (id, version, description, created_datetime, last_updated_datetime, created_user, last_updated_user)
+    VALUES (NEW.id, latest_version, NEW.description, NEW.created_datetime, NEW.last_updated_datetime, NEW.created_user, NEW.last_updated_user);
+END $$
 
 DELIMITER ;
 
@@ -475,7 +526,17 @@ INSERT INTO PlotStates (name)
 VALUES ('Disponible'),('Habitado'),('En construcción');
 
 INSERT INTO PlotTypes (name)
-VALUES ('Comercial'),('Residencial'),('Baldío')
+VALUES ('Comercial'),('Residencial'),('Baldío');
+
+-- Insertar tipos de DNI
+INSERT INTO dni_type (description, created_datetime, last_updated_datetime, created_user, last_updated_user)
+VALUES
+    ('DNI', NOW(), NOW(), 1, 1),
+    ('Pasaporte', NOW(), NOW(), 1, 1);
+    ('CUIT/CUIL', NOW(), NOW(), 1, 1);
+
+
+
 
 
 
