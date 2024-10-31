@@ -6,12 +6,16 @@ import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.UserPost;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 /**
  * Servicio que se encarga de realizar las peticiones REST a la API de usuarios.
@@ -105,16 +109,47 @@ public class RestUser {
      *
      * @param userId identificador del usuario a dar de baja.
      * @param userIdUpdate identificador del usuario que realiza la baja.
-     * @throws ResponseStatusException si hubo un error en la petición.
+     * @throws ResponseStatusException si hubo un error en la petición o no se encuentra
+     * el usuario tipo propietario.
      */
     public void deleteUser(Integer userId, Integer userIdUpdate) {
-        try{
-            restTemplate.delete(url + "/delete/" + userId + "/" + userIdUpdate);
-        }catch (HttpClientErrorException e) {
+        ResponseEntity<List<GetUserDto>> response = restTemplate.exchange(
+                url + "/byOwner/" + userId,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<GetUserDto>>() { }
+        );
+
+        List<GetUserDto> users = response.getBody();
+        GetUserDto ownerUser = null;
+
+        if (users != null) {
+            for (GetUserDto user : users) {
+                if (user.getRoles() != null) {
+                    for (String role : user.getRoles()) {
+                        if (role.equals("Propietario")) {
+                            ownerUser = user;
+                            break;
+                        }
+                    }
+                    if (ownerUser != null) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (ownerUser == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with role 'Propietario' not found.");
+        }
+
+        try {
+            restTemplate.delete(url + "/delete/" + ownerUser.getId() + "/" + userIdUpdate);
+        } catch (HttpClientErrorException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getMessage());
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Server error while creating the user" + e.getMessage());
+                    "Server error while deleting the user: " + e.getMessage());
         }
     }
 }

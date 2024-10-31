@@ -57,6 +57,11 @@ public class OwnerServiceImpl implements OwnerService {
     private final PlotOwnerRepository plotOwnerRepository;
 
     /**
+     * Repositorio para manejar PlotState entities.
+     */
+    private final PlotStateRepository plotStateRepository;
+
+    /**
      * Mapper para mapear entidades a DTOs.
      */
     private final ModelMapper modelMapper;
@@ -156,11 +161,22 @@ public class OwnerServiceImpl implements OwnerService {
      */
     public void assignPlots(OwnerEntity owner, PostOwnerDto postOwnerDto) {
         for (Integer plotId : postOwnerDto.getPlotId()) {
-            if (plotRepository.findById(plotId).isEmpty()) {
-                throw new EntityNotFoundException("Plot not found with id: " + plotId);
-            }
-            createPlotOwnerEntity(owner, postOwnerDto, plotId);
+            PlotOwnerEntity plotOwnerEntity = mapPlotOwnerEntity(owner, postOwnerDto, plotId);
+            validatePlot(plotOwnerEntity); //Valida que no exista relacion existente actual con otro Propieatrio
+            plotOwnerRepository.save(plotOwnerEntity);
+            changePlotState(plotId, postOwnerDto);
         }
+    }
+
+    private void changePlotState(Integer plotId, PostOwnerDto postOwnerDto) {
+        //Cambiamos el estado a "Habitado"
+        PlotEntity updatePlot = plotRepository.findById(plotId)
+                .orElseThrow(() -> new EntityNotFoundException("Plot not found"));
+
+        updatePlot.setPlotState(plotStateRepository.findById(2).orElseThrow(() -> new EntityNotFoundException("Plot State not found")));
+        updatePlot.setLastUpdatedUser(postOwnerDto.getUserCreateId());
+        updatePlot.setLastUpdatedDatetime(LocalDateTime.now());
+        plotRepository.save(updatePlot);
     }
 
     /**
@@ -174,6 +190,25 @@ public class OwnerServiceImpl implements OwnerService {
         dto.setOwnerType(owner.getOwnerType().getDescription());
         dto.setTaxStatus(owner.getTaxStatus().getDescription());
         return dto;
+    }
+
+    /**
+     * Valida si el lote no existe y si ya tiene un propieatrio asignado.
+     *
+     * @param plotOwner entidad de PlotOwner.
+     * @throws EntityNotFoundException si no se encuentra un lote con esa id.
+     * @throws IllegalArgumentException si ya existe un propietario activo que tenga ese lote.
+     */
+    public void validatePlot(PlotOwnerEntity plotOwner) {
+        if (!plotRepository.existsById(plotOwner.getPlot().getId())) {
+            throw new EntityNotFoundException("Plot not found with id: " + plotOwner.getPlot().getId());
+        }
+
+        if (!plotOwnerRepository.findByPlotId(plotOwner.getPlot().getId()).isEmpty()) {
+            if (ownerRepository.existsByIdAndActive(plotOwner.getOwner().getId(), true)) {
+                throw new IllegalArgumentException("Plot already has an active owner.");
+            }
+        }
     }
 
     /**
@@ -238,19 +273,19 @@ public class OwnerServiceImpl implements OwnerService {
      *
      * @param ownerEntity  la entidad del propietario.
      * @param postOwnerDto el DTO con la información del propietario.
-     * @param plotId el id del lote.
+     * @param plotId el id del lote a asignar.
+     * @return la entidad creada.
      */
-    public void createPlotOwnerEntity(OwnerEntity ownerEntity, PostOwnerDto postOwnerDto, Integer plotId) {
+    public PlotOwnerEntity mapPlotOwnerEntity(OwnerEntity ownerEntity, PostOwnerDto postOwnerDto, Integer plotId) {
         PlotOwnerEntity plotOwnerEntity = new PlotOwnerEntity();
         plotOwnerEntity.setOwner(ownerEntity);
-        PlotEntity plotEntity = new PlotEntity();
-        plotEntity.setId(plotId);
+        PlotEntity plotEntity = plotRepository.findById(plotId).orElseThrow(() -> new EntityNotFoundException("Plot not found"));
         plotOwnerEntity.setPlot(plotEntity);
         plotOwnerEntity.setCreatedUser(postOwnerDto.getUserCreateId());
         plotOwnerEntity.setCreatedDatetime(LocalDateTime.now());
         plotOwnerEntity.setLastUpdatedUser(postOwnerDto.getUserCreateId());
         plotOwnerEntity.setLastUpdatedDatetime(LocalDateTime.now());
-        plotOwnerRepository.save(plotOwnerEntity);
+        return plotOwnerEntity;
     }
 
     /**

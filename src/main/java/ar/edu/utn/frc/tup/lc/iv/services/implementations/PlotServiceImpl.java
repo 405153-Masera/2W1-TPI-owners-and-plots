@@ -307,7 +307,7 @@ public class PlotServiceImpl implements PlotService {
         plotEntity.setCreatedDatetime(LocalDateTime.now());
         plotEntity.setLastUpdatedDatetime(LocalDateTime.now());
         plotEntity.setCreatedUser(postPlotDto.getUserCreateId());
-        plotEntity.setLastUpdatedUser(plotEntity.getLastUpdatedUser());
+        plotEntity.setLastUpdatedUser(postPlotDto.getUserCreateId());
     }
 
     /**

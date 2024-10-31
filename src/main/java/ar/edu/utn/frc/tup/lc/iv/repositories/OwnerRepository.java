@@ -30,4 +30,13 @@ public interface OwnerRepository extends JpaRepository<OwnerEntity, Integer> {
      */
     @Query("SELECT o FROM OwnerEntity o WHERE o.active = true")
     List<OwnerEntity> findAllActives();
+
+    /**
+     * Busca un propietario por su id y estado.
+     *
+     * @param id     el identificador de un propietario.
+     * @param active el estado a buscar.
+     * @return true si existe, false en caso contrario.
+     */
+    boolean existsByIdAndActive(Integer id, Boolean active);
 }
