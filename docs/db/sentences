@@ -517,16 +517,30 @@ DELIMITER ;
 
 
 INSERT INTO TaxStatus (description)
-VALUES ('IVA Responsable inscripto'),('IVA Responsable no inscripto'),('IVA no Responsable'),('IVA Sujeto Exento'),('Monotributista');
+VALUES 
+('IVA Responsable inscripto', NOW(), NOW(), 1, 1),
+('IVA Responsable no inscripto', NOW(), NOW(), 1, 1),
+('IVA no Responsable', NOW(), NOW(), 1, 1),
+('IVA Sujeto Exento', NOW(), NOW(), 1, 1),
+('Monotributista', NOW(), NOW(), 1, 1);
 
 INSERT INTO OwnersTypes (description)
-VALUES ('Persona Física'), ('Persona Jurídica'),('Otro');
+VALUES 
+('Persona Física' , NOW(), NOW(), 1, 1), 
+('Persona Jurídica', NOW(), NOW(), 1, 1),
+('Otro', NOW(), NOW(), 1, 1);
 
 INSERT INTO PlotStates (name)
-VALUES ('Disponible'),('Habitado'),('En construcción');
+VALUES 
+('Disponible', NOW(), NOW(), 1, 1),
+('Habitado', NOW(), NOW(), 1, 1),
+('En construcción', NOW(), NOW(), 1, 1);
 
 INSERT INTO PlotTypes (name)
-VALUES ('Comercial'),('Residencial'),('Baldío');
+VALUES 
+('Comercial', NOW(), NOW(), 1, 1),
+('Residencial', NOW(), NOW(), 1, 1),
+('Baldío', NOW(), NOW(), 1, 1);
 
 -- Insertar tipos de DNI
 INSERT INTO dni_types (description, created_datetime, last_updated_datetime, created_user, last_updated_user)
