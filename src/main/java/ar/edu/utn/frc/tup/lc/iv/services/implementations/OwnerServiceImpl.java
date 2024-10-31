@@ -47,6 +47,11 @@ public class OwnerServiceImpl implements OwnerService {
     private final TaxStatusRepository taxStatusRepository;
 
     /**
+     * Repositorio para manejar DniTypes entities.
+     */
+    private final DniTypeRepository dniTypeRepository;
+
+    /**
      * Repositorio para manejar OwnerType entities.
      */
     private final OwnerTypeRepository ownerTypeRepository;
@@ -330,7 +335,8 @@ public class OwnerServiceImpl implements OwnerService {
         owner.setName(dto.getName());
         owner.setLastname(dto.getLastname());
         owner.setDni(dto.getDni());
-        owner.setCuitCuil(dto.getCuitCuil());
+        owner.setDni_type_id(dniTypeRepository.findById(dto.getDni_type_id())
+                .orElseThrow(() -> new EntityNotFoundException("Dni type not found")));
         owner.setDateBirth(dto.getDateBirth());
         owner.setOwnerType(findOwnerType(dto.getOwnerTypeId()));
         owner.setTaxStatus(findTaxStatus(dto.getTaxStatusId()));
@@ -367,7 +373,8 @@ public class OwnerServiceImpl implements OwnerService {
         ownerEntity.setName(postOwnerDto.getName());
         ownerEntity.setLastname(postOwnerDto.getLastname());
         ownerEntity.setDni(postOwnerDto.getDni());
-        ownerEntity.setCuitCuil(postOwnerDto.getCuitCuil());
+        ownerEntity.setDni_type_id(dniTypeRepository.findById(postOwnerDto.getDni_type_id())
+                .orElseThrow(() -> new EntityNotFoundException("DniType not found with id: " + postOwnerDto.getDni_type_id())));
         ownerEntity.setDateBirth(postOwnerDto.getDateBirth());
         ownerEntity.setBusinessName(postOwnerDto.getBusinessName());
         ownerEntity.setActive(postOwnerDto.getActive());
@@ -390,7 +397,7 @@ public class OwnerServiceImpl implements OwnerService {
         getOwnerDto.setName(ownerEntity.getName());
         getOwnerDto.setLastname(ownerEntity.getLastname());
         getOwnerDto.setDni(ownerEntity.getDni());
-        getOwnerDto.setCuitCuil(ownerEntity.getCuitCuil());
+        getOwnerDto.setDni_type(ownerEntity.getDni_type_id().getDescription());
         getOwnerDto.setDateBirth(ownerEntity.getDateBirth());
         getOwnerDto.setOwnerType(ownerEntity.getOwnerType().getDescription());
         getOwnerDto.setTaxStatus(ownerEntity.getTaxStatus().getDescription());
@@ -590,7 +597,7 @@ public class OwnerServiceImpl implements OwnerService {
         ownerDto.setName(ownerEntity.getName());
         ownerDto.setLastname(ownerEntity.getLastname());
         ownerDto.setDni(ownerEntity.getDni());
-        ownerDto.setCuitCuil(ownerEntity.getCuitCuil());
+        ownerDto.setDni_type(ownerEntity.getDni_type_id().getDescription());
         ownerDto.setDateBirth(ownerEntity.getDateBirth());
         ownerDto.setOwnerType(ownerEntity.getOwnerType().getDescription());
         ownerDto.setBusinessName(ownerEntity.getBusinessName());

@@ -1,6 +1,7 @@
 package ar.edu.utn.frc.tup.lc.iv.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -46,10 +47,11 @@ public class OwnerEntity {
     private String dni;
 
     /**
-     * Número de CUIT/CUIL del propietario.
+     * Identificador de tipo de dni del usuario.
      */
-    @Column(name = "cuit_cuil")
-    private String cuitCuil;
+    @ManyToOne
+    @JoinColumn(name = "dni_type_id")
+    private DniTypeEntity dni_type_id;
 
     /**
      * Fecha de nacimiento del propietario.

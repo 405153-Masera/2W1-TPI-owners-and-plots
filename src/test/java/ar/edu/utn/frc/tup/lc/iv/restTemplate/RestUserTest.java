@@ -47,7 +47,6 @@ class RestUserTest {
         postOwnerDto.setEmail("email@example.com");
         postOwnerDto.setPhoneNumber("123456789");
         postOwnerDto.setDni("12345678");
-        postOwnerDto.setCuitCuil("20123456789");
         postOwnerDto.setDateBirth(LocalDate.of(1990, 1, 1));
         postOwnerDto.setOwnerTypeId(1);
         postOwnerDto.setTaxStatusId(1);

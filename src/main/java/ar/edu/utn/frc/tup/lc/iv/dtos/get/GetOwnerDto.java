@@ -1,6 +1,7 @@
 package ar.edu.utn.frc.tup.lc.iv.dtos.get;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,14 +34,14 @@ public class GetOwnerDto {
     private String lastname;
 
     /**
+     * Tipo de DNI del propietario.
+     */
+    private String dni_type;
+
+    /**
      * DNI del propietario.
      */
     private String dni;
-
-    /**
-     * CUIT/CUIL del propietario.
-     */
-    private String cuitCuil;
 
     /**
      * Fecha de nacimiento del propietario.

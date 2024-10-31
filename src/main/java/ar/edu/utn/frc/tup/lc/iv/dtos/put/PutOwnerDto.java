@@ -33,6 +33,12 @@ public class PutOwnerDto {
     private String lastname;
 
     /**
+     * Tipo de DNI del propietario.
+     */
+    @NotNull(message = "El tipo de DNI no puede ser nulo")
+    private Integer dni_type_id;
+
+    /**
      * DNI del propietario.
      */
     @NotBlank(message = "El DNI no puede estar vacío")
