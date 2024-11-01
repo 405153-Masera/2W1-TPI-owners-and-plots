@@ -15,6 +15,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -53,25 +55,8 @@ public class RestUser {
      */
     public boolean createUser(PostOwnerDto postOwnerDto) {
 
-        UserPost userPost = new UserPost();
-        userPost.setName(postOwnerDto.getName());
-        userPost.setLastname(postOwnerDto.getLastname());
-        userPost.setUsername(postOwnerDto.getUsername());
-        userPost.setPassword(postOwnerDto.getPassword());
-        userPost.setEmail(postOwnerDto.getEmail());
-        userPost.setPhone_number(postOwnerDto.getPhoneNumber());
-        userPost.setDni(postOwnerDto.getDni());
-        userPost.setActive(true);
-        userPost.setAvatar_url(postOwnerDto.getAvatarUrl());
-        userPost.setRoles(postOwnerDto.getRoles());
-        userPost.setDatebirth(postOwnerDto.getDateBirth());
-        userPost.setUserUpdateId(postOwnerDto.getUserCreateId());
-        userPost.setPlot_id(postOwnerDto.getPlotId());
-        userPost.setTelegram_id(postOwnerDto.getTelegramId());
-        userPost.setDni_type_id(postOwnerDto.getDni_type_id());
-
+      UserPost userPost = mapToUserPost(postOwnerDto);
         try {
-
             ResponseEntity<Void> response = restTemplate.postForEntity(url + "/post/owner", userPost, Void.class);
             return response.getStatusCode().is2xxSuccessful();
 
@@ -113,43 +98,55 @@ public class RestUser {
      * el usuario tipo propietario.
      */
     public void deleteUser(Integer userId, Integer userIdUpdate) {
+      GetUserDto ownerUser = findOwnerUser(userId);
+
+       if(ownerUser == null){
+           throw new ResponseStatusException(HttpStatus.NOT_FOUND,"User with role 'Propietario' not found");
+       }
+       try{
+           restTemplate.delete(url + "/delete/" + ownerUser.getId() + "/" + userIdUpdate);
+       }catch (HttpClientErrorException e){
+           throw new ResponseStatusException(e.getStatusCode(),e.getMessage());
+       } catch (Exception e) {
+           throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                   "Server error while deleting the user :" + e.getMessage());
+       }
+    }
+
+    private UserPost mapToUserPost(PostOwnerDto postOwnerDto) {
+        UserPost userPost = new UserPost();
+        userPost.setName(postOwnerDto.getName());
+        userPost.setLastname(postOwnerDto.getLastname());
+        userPost.setUsername(postOwnerDto.getUsername());
+        userPost.setPassword(postOwnerDto.getPassword());
+        userPost.setEmail(postOwnerDto.getEmail());
+        userPost.setPhone_number(postOwnerDto.getPhoneNumber());
+        userPost.setDni(postOwnerDto.getDni());
+        userPost.setActive(true);
+        userPost.setAvatar_url(postOwnerDto.getAvatarUrl());
+        userPost.setRoles(postOwnerDto.getRoles());
+        userPost.setDatebirth(postOwnerDto.getDateBirth());
+        userPost.setUserUpdateId(postOwnerDto.getUserCreateId());
+        userPost.setPlot_id(postOwnerDto.getPlotId());
+        userPost.setTelegram_id(postOwnerDto.getTelegramId());
+        userPost.setDni_type_id(postOwnerDto.getDni_type_id());
+        return userPost;
+    }
+    private GetUserDto findOwnerUser(Integer userId) {
+        String endpoint = String.format("%s/byOwner/%d", url, userId);
         ResponseEntity<List<GetUserDto>> response = restTemplate.exchange(
-                url + "/byOwner/" + userId,
+                endpoint,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<GetUserDto>>() { }
+                new ParameterizedTypeReference<List<GetUserDto>>() {}
         );
-
         List<GetUserDto> users = response.getBody();
-        GetUserDto ownerUser = null;
-
-        if (users != null) {
-            for (GetUserDto user : users) {
-                if (user.getRoles() != null) {
-                    for (String role : user.getRoles()) {
-                        if (role.equals("Propietario")) {
-                            ownerUser = user;
-                            break;
-                        }
-                    }
-                    if (ownerUser != null) {
-                        break;
-                    }
-                }
-            }
+        if (users == null || users.isEmpty()) {
+            return null;
         }
-
-        if (ownerUser == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with role 'Propietario' not found.");
-        }
-
-        try {
-            restTemplate.delete(url + "/delete/" + ownerUser.getId() + "/" + userIdUpdate);
-        } catch (HttpClientErrorException e) {
-            throw new ResponseStatusException(e.getStatusCode(), e.getMessage());
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Server error while deleting the user: " + e.getMessage());
-        }
+        return users.stream()
+                .filter(user -> user.getRoles() != null && Arrays.asList(user.getRoles()).contains("Propietario"))
+                .findFirst()
+                .orElse(null);
     }
 }

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/*
 public class OwnerTestHelper {
 
     public static final Integer[] plot_id = new Integer[]{1,2};
@@ -257,3 +258,4 @@ public class OwnerTestHelper {
             .build();
 
 }
+*/

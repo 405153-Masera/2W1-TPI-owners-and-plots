@@ -464,37 +464,10 @@ public class OwnerServiceImpl implements OwnerService {
      */
     @Override
     public List<GetOwnerAndPlot> getOwersAndPlots() {
-        List<OwnerEntity> ownerEntities = ownerRepository.findAllActives();
-        List<GetOwnerAndPlot> ownerAndPlots = new ArrayList<>();
-        for (OwnerEntity ownerEntity : ownerEntities) {
-            GetOwnerAndPlot getOwnerAndPlot = new GetOwnerAndPlot();
-
-            List<PlotOwnerEntity> plotOwnerEntity = plotOwnerRepository.findByOwnerId(ownerEntity.getId());
-
-            List<PlotEntity> plotEntities = new ArrayList<>();
-            List<GetPlotDto> getPlotDtos = new ArrayList<>();
-
-            for (PlotOwnerEntity plotOwner : plotOwnerEntity) {
-                PlotEntity plotEntity = plotRepository.findById(plotOwner.getPlot().getId()).orElse(null);
-                GetPlotDto getPlotDto = new GetPlotDto();
-                plotService.mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
-                getPlotDtos.add(getPlotDto);
-            }
-
-            if (plotEntities == null) {
-                throw new RuntimeException();
-            }
-            OwnerDto ownerDto = mapOwnerEntityToOwnerDto(ownerEntity);
-
-            GetUserDto getUserDto = restUser.getUser(getPlotDtos.get(0).getId());
-
-            getOwnerAndPlot.setOwner(ownerDto);
-            getOwnerAndPlot.setPlot(getPlotDtos);
-            getOwnerAndPlot.setUser(getUserDto);
-
-            ownerAndPlots.add(getOwnerAndPlot);
-        }
-        return ownerAndPlots;
+        return ownerRepository.findAllActives()
+                .stream()
+                .map(this::buildGetOwnerAndPlot)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -505,38 +478,9 @@ public class OwnerServiceImpl implements OwnerService {
      */
     @Override
     public GetOwnerAndPlot getOwnerAndPlotById(Integer ownerId) {
-        OwnerEntity ownerEntity = ownerRepository.findById(ownerId).orElse(null);
-
-        if (ownerEntity == null) {
-            return null;
-        }
-
-        GetOwnerAndPlot getOwnerAndPlot = new GetOwnerAndPlot();
-
-        List<PlotOwnerEntity> plotOwnerEntity = plotOwnerRepository.findByOwnerId(ownerEntity.getId());
-
-        List<PlotEntity> plotEntities = new ArrayList<>();
-        List<GetPlotDto> getPlotDtos = new ArrayList<>();
-
-        for (PlotOwnerEntity plotOwner : plotOwnerEntity) {
-            PlotEntity plotEntity = plotRepository.findById(plotOwner.getPlot().getId()).orElse(null);
-            GetPlotDto getPlotDto = new GetPlotDto();
-            plotService.mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
-            getPlotDtos.add(getPlotDto);
-        }
-
-        if (plotEntities == null) {
-            throw new RuntimeException();
-        }
-        OwnerDto ownerDto = mapOwnerEntityToOwnerDto(ownerEntity);
-
-        GetUserDto getUserDto = restUser.getUser(getPlotDtos.get(0).getId());
-
-        getOwnerAndPlot.setOwner(ownerDto);
-        getOwnerAndPlot.setPlot(getPlotDtos);
-        getOwnerAndPlot.setUser(getUserDto);
-
-        return getOwnerAndPlot;
+        return ownerRepository.findById(ownerId)
+                .map(this::buildGetOwnerAndPlot)
+                .orElse(null);
     }
 
 
@@ -606,4 +550,36 @@ public class OwnerServiceImpl implements OwnerService {
         ownerDto.setTaxStatus(ownerEntity.getTaxStatus().getDescription());
         return ownerDto;
     }
+
+    private List<GetPlotDto> mapPlotOwnersToGetPlotDtos(List<PlotOwnerEntity> plotOwnerEntities) {
+        return plotOwnerEntities.stream()
+                .map(plotOwner -> {
+                    PlotEntity plotEntity = plotRepository.findById(plotOwner.getPlot().getId()).orElse(null);
+                    if (plotEntity == null) {
+                        throw new EntityNotFoundException("Plot not found for PlotOwner");
+                    }
+                    GetPlotDto getPlotDto = new GetPlotDto();
+                    plotService.mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
+                    return getPlotDto;
+                })
+                .collect(Collectors.toList());
+    }
+
+    private GetOwnerAndPlot buildGetOwnerAndPlot(OwnerEntity ownerEntity) {
+        GetOwnerAndPlot getOwnerAndPlot = new GetOwnerAndPlot();
+        List<GetPlotDto> getPlotDtos = mapPlotOwnersToGetPlotDtos(plotOwnerRepository.findByOwnerId(ownerEntity.getId()));
+
+        OwnerDto ownerDto = mapOwnerEntityToOwnerDto(ownerEntity);
+        GetUserDto getUserDto = restUser.getUser(getPlotDtos.isEmpty() ? null : getPlotDtos.get(0).getId());
+
+        getOwnerAndPlot.setOwner(ownerDto);
+        getOwnerAndPlot.setPlot(getPlotDtos);
+        getOwnerAndPlot.setUser(getUserDto);
+
+        return getOwnerAndPlot;
+    }
+
+
+
+
 }
