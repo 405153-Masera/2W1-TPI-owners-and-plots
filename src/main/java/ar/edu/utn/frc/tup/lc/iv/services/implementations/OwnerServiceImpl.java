@@ -165,11 +165,12 @@ public class OwnerServiceImpl implements OwnerService {
      * @throws EntityNotFoundException si no se encuentra el lote.
      */
     public void assignPlots(OwnerEntity owner, PostOwnerDto postOwnerDto) {
-        for (Integer plotId : postOwnerDto.getPlotId()) {
-            PlotOwnerEntity plotOwnerEntity = mapPlotOwnerEntity(owner, postOwnerDto, plotId);
-            validatePlot(plotOwnerEntity); //Valida que no exista relacion existente actual con otro Propieatrio
+        Integer[] plots = postOwnerDto.getPlotId();
+        for (Integer plot : plots) {
+            PlotOwnerEntity plotOwnerEntity = mapPlotOwnerEntity(owner,postOwnerDto,plot);
+            validatePlot(plotOwnerEntity);
             plotOwnerRepository.save(plotOwnerEntity);
-            changePlotState(plotId, postOwnerDto);
+            changePlotState(plot, postOwnerDto);
         }
     }
 
