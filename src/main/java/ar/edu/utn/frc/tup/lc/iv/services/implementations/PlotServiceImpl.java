@@ -5,11 +5,8 @@ import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotStateDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotTypeDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutPlotDto;
-import ar.edu.utn.frc.tup.lc.iv.entities.FileEntity;
-import ar.edu.utn.frc.tup.lc.iv.entities.FilePlotEntity;
-import ar.edu.utn.frc.tup.lc.iv.entities.PlotEntity;
-import ar.edu.utn.frc.tup.lc.iv.entities.PlotTypeEntity;
-import ar.edu.utn.frc.tup.lc.iv.entities.PlotStateEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.*;
+import ar.edu.utn.frc.tup.lc.iv.repositories.PlotOwnerRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotStateRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotTypeRepository;
@@ -66,6 +63,7 @@ public class PlotServiceImpl implements PlotService {
      * Servicio para mapear entidades a dtos y viceversa.
      */
     private final ModelMapper modelMapper;
+    private final PlotOwnerRepository plotOwnerRepository;
 
     /**
      * Crea un nuevo lote.
@@ -292,6 +290,21 @@ public class PlotServiceImpl implements PlotService {
         mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
         getPlotDto.setFiles(fileService.getPlotFiles(plotEntity.getId()));
         return getPlotDto;
+    }
+
+    @Override
+    public List<GetPlotDto> getPlotByOwnerId(Integer ownerdId) {
+        List<GetPlotDto> plotDtos = new ArrayList<>();
+        List<PlotOwnerEntity> plotOwnerEntity = plotOwnerRepository.findByOwnerId(ownerdId);
+        for (PlotOwnerEntity plotOwner : plotOwnerEntity) {
+            GetPlotDto getPlotDto = new GetPlotDto();
+            PlotEntity plotEntity = plotRepository.findById(plotOwner.getPlot().getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Plot not found"));
+            mapPlotEntityToGetPlotDto(plotEntity, getPlotDto);
+            plotDtos.add(getPlotDto);
+        }
+        return plotDtos;
+
     }
 
     /**

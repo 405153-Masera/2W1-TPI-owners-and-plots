@@ -106,4 +106,15 @@ public class PlotController {
         return ResponseEntity.ok(plotService.getPlotById(plotId));
 
     }
+
+    /**
+     * Obtiene una lista de lotes por id de propieatrio.
+     *
+     * @param ownerId id del propietario asignado al lote.
+     * @return una lista de lotes.
+     */
+    @GetMapping("/{ownerId}/owner")
+    public ResponseEntity<List<GetPlotDto>> getPlotByOwnerId(@PathVariable Integer ownerId) {
+        return ResponseEntity.ok(plotService.getPlotByOwnerId(ownerId));
+    }
 }

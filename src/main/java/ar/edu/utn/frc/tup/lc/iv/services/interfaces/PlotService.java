@@ -61,6 +61,14 @@ public interface PlotService {
     GetPlotDto getPlotById(Integer plotId);
 
     /**
+     * Obtiene un lote por id de Owner.
+     *
+     * @param ownerdId id del propietario para buscar el lote.
+     * @return los lotes encontrados.
+     */
+    List<GetPlotDto> getPlotByOwnerId(Integer ownerdId);
+
+    /**
      * Actualiza un lote.
      *
      * @param putPlotDto datos del lote a actualizar.
