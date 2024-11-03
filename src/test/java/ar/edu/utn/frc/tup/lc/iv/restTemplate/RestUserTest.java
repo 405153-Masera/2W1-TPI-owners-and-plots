@@ -4,8 +4,10 @@ import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.GetUserDto;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.UserPost;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -152,7 +154,8 @@ class RestUserTest {
         ResponseEntity<GetUserDto> mockResponse = new ResponseEntity<>(mockUserDto, HttpStatus.OK);
 
         // When
-        when(restTemplate.getForEntity("http://localhost:8080/users/plot/" + plotId, GetUserDto.class))
+        // Cambia la URL aquí para que coincida con la URL del método real
+        when(restTemplate.getForEntity("http://localhost:9060/users/get/owner/" + plotId, GetUserDto.class))
                 .thenReturn(mockResponse);
 
         // Then
@@ -160,24 +163,26 @@ class RestUserTest {
         assertNotNull(response, "The user should be returned");
         assertEquals("user1", response.getName());
         assertEquals("lastname1", response.getLastname());
-        verify(restTemplate, times(1)).getForEntity("http://localhost:8080/users/plot/" + plotId, GetUserDto.class);
+        verify(restTemplate, times(1)).getForEntity("http://localhost:9060/users/get/owner/" + plotId, GetUserDto.class);
     }
 
     @Test
     void getUser_UserNotFound() {
-        // Given
-        Integer plotId = 12;
+        // Arrange
+        Integer plotId = 1;
 
-        // Mock response: Simula que el usuario no fue encontrado
-        when(restTemplate.getForEntity("http://localhost:8080/users/plot/" + plotId, GetUserDto.class))
-                .thenThrow(new EntityNotFoundException("User not found"));
+        // Simulamos que el RestTemplate devuelve una respuesta con un código 404
+        ResponseEntity<GetUserDto> responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        Mockito.when(restTemplate.getForEntity(Mockito.anyString(), Mockito.eq(GetUserDto.class)))
+                .thenReturn(responseEntity);
 
-        // Then
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
+        // Act & Assert
+        EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () -> {
             restUser.getUser(plotId);
         });
-        assertEquals("User not found", exception.getMessage());
-        verify(restTemplate, times(1)).getForEntity("http://localhost:8080/users/plot/" + plotId, GetUserDto.class);
+
+        // Verificamos que la excepción lanzada tiene el mensaje correcto
+        Assertions.assertEquals("No se encontró el usuario", exception.getMessage());
     }
 
 
@@ -187,35 +192,45 @@ class RestUserTest {
         // Given
         Integer userId = 1;
         Integer userIdUpdate = 2;
+        GetUserDto ownerUser = new GetUserDto();
+        ownerUser.setId(userId);
+        ownerUser.setRoles(new String[]{"Propietario"});
+
+        // Simulamos que findOwnerUser retorna un usuario propietario
+        Mockito.doReturn(ownerUser).when(restUser).findOwnerUser(userId);
+
+        // Simulamos que el método delete no lanza excepciones
+        doNothing().when(restTemplate).delete(Mockito.anyString());
 
         // When
-        doNothing().when(restTemplate).delete("http://localhost:8080/users/" + userId + "/" + userIdUpdate);
+        restUser.deleteUser(userId, userIdUpdate);
 
         // Then
-        restUser.deleteUser(userId, userIdUpdate);
-        verify(restTemplate, times(1)).delete("http://localhost:8080/users/" + userId + "/" + userIdUpdate);
+        verify(restTemplate, times(1)).delete("http://localhost:9060/users/delete/" + userId + "/" + userIdUpdate);
     }
 
     @Test
     void deleteUser_ServerError() {
-        // Given
+        // Arrange
         Integer userId = 1;
         Integer userIdUpdate = 2;
+        GetUserDto ownerUser = new GetUserDto();
+        ownerUser.setId(1);
+        ownerUser.setRoles(new String[]{"Propietario"});
 
-        // Mock response: Simula que el usuario no fue encontrado
-        doThrow(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR))
-                .when(restTemplate).delete("http://localhost:8080/users/" + userId + "/" + userIdUpdate);
+        // Simulamos que el método findOwnerUser retorna un usuario propietario
+        Mockito.doReturn(ownerUser).when(restUser).findOwnerUser(userId);
 
-        // Then
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
+        // Simulamos que el RestTemplate lanza una excepción al intentar eliminar
+        Mockito.doThrow(new RuntimeException("Simulated server error"))
+                .when(restTemplate).delete(Mockito.anyString());
+
+        // Act & Assert
+        ResponseStatusException exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
             restUser.deleteUser(userId, userIdUpdate);
         });
 
-        // Comprobamos que el código de estado sea 404
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getStatusCode());
-
-        // Verificamos que se haya llamado al método delete una vez con los parámetros correctos
-        verify(restTemplate, times(1)).delete("http://localhost:8080/users/" + userId + "/" + userIdUpdate);
+        Assertions.assertEquals("Server error while deleting the user :Simulated server error", exception.getReason());
     }
 
 }

@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
-/*
+
 @SpringBootTest
 class OwnerServiceImplTest {
 
@@ -53,13 +54,77 @@ class OwnerServiceImplTest {
     @SpyBean
     private OwnerService ownerServiceSpy;
 
+    @MockBean
+    private DniTypeRepository dniTypeRepositoryMock;
+
     @Test
     void updateOwner() {
+        // Arrange
+        Integer ownerId = 1;
+        PutOwnerDto putOwnerDto = new PutOwnerDto();
+        putOwnerDto.setName("Manu");
+        putOwnerDto.setLastname("Ginóbili");
+        putOwnerDto.setDni("45591511");
+        putOwnerDto.setDni_type_id(1);
+        putOwnerDto.setDateBirth(LocalDate.of(1977, 7, 28));
+        putOwnerDto.setBusinessName("Ginóbili Enterprises");
+        putOwnerDto.setOwnerTypeId(1);
+        putOwnerDto.setTaxStatusId(1);
+        putOwnerDto.setUserUpdateId(1);
+        putOwnerDto.setFiles(new ArrayList<>()); // Asumiendo que agregas archivos aquí
+
+        OwnerEntity ownerEntity = OwnerTestHelper.OWNER_ENTITY_1; // Utiliza un propietario de tu test helper
+        when(ownerRepositoryMock.findById(ownerId)).thenReturn(Optional.of(ownerEntity));
+        when(dniTypeRepositoryMock.findById(1)).thenReturn(Optional.of(OwnerTestHelper.DNI_TYPE_ENTITY_DNI));
+        when(ownerTypeRepositoryMock.findById(1)).thenReturn(Optional.ofNullable(OwnerTestHelper.OWNER_TYPE_FISICA));
+        when(taxStatusRepositoryMock.findById(1)).thenReturn(Optional.ofNullable(OwnerTestHelper.TAX_STATUS_RESPONSABLE_INSCRIPTO));
+        when(ownerRepositoryMock.save(any(OwnerEntity.class))).thenReturn(ownerEntity); // Simulamos la persistencia
+
+        // Act
+        GetOwnerDto result = ownerServiceSpy.updateOwner(ownerId, putOwnerDto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("Manu", result.getName());
+        assertEquals("Ginóbili", result.getLastname());
+        assertEquals("45591511", result.getDni());
+        assertEquals("DNI", result.getDni_type());
+        assertEquals(LocalDate.of(1977, 7, 28), result.getDateBirth());
+        assertEquals("Ginóbili Enterprises", result.getBusinessName());
+        verify(ownerRepositoryMock, times(2)).save(any(OwnerEntity.class));
     }
 
     @Test
     void updateOwner_TaxStatusEntityNotFoundException() {
-        
+        // Given
+        Integer ownerId = 1;
+        PutOwnerDto putOwnerDto = new PutOwnerDto();
+        putOwnerDto.setName("UpdatedName");
+        putOwnerDto.setLastname("UpdatedLastname");
+        putOwnerDto.setDni("12345678");
+        putOwnerDto.setDni_type_id(1);
+        putOwnerDto.setDateBirth(LocalDate.of(1990, 1, 1));
+        putOwnerDto.setOwnerTypeId(1);
+        putOwnerDto.setTaxStatusId(1); // Este es el ID que buscamos
+        putOwnerDto.setBusinessName("UpdatedBusinessName");
+        putOwnerDto.setUserUpdateId(1);
+        putOwnerDto.setFiles(new ArrayList<>());
+
+        OwnerEntity existingOwner = new OwnerEntity(); // Crea una instancia de OwnerEntity
+        existingOwner.setId(ownerId);
+        existingOwner.setName("OldName");
+        existingOwner.setLastname("OldLastname");
+        // Configura otros campos según sea necesario
+
+        // Simulamos que el owner existe
+        when(ownerRepositoryMock.findById(ownerId)).thenReturn(Optional.of(existingOwner));
+        // Simulamos que el TaxStatus no se encuentra
+        when(taxStatusRepositoryMock.findById(putOwnerDto.getTaxStatusId())).thenReturn(Optional.empty());
+
+        // When & Then
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
+            ownerServiceSpy.updateOwner(ownerId, putOwnerDto);
+        });
     }
 
     @Test
@@ -109,6 +174,7 @@ class OwnerServiceImplTest {
         ownerEntity.setId(12);
         ownerEntity.setName("Bruno");
         ownerEntity.setLastname("Diaz");
+        ownerEntity.setDni_type_id(OwnerTestHelper.DNI_TYPE_ENTITY_PASAPORTE);
         ownerEntity.setOwnerType(ownerTypeEntity);
         ownerEntity.setTaxStatus(taxStatusEntity);
         ownerEntity.setCreatedDatetime(LocalDateTime.now()); // Inicializa el campo aquí
@@ -197,6 +263,7 @@ class OwnerServiceImplTest {
         OwnerEntity ownerEntity = new OwnerEntity();
         ownerEntity.setId(1);
         ownerEntity.setName("Manolo");
+        ownerEntity.setDni_type_id(OwnerTestHelper.DNI_TYPE_ENTITY_PASAPORTE);
         ownerEntity.setTaxStatus(taxStatusEntity);
         ownerEntity.setOwnerType(ownerTypeEntity);
         ownerEntity.setCreatedDatetime(LocalDateTime.now()); // Inicializa el campo aquí
@@ -259,10 +326,11 @@ class OwnerServiceImplTest {
 
         when(plotRepositoryMock.findById(anyInt())).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(RuntimeException.class, () -> {
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             ownerServiceSpy.getOwersAndPlots();
         });
         assertNotNull(exception);
+        assertEquals("Plot not found for PlotOwner", exception.getMessage());
     }
 
     @Test
@@ -272,6 +340,7 @@ class OwnerServiceImplTest {
 
         OwnerEntity ownerEntity = new OwnerEntity();
         ownerEntity.setId(1);
+        ownerEntity.setDni_type_id(OwnerTestHelper.DNI_TYPE_ENTITY_PASAPORTE);
         ownerEntity.setName("Manolo");
         ownerEntity.setTaxStatus(taxStatusEntity);
         ownerEntity.setOwnerType(ownerTypeEntity);
@@ -375,5 +444,3 @@ class OwnerServiceImplTest {
         verify(restUserMock, times(0)).deleteUser(12, 1);
     }
 }
-
- */

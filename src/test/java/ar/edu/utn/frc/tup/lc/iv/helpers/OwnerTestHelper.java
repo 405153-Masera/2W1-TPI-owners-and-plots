@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/*
+
 public class OwnerTestHelper {
 
     public static final Integer[] plot_id = new Integer[]{1,2};
@@ -21,8 +21,8 @@ public class OwnerTestHelper {
             .id(2)
             .name("Manu")
             .lastname("Ginóbili")
+            .dni_type("DNI")
             .dni("45591511")
-            .cuitCuil("20-22334455-9")
             .dateBirth(LocalDate.of(1977, 7, 28))
             .businessName("Ginóbili Enterprises")
             .active(true)
@@ -103,13 +103,50 @@ public class OwnerTestHelper {
             .lastUpdatedUser(1)
             .build();
 
-    // Manu Ginóbili
+    public static DniTypeEntity DNI_TYPE_ENTITY_CUIT = DniTypeEntity.builder()
+            .id(2)
+            .description("CUIT")
+            .createdDatetime(LocalDateTime.now())
+            .createdUser(1)
+            .lastUpdatedDatetime(LocalDateTime.now())
+            .lastUpdatedUser(1)
+            .build();
+
+    public static final DniTypeEntity DNI_TYPE_ENTITY_DNI = DniTypeEntity.builder()
+            .id(1)
+            .description("DNI")
+            .createdDatetime(LocalDateTime.now())
+            .createdUser(1)
+            .lastUpdatedDatetime(LocalDateTime.now())
+            .lastUpdatedUser(1)
+            .build();
+
+
+
+    public static DniTypeEntity DNI_TYPE_ENTITY_CUIL = DniTypeEntity.builder()
+            .id(3)
+            .description("CUIL")
+            .createdDatetime(LocalDateTime.now())
+            .createdUser(1)
+            .lastUpdatedDatetime(LocalDateTime.now())
+            .lastUpdatedUser(1)
+            .build();
+
+    public static DniTypeEntity DNI_TYPE_ENTITY_PASAPORTE = DniTypeEntity.builder()
+            .id(4)
+            .description("Pasaporte")
+            .createdDatetime(LocalDateTime.now())
+            .createdUser(1)
+            .lastUpdatedDatetime(LocalDateTime.now())
+            .lastUpdatedUser(1)
+            .build();
+
     public static final OwnerEntity OWNER_ENTITY_1 = OwnerEntity.builder()
             .id(1)
             .name("Manu")
             .lastname("Ginóbili")
+            .dni_type_id(DniTypeEntity.builder().build())
             .dni("45591511")
-            .cuitCuil("20-22334455-9")
             .dateBirth(LocalDate.of(1977, 7, 28))
             .businessName("Ginóbili Enterprises")
             .active(true)
@@ -120,6 +157,7 @@ public class OwnerTestHelper {
             .ownerType(OWNER_TYPE_FISICA)
             .taxStatus(TAX_STATUS_RESPONSABLE_INSCRIPTO)
             .files(new ArrayList<>())
+            .dni_type_id(DNI_TYPE_ENTITY_CUIT)
             .build();
 
     // Fabricio Oberto
@@ -127,8 +165,8 @@ public class OwnerTestHelper {
             .id(2)
             .name("Fabricio")
             .lastname("Oberto")
+            .dni_type_id(DniTypeEntity.builder().build())
             .dni("45591512")
-            .cuitCuil("20-22334456-8")
             .dateBirth(LocalDate.of(1975, 3, 21))
             .businessName("Oberto Corp")
             .active(true)
@@ -138,6 +176,7 @@ public class OwnerTestHelper {
             .lastUpdatedUser(2)
             .ownerType(OWNER_TYPE_FISICA)
             .taxStatus(TAX_STATUS_MONOTRIBUTO)
+            .dni_type_id(DNI_TYPE_ENTITY_PASAPORTE)
             .files(new ArrayList<>())
             .build();
 
@@ -146,13 +185,14 @@ public class OwnerTestHelper {
             .id(3)
             .name("Luis")
             .lastname("Scola")
+            .dni("DNI")
             .dni("45591513")
-            .cuitCuil("20-22334457-7")
             .dateBirth(LocalDate.of(1980, 4, 30))
             .businessName("Scola Holdings")
             .active(true)
             .createdDatetime(LocalDateTime.now())
             .createdUser(3)
+            .dni_type_id(DNI_TYPE_ENTITY_PASAPORTE)
             .lastUpdatedDatetime(LocalDateTime.now())
             .lastUpdatedUser(3)
             .ownerType(OWNER_TYPE_JURIDICA)
@@ -256,6 +296,4 @@ public class OwnerTestHelper {
             .lastUpdatedDatetime(LocalDateTime.now())
             .lastUpdatedUser(1)
             .build();
-
 }
-*/

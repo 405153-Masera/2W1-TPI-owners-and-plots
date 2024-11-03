@@ -132,7 +132,7 @@ public class RestUser {
         userPost.setDni_type_id(postOwnerDto.getDni_type_id());
         return userPost;
     }
-    private GetUserDto findOwnerUser(Integer userId) {
+    public GetUserDto findOwnerUser(Integer userId) {
         String endpoint = String.format("%s/byOwner/%d", url, userId);
         ResponseEntity<List<GetUserDto>> response = restTemplate.exchange(
                 endpoint,
