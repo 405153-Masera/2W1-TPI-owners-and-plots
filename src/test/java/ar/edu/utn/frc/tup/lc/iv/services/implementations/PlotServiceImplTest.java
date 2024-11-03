@@ -4,26 +4,34 @@ import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotStateDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotTypeDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostPlotDto;
-import ar.edu.utn.frc.tup.lc.iv.entities.PlotEntity;
-import ar.edu.utn.frc.tup.lc.iv.entities.PlotStateEntity;
-import ar.edu.utn.frc.tup.lc.iv.entities.PlotTypeEntity;
+import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutPlotDto;
+import ar.edu.utn.frc.tup.lc.iv.entities.*;
+import ar.edu.utn.frc.tup.lc.iv.repositories.PlotOwnerRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotStateRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotTypeRepository;
+import ar.edu.utn.frc.tup.lc.iv.restTemplate.FileManagerClient;
+import ar.edu.utn.frc.tup.lc.iv.services.interfaces.FileService;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class PlotServiceImplTest {
@@ -35,7 +43,22 @@ class PlotServiceImplTest {
     private PlotTypeRepository plotTypeRepository;
 
     @MockBean
+    private FileManagerClient fileManagerClient;
+
+    @MockBean
+    private MultipartFile mockFile;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
+    @MockBean
+    private FileService fileService;
+
+    @MockBean
     private PlotRepository plotRepository;
+
+    @MockBean
+    private PlotOwnerRepository plotOwnerRepository;
 
     @SpyBean
     private PlotServiceImpl plotService;
@@ -83,7 +106,7 @@ class PlotServiceImplTest {
 
         //then
         Assertions.assertEquals(3, plotStateDtoList.size());
-        Assertions.assertEquals("Disponible",plotStateDtoList.get(0).getName());
+        Assertions.assertEquals("Disponible", plotStateDtoList.get(0).getName());
         Assertions.assertEquals(plotStateEntityList.get(1).getName(), plotStateDtoList.get(1).getName());
         Assertions.assertNotEquals(2, plotStateDtoList.get(2).getId());
     }
@@ -373,10 +396,6 @@ class PlotServiceImplTest {
     }
 
     @Test
-    void putPlot() {
-    }
-
-    @Test
     void getPlotById() {
 
         //given
@@ -561,5 +580,211 @@ class PlotServiceImplTest {
         Assertions.assertEquals(plotEntity.getBuiltAreaInM2(), getPlotDto.getBuilt_area_in_m2());
         Assertions.assertEquals(plotEntity.getPlotState().getName(), getPlotDto.getPlot_state());
         Assertions.assertEquals(plotEntity.getPlotType().getName(), getPlotDto.getPlot_type());
+    }
+
+    @Test
+    void validateWasteland_withBuiltArea_shouldThrowException() {
+
+        PostPlotDto postPlotDto = new PostPlotDto();
+        postPlotDto.setPlot_type_id(3);
+        postPlotDto.setBuilt_area_in_m2(50);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            plotService.validateWasteland(postPlotDto);
+        });
+        assertEquals("Error , a westland plot cannot have a built area", exception.getMessage());
+    }
+
+    @Test
+    void validateWasteland_withoutBuiltArea_shouldPass() {
+
+        PostPlotDto postPlotDto = new PostPlotDto();
+        postPlotDto.setPlot_type_id(3);
+        postPlotDto.setBuilt_area_in_m2(0);
+
+        assertDoesNotThrow(() -> plotService.validateWasteland(postPlotDto));
+    }
+
+    @Test
+    void validateWasteland_withNonWastelandType_shouldPass() {
+
+        PostPlotDto postPlotDto = new PostPlotDto();
+        postPlotDto.setPlot_type_id(2);
+        postPlotDto.setBuilt_area_in_m2(50);
+
+        assertDoesNotThrow(() -> plotService.validateWasteland(postPlotDto));
+    }
+
+    @Test
+    void validateBuiltArea_withBuiltAreaGreaterThanTotalArea_shouldThrowException() {
+
+        PostPlotDto postPlotDto = new PostPlotDto();
+        postPlotDto.setTotal_area_in_m2(100);
+        postPlotDto.setBuilt_area_in_m2(150);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            plotService.validateBuiltArea(postPlotDto);
+        });
+        assertEquals("Error , built area is bigger than total area", exception.getMessage());
+    }
+
+    @Test
+    void validateBuiltArea_withBuiltAreaEqualToTotalArea_shouldPass() {
+
+        PostPlotDto postPlotDto = new PostPlotDto();
+        postPlotDto.setTotal_area_in_m2(100);
+        postPlotDto.setBuilt_area_in_m2(100);
+
+        assertDoesNotThrow(() -> plotService.validateBuiltArea(postPlotDto));
+    }
+
+    @Test
+    void validateBuiltArea_withBuiltAreaLessThanTotalArea_shouldPass() {
+        PostPlotDto postPlotDto = new PostPlotDto();
+        postPlotDto.setTotal_area_in_m2(100);
+        postPlotDto.setBuilt_area_in_m2(50);
+
+        assertDoesNotThrow(() -> plotService.validateBuiltArea(postPlotDto));
+    }
+
+    @Test
+    void uploadFiles_withNullOrEmptyFilesList_shouldDoNothing() {
+
+        PlotEntity plotEntity = new PlotEntity();
+        plotEntity.setFiles(new ArrayList<>());
+
+        plotService.uploadFiles(null, 1, plotEntity);
+        plotService.uploadFiles(new ArrayList<>(), 1, plotEntity);
+
+        assertTrue(plotEntity.getFiles().isEmpty());
+    }
+
+
+    @Test
+    void getPlotByOwnerId() {
+
+        Integer ownerId = 1;
+
+        PlotStateEntity plotStateEntity = PlotStateEntity.builder()
+                .id(1)
+                .name("Estado de prueba")
+                .build();
+
+        PlotTypeEntity plotTypeEntity = PlotTypeEntity.builder()
+                .id(1)
+                .name("Tipo de prueba")
+                .build();
+
+        PlotEntity plotEntity = PlotEntity.builder()
+                .id(1)
+                .plotNumber(101)
+                .blockNumber(5)
+                .totalAreaInM2(100.0)
+                .builtAreaInM2(80.0)
+                .plotState(plotStateEntity)
+                .plotType(plotTypeEntity)
+                .build();
+
+        PlotOwnerEntity plotOwnerEntity = PlotOwnerEntity.builder()
+                .id(1)
+                .plot(plotEntity)
+                .owner(new OwnerEntity())
+                .build();
+
+        when(plotOwnerRepository.findByOwnerId(ownerId)).thenReturn(List.of(plotOwnerEntity));
+        when(plotRepository.findById(plotEntity.getId())).thenReturn(Optional.of(plotEntity));
+
+        List<GetPlotDto> result = plotService.getPlotByOwnerId(ownerId);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        GetPlotDto plotDto = result.get(0);
+        assertEquals(101, plotDto.getPlot_number());
+        assertEquals(5, plotDto.getBlock_number());
+        assertEquals(100.0, plotDto.getTotal_area_in_m2());
+        assertEquals(80.0, plotDto.getBuilt_area_in_m2());
+    }
+
+    @Test
+    void testGetPlotEntityById_WhenPlotExists() {
+
+        Integer plotId = 1;
+
+        PlotEntity plotEntity = PlotEntity.builder()
+                .id(plotId)
+                .plotNumber(101)
+                .blockNumber(5)
+                .totalAreaInM2(100.0)
+                .builtAreaInM2(80.0)
+                .build();
+
+        when(plotRepository.findById(plotId)).thenReturn(Optional.of(plotEntity));
+
+        PlotEntity result = plotService.getPlotEntityById(plotId);
+
+        assertNotNull(result);
+        assertEquals(plotId, result.getId());
+        assertEquals(101, result.getPlotNumber());
+        assertEquals(5, result.getBlockNumber());
+    }
+
+    @Test
+    void testGetPlotEntityById_WhenPlotDoesNotExist() {
+        Integer plotId = 1;
+
+        when(plotRepository.findById(plotId)).thenReturn(Optional.empty());
+
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
+            plotService.getPlotEntityById(plotId);
+        });
+
+        assertEquals("Plot not found with id: " + plotId, exception.getMessage());
+    }
+
+    @Test
+    void testPutPlot() {
+
+        Integer plotId = 1;
+        PutPlotDto plotDto = PutPlotDto.builder()
+                .total_area_in_m2(100.0)
+                .built_area_in_m2(80.0)
+                .plot_state_id(1)
+                .plot_type_id(1)
+                .userUpdateId(123)
+                .files(Collections.emptyList())
+                .build();
+
+        PlotStateEntity plotState = new PlotStateEntity();
+        plotState.setId(1);
+        plotState.setName("Disponible");
+
+        PlotTypeEntity plotType = new PlotTypeEntity();
+        plotType.setId(1);
+        plotType.setName("Casa");
+
+        PlotEntity existingPlot = PlotEntity.builder()
+                .id(plotId)
+                .plotNumber(101)
+                .blockNumber(1)
+                .totalAreaInM2(90.0)
+                .builtAreaInM2(70.0)
+                .plotState(plotState)
+                .plotType(plotType)
+                .files(Collections.emptyList())
+                .build();
+
+        when(plotRepository.findById(plotId)).thenReturn(Optional.of(existingPlot));
+        when(plotRepository.save(any(PlotEntity.class))).thenReturn(existingPlot);
+
+        when(plotStateRepository.findById(plotDto.getPlot_state_id())).thenReturn(Optional.of(plotState));
+        when(plotTypeRepository.findById(plotDto.getPlot_type_id())).thenReturn(Optional.of(plotType));
+
+        GetPlotDto result = plotService.putPlot(plotDto, plotId);
+
+        assertNotNull(result);
+        assertEquals(100.0, result.getTotal_area_in_m2());
+        assertEquals(80.0, result.getBuilt_area_in_m2());
+        assertEquals(plotState.getName(), result.getPlot_state());
+        assertEquals(plotType.getName(), result.getPlot_type());
     }
 }

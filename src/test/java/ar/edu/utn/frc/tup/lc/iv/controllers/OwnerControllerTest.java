@@ -3,6 +3,7 @@ package ar.edu.utn.frc.tup.lc.iv.controllers;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.*;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutOwnerDto;
+import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.GetUserDto;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,10 +19,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,20 +42,20 @@ class OwnerControllerTest {
     void postOwner() throws Exception {
 
         PostOwnerDto postOwnerDto = new PostOwnerDto();
-        postOwnerDto.setName("John Doe");
+        postOwnerDto.setName("Juan Ramirez");
 
         GetOwnerDto getOwnerDto = new GetOwnerDto();
         getOwnerDto.setId(1);
-        getOwnerDto.setName("John Doe");
+        getOwnerDto.setName("Juan Ramirez");
 
-        Mockito.when(ownerService.createOwner(Mockito.any(PostOwnerDto.class))).thenReturn(getOwnerDto);
+        when(ownerService.createOwner(Mockito.any(PostOwnerDto.class))).thenReturn(getOwnerDto);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/owners")
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                         .flashAttr("postOwnerDto", postOwnerDto))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.name").value("John Doe"));
+                .andExpect(jsonPath("$.name").value("Juan Ramirez"));
     }
 
     @Test
@@ -64,7 +68,7 @@ class OwnerControllerTest {
         getOwnerDto.setId(ownerId);
         getOwnerDto.setName("Carlos Updated");
 
-        Mockito.when(ownerService.updateOwner(Mockito.eq(ownerId), Mockito.any(PutOwnerDto.class))).thenReturn(getOwnerDto);
+        when(ownerService.updateOwner(Mockito.eq(ownerId), Mockito.any(PutOwnerDto.class))).thenReturn(getOwnerDto);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/owners/{ownerId}", ownerId)
                         .contentType(MediaType.MULTIPART_FORM_DATA)
@@ -78,14 +82,14 @@ class OwnerControllerTest {
     void getOwnerById() throws Exception {
         GetOwnerDto mockOwner = new GetOwnerDto();
         mockOwner.setId(1);
-        mockOwner.setName("John Doe");
+        mockOwner.setName("Juan Ramirez");
 
-        Mockito.when(ownerService.getById(anyInt())).thenReturn(mockOwner);
+        when(ownerService.getById(anyInt())).thenReturn(mockOwner);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/owners/1"))
+        mockMvc.perform(get("/owners/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.name").value("John Doe"));
+                .andExpect(jsonPath("$.name").value("Juan Ramirez"));
 
     }
 
@@ -102,9 +106,9 @@ class OwnerControllerTest {
 
         List<GetTaxStatusDto> mockTaxStatuses = List.of(taxStatus1, taxStatus2);
 
-        Mockito.when(ownerService.getTaxStatus()).thenReturn(mockTaxStatuses);
+        when(ownerService.getTaxStatus()).thenReturn(mockTaxStatuses);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/owners/taxstatus"))
+        mockMvc.perform(get("/owners/taxstatus"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].description").value("Tax Status 1"))
@@ -125,9 +129,9 @@ class OwnerControllerTest {
 
         List<GetOwnerTypeDto> mockOwnerTypes = List.of(ownerType1, ownerType2);
 
-        Mockito.when(ownerService.getOwnerTypes()).thenReturn(mockOwnerTypes);
+        when(ownerService.getOwnerTypes()).thenReturn(mockOwnerTypes);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/owners/ownertypes"))
+        mockMvc.perform(get("/owners/ownertypes"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].description").value("Owner Type 1"))
@@ -147,9 +151,9 @@ class OwnerControllerTest {
 
         List<GetOwnerDto> mockOwners = List.of(owner1, owner2);
 
-        Mockito.when(ownerService.getAllOwners()).thenReturn(mockOwners);
+        when(ownerService.getAllOwners()).thenReturn(mockOwners);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/owners"))
+        mockMvc.perform(get("/owners"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].name").value("Carlos "))
@@ -171,9 +175,9 @@ class OwnerControllerTest {
 
         List<OwnerDto> mockOwners = List.of(owner1, owner2);
 
-        Mockito.when(ownerService.getOwnersByPlotId(plotId)).thenReturn(mockOwners);
+        when(ownerService.getOwnersByPlotId(plotId)).thenReturn(mockOwners);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/owners/plot/{plotId}", plotId))
+        mockMvc.perform(get("/owners/plot/{plotId}", plotId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].name").value("Carlos"))
@@ -182,13 +186,73 @@ class OwnerControllerTest {
     }
 
     @Test
-    void getOwnersPlots() throws Exception {
+    public void testGetOwnersPlots() throws Exception {
+        GetOwnerAndPlot sampleOwnerAndPlot = GetOwnerAndPlot.builder()
+                .owner(OwnerDto.builder()
+                        .id(1)
+                        .name("Juan")
+                        .lastname("Ramirez")
+                        .build())
+                .plot(Collections.singletonList(GetPlotDto.builder()
+                        .id(1)
+                        .plot_number(101)
+                        .block_number(5)
+                        .build()))
+                .user(GetUserDto.builder()
+                        .id(1)
+                        .name("Admin")
+                        .username("admin_user")
+                        .build())
+                .build();
 
+        List<GetOwnerAndPlot> ownersList = Collections.singletonList(sampleOwnerAndPlot);
+        when(ownerService.getOwersAndPlots()).thenReturn(ownersList);
+
+        mockMvc.perform(get("/owners/ownersandplots")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].owner.name").value("Juan"))
+                .andExpect(jsonPath("$[0].plot[0].plot_number").value(101))
+                .andExpect(jsonPath("$[0].user.username").value("admin_user"));
     }
 
     @Test
-    void getOwnerAndPlotById() throws Exception {
+    public void testGetOwnerAndPlotById() throws Exception {
+        GetOwnerAndPlot sampleOwnerAndPlot = GetOwnerAndPlot.builder()
+                .owner(OwnerDto.builder()
+                        .id(1)
+                        .name("Juan")
+                        .lastname("Ramirez")
+                        .build())
+                .plot(Collections.singletonList(GetPlotDto.builder()
+                        .id(1)
+                        .plot_number(101)
+                        .block_number(5)
+                        .build()))
+                .user(GetUserDto.builder()
+                        .id(1)
+                        .name("Admin")
+                        .username("admin_user")
+                        .build())
+                .build();
 
+        when(ownerService.getOwnerAndPlotById(1)).thenReturn(sampleOwnerAndPlot);
+
+        mockMvc.perform(get("/owners/ownersandplots/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.owner.name").value("Juan"))
+                .andExpect(jsonPath("$.plot[0].plot_number").value(101))
+                .andExpect(jsonPath("$.user.username").value("admin_user"));
+    }
+
+    @Test
+    public void testGetOwnerAndPlotByIdNotFound() throws Exception {
+        when(ownerService.getOwnerAndPlotById(99)).thenReturn(null);
+
+        mockMvc.perform(get("/owners/ownersandplots/99")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     @Test

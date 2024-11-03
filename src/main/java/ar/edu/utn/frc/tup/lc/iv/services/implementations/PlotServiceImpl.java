@@ -93,7 +93,7 @@ public class PlotServiceImpl implements PlotService {
      * @param postPlotDto Dto de solicitud de alta de lote.
      * @throws IllegalArgumentException si es de tipo baldio y tiene metros construidos.
      */
-    private void validateWasteland(PostPlotDto postPlotDto) {
+    public void validateWasteland(PostPlotDto postPlotDto) {
         if (postPlotDto.getPlot_type_id() == 3 && postPlotDto.getBuilt_area_in_m2() > 0){
             throw new IllegalArgumentException("Error , a westland plot cannot have a built area");
         }
@@ -105,7 +105,7 @@ public class PlotServiceImpl implements PlotService {
      * @param postPlotDto Dto de solicitud de alta de lote.
      * @throws IllegalArgumentException si el area construida es mayor al area total.
      */
-    private void validateBuiltArea(PostPlotDto postPlotDto) {
+    public void validateBuiltArea(PostPlotDto postPlotDto) {
         if (postPlotDto.getBuilt_area_in_m2() > postPlotDto.getTotal_area_in_m2()) {
             throw new IllegalArgumentException("Error , built area is bigger than total area");
         }
@@ -390,4 +390,6 @@ public class PlotServiceImpl implements PlotService {
         getPlotDto.setPlot_state(plotEntity.getPlotState().getName());
         getPlotDto.setPlot_type(plotEntity.getPlotType().getName());
     }
+
+
 }
