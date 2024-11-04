@@ -458,7 +458,7 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     /**
-     * Obtiene todos los propietarios activos, junto con su lote y su usuario.
+     * Obtiene todos los propietarios activos, junto con sus lotes y su usuario.
      *
      * @return una lista con todos los propietarios activos, su lote y su usuario.
      */
@@ -468,6 +468,35 @@ public class OwnerServiceImpl implements OwnerService {
                 .stream()
                 .map(this::buildGetOwnerAndPlot)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Obtiene todos los propietarios activos, junto con sus lotes (SIN SU USUARIO).
+     *
+     * @return una lista con todos los propietarios activos y sus lotes
+     */
+    @Override
+    public List<GetOwnerWithHisPlots> getallOwnersWithTheirPlots() {
+        return ownerRepository.findAllActives()
+                .stream()
+                .map(this::buildGetOwnerWithHisPlots)
+                .collect(Collectors.toList());
+    }
+
+    private GetOwnerWithHisPlots buildGetOwnerWithHisPlots(OwnerEntity ownerEntity) {
+        GetOwnerWithHisPlots getOwnerWithHisPlots = new GetOwnerWithHisPlots();
+
+        // Obtener la lista de IDs de los plots
+        List<Integer> plotIds = plotOwnerRepository.findByOwnerId(ownerEntity.getId()).stream()
+                .map(plotOwner -> plotOwner.getPlot().getId())
+                .collect(Collectors.toList());
+
+        OwnerDto ownerDto = mapOwnerEntityToOwnerDto(ownerEntity);
+
+        getOwnerWithHisPlots.setOwner(ownerDto);
+        getOwnerWithHisPlots.setPlot(plotIds);
+
+        return getOwnerWithHisPlots;
     }
 
     /**

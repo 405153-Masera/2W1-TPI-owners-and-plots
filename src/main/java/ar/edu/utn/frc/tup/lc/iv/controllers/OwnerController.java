@@ -127,6 +127,16 @@ public class OwnerController {
     }
 
     /**
+     * Obtiene todos los propietarios activos, junto con su lote y su usuario.
+     *
+     * @return una lista con todos los propietarios activos, su lote y su usuario.
+     */
+    @GetMapping("/allOwnersWithTheirPlots")
+    public ResponseEntity<List<GetOwnerWithHisPlots>> getallOwnersWithTheirPlots() {
+        return ResponseEntity.ok(ownerService.getallOwnersWithTheirPlots());
+    }
+
+    /**
      * Obtiene un propietario por su id, junto con su lote y su usuario.
      *
      * @param ownerId el id del propietario a buscar.
