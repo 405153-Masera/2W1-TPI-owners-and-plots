@@ -1,8 +1,6 @@
 package ar.edu.utn.frc.tup.lc.iv.services.implementations;
 
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotDto;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotStateDto;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotTypeDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.*;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.entities.*;
@@ -12,6 +10,7 @@ import ar.edu.utn.frc.tup.lc.iv.repositories.PlotStateRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotTypeRepository;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.FileManagerClient;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.FileService;
+import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotOwnerService;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
@@ -24,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Implementación de la interfaz PlotService,
@@ -38,6 +39,8 @@ public class PlotServiceImpl implements PlotService {
      * Repositorio para manejar Plot entities.
      */
     private final PlotRepository plotRepository;
+
+    private final PlotOwnerService plotOwnerService;
 
     /**
      * Repositorio para manejar PlotState entities.
@@ -174,6 +177,7 @@ public class PlotServiceImpl implements PlotService {
         return plotStateDtos;
     }
 
+
     /**
      * Obtiene los tipos de los lotes.
      *
@@ -256,6 +260,52 @@ public class PlotServiceImpl implements PlotService {
             plotDtos.add(getPlotDto);
         }
         return plotDtos;
+    }
+
+    /**
+     * Obtiene todos los lotes.
+     *
+     * @return una lista con todos los lotes, y con su owner.
+     */
+    @Override
+    public List<GetPlotWithHisOwnerDto> getPlotsWithHisOwner() {
+        List<PlotEntity> plotEntities = plotRepository.findAll();
+        List<GetPlotWithHisOwnerDto> plotDtos = new ArrayList<>();
+
+        List<GetPlotOwnerDto> plotOwners = plotOwnerService.getAllPlotOwner();
+
+        // Crear un mapa para acceder fácilmente a los ownerId por plot_id
+        Map<Integer, Integer> plotOwnerMap = plotOwners.stream()
+                .collect(Collectors.toMap(GetPlotOwnerDto::getPlot_id, GetPlotOwnerDto::getOwner_id));
+
+        for (PlotEntity plotEntity : plotEntities) {
+            GetPlotWithHisOwnerDto getPlotDto = new GetPlotWithHisOwnerDto();
+            mapPlotEntityToGetPlotWithHisOwnerDto(plotEntity, getPlotDto);
+            getPlotDto.setFiles(fileService.getPlotFiles(plotEntity.getId()));
+
+            // Asignar el ownerId correspondiente
+            getPlotDto.setOwnerId(plotOwnerMap.get(plotEntity.getId()));
+
+            plotDtos.add(getPlotDto);
+        }
+
+        return plotDtos;
+    }
+
+    /**
+     * Mapea los datos de un lote a un dto de lote con el ID del propietario.
+     *
+     * @param plotEntity entidad de lote a mapear.
+     * @param getPlotDto dto de lote a mapear.
+     */
+    public void mapPlotEntityToGetPlotWithHisOwnerDto(PlotEntity plotEntity, GetPlotWithHisOwnerDto getPlotDto) {
+        getPlotDto.setPlot_number(plotEntity.getPlotNumber());
+        getPlotDto.setBlock_number(plotEntity.getBlockNumber());
+        getPlotDto.setBuilt_area_in_m2(plotEntity.getBuiltAreaInM2());
+        getPlotDto.setTotal_area_in_m2(plotEntity.getTotalAreaInM2());
+        getPlotDto.setId(plotEntity.getId());
+        getPlotDto.setPlot_state(plotEntity.getPlotState().getName());
+        getPlotDto.setPlot_type(plotEntity.getPlotType().getName());
     }
 
     /**
@@ -390,6 +440,5 @@ public class PlotServiceImpl implements PlotService {
         getPlotDto.setPlot_state(plotEntity.getPlotState().getName());
         getPlotDto.setPlot_type(plotEntity.getPlotType().getName());
     }
-
 
 }
