@@ -3,6 +3,7 @@ package ar.edu.utn.frc.tup.lc.iv.controllers;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotStateDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotTypeDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotWithHisOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotService;
@@ -83,6 +84,16 @@ public class PlotController {
     @GetMapping()
     public ResponseEntity<List<GetPlotDto>> getPlots() {
         return ResponseEntity.ok(plotService.getAllPlots());
+    }
+
+    /**
+     * Obtiene todos los lotes con el id de su owner.
+     *
+     * @return una lista con todos los lotes.
+     */
+    @GetMapping("/withHisOwner")
+    public ResponseEntity<List<GetPlotWithHisOwnerDto>> getPlotsWithHisOwner() {
+        return ResponseEntity.ok(plotService.getPlotsWithHisOwner());
     }
 
     /**
