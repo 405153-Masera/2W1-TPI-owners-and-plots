@@ -5,8 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO que representa una respuesta que contiene la infromación de
- * el estado del lote.
+ * DTO que representa una respuesta que contiene la información del
+ * estado del lote.
  */
 @Data
 @AllArgsConstructor

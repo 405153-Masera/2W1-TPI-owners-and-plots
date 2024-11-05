@@ -4,7 +4,7 @@ import ar.edu.utn.frc.tup.lc.iv.dtos.get.*;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,23 +14,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/owners")
-
+@RequiredArgsConstructor
 public class OwnerController {
 
     /**
      * Servicio para manejar la lógica de propietarios.
      */
-    @Autowired
-    private OwnerService ownerService;
-
-    /**
-     * Constructor de OwnerController.
-     *
-     * @param ownerService servicio de propietarios.
-     */
-//    public OwnerController(OwnerService ownerService) {
-//        this.ownerService = ownerService;
-//    }
+    private final OwnerService ownerService;
 
     /**
      * Guarda un nuevo propietario.

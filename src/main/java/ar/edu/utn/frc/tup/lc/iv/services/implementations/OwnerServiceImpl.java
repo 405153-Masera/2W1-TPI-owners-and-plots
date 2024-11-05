@@ -167,7 +167,7 @@ public class OwnerServiceImpl implements OwnerService {
     public void assignPlots(OwnerEntity owner, PostOwnerDto postOwnerDto) {
         Integer[] plots = postOwnerDto.getPlotId();
         for (Integer plot : plots) {
-            PlotOwnerEntity plotOwnerEntity = mapPlotOwnerEntity(owner,postOwnerDto,plot);
+            PlotOwnerEntity plotOwnerEntity = mapPlotOwnerEntity(owner, postOwnerDto, plot);
             validatePlot(plotOwnerEntity);
             plotOwnerRepository.save(plotOwnerEntity);
             changePlotState(plot, postOwnerDto);
@@ -607,8 +607,5 @@ public class OwnerServiceImpl implements OwnerService {
 
         return getOwnerAndPlot;
     }
-
-
-
 
 }

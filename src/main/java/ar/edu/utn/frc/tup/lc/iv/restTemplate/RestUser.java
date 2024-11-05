@@ -15,7 +15,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,7 +31,7 @@ public class RestUser {
     private final RestTemplate restTemplate;
 
     /**
-     * Direccion url donde se levanta el microservicio de usuarios.
+     * Dirección url donde se levanta el microservicio de usuarios.
      */
     private String url = "http://localhost:9060/users";
 
@@ -73,7 +72,7 @@ public class RestUser {
      *
      * @param plotId identificador del lote.
      * @return un DTO con la información del usuario.
-     * @throws EntityNotFoundException si no se encontro el usuario.
+     * @throws EntityNotFoundException si no se encuentra el usuario.
      */
     public GetUserDto getUser(Integer plotId) {
 
@@ -100,13 +99,13 @@ public class RestUser {
     public void deleteUser(Integer userId, Integer userIdUpdate) {
       GetUserDto ownerUser = findOwnerUser(userId);
 
-       if(ownerUser == null){
-           throw new ResponseStatusException(HttpStatus.NOT_FOUND,"User with role 'Propietario' not found");
+       if (ownerUser == null) {
+           throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with role 'Propietario' not found");
        }
-       try{
+       try {
            restTemplate.delete(url + "/delete/" + ownerUser.getId() + "/" + userIdUpdate);
-       }catch (HttpClientErrorException e){
-           throw new ResponseStatusException(e.getStatusCode(),e.getMessage());
+       } catch (HttpClientErrorException e) {
+           throw new ResponseStatusException(e.getStatusCode(), e.getMessage());
        } catch (Exception e) {
            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                    "Server error while deleting the user :" + e.getMessage());
@@ -132,13 +131,20 @@ public class RestUser {
         userPost.setDni_type_id(postOwnerDto.getDni_type_id());
         return userPost;
     }
+
+    /**
+     * Metodo para obtener un usuario propietario.
+     *
+     * @param userId identificador del usuario.
+     * @return un DTO con la información del usuario propietario.
+     */
     public GetUserDto findOwnerUser(Integer userId) {
         String endpoint = String.format("%s/byOwner/%d", url, userId);
         ResponseEntity<List<GetUserDto>> response = restTemplate.exchange(
                 endpoint,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<GetUserDto>>() {}
+                new ParameterizedTypeReference<List<GetUserDto>>() { }
         );
         List<GetUserDto> users = response.getBody();
         if (users == null || users.isEmpty()) {

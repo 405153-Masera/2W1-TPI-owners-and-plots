@@ -40,6 +40,9 @@ public class PlotServiceImpl implements PlotService {
      */
     private final PlotRepository plotRepository;
 
+    /**
+     * Servicio para manejar la lógica de los propietarios de los lotes.
+     */
     private final PlotOwnerService plotOwnerService;
 
     /**
@@ -66,6 +69,10 @@ public class PlotServiceImpl implements PlotService {
      * Servicio para mapear entidades a dtos y viceversa.
      */
     private final ModelMapper modelMapper;
+
+    /**
+     * Repositorio para manejar PlotOwner entities.
+     */
     private final PlotOwnerRepository plotOwnerRepository;
 
     /**
@@ -97,7 +104,7 @@ public class PlotServiceImpl implements PlotService {
      * @throws IllegalArgumentException si es de tipo baldio y tiene metros construidos.
      */
     public void validateWasteland(PostPlotDto postPlotDto) {
-        if (postPlotDto.getPlot_type_id() == 3 && postPlotDto.getBuilt_area_in_m2() > 0){
+        if (postPlotDto.getPlot_type_id() == 3 && postPlotDto.getBuilt_area_in_m2() > 0) {
             throw new IllegalArgumentException("Error , a westland plot cannot have a built area");
         }
     }
@@ -342,6 +349,12 @@ public class PlotServiceImpl implements PlotService {
         return getPlotDto;
     }
 
+    /**
+     * Obtiene los lotes de un propietario.
+     *
+     * @param ownerdId id del propietario.
+     * @return lista de lotes del propietario.
+     */
     @Override
     public List<GetPlotDto> getPlotByOwnerId(Integer ownerdId) {
         List<GetPlotDto> plotDtos = new ArrayList<>();
@@ -354,7 +367,6 @@ public class PlotServiceImpl implements PlotService {
             plotDtos.add(getPlotDto);
         }
         return plotDtos;
-
     }
 
     /**

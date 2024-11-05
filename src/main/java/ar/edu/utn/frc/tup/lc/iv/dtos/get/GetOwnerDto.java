@@ -1,7 +1,6 @@
 package ar.edu.utn.frc.tup.lc.iv.dtos.get;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * DTO que representa una respuesta que contiene la infromación de
+ * DTO que representa una respuesta que contiene la información de
  * un propietario.
  */
 @Data
@@ -61,7 +60,7 @@ public class GetOwnerDto {
     private String ownerType;
 
     /**
-     * Situcación fiscal del propietario.
+     * Situación fiscal del propietario.
      */
     private String taxStatus;
 

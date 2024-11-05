@@ -90,5 +90,10 @@ public interface OwnerService {
      */
     GetOwnerAndPlot getOwnerAndPlotById(Integer ownerId);
 
+    /**
+     * Obtiene todos los propietarios con sus lotes.
+     *
+     * @return una lista con todos los propietarios y sus lotes.
+     */
     List<GetOwnerWithHisPlots> getallOwnersWithTheirPlots();
 }

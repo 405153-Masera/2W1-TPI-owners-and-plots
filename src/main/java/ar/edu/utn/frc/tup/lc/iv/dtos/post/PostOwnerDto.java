@@ -4,7 +4,6 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.NumberFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -60,7 +59,7 @@ public class PostOwnerDto {
     private Integer ownerTypeId;
 
     /**
-     * Identificador de la situacion fiscal.
+     * Identificador de la situación fiscal.
      */
     @NotNull(message = "El estado fiscal no puede ser nulo")
     private Integer taxStatusId;
@@ -92,7 +91,7 @@ public class PostOwnerDto {
     private String password;
 
     /**
-     * Correo electronico del usuario utilizado en el login
+     * Correo electrónico del usuario utilizado en el login
      * que se guarda en el microservicio de contactos.
      */
     @NotBlank(message = "El correo electrónico no puede estar vacío")
@@ -100,7 +99,7 @@ public class PostOwnerDto {
     private String email;
 
     /**
-     * Telefono del usuario del usuario que se guarda en
+     * Teléfono del usuario que se guarda en
      * el microservicio de contactos.
      */
     @NotBlank(message = "El número de teléfono no puede estar vacío")
@@ -120,7 +119,7 @@ public class PostOwnerDto {
     private String[] roles;
 
     /**
-     * Identificador de lote asociada al propietario y al usuario.
+     * Identificador del lote asociado al propietario y al usuario.
      */
     @NotNull(message = "El ID del lote no puede ser nulo")
     private Integer[] plotId;

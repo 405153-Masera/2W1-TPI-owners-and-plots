@@ -18,13 +18,13 @@ import java.util.List;
 public class PostPlotDto {
 
     /**
-     * Numero de lote.
+     * Número de lote.
      */
     @NotNull(message = "El lote no puede ser nulo")
     private int plot_number;
 
     /**
-     * Numero de manzana.
+     * Número de manzana.
      */
     @NotNull(message = "La manzana no puede ser nula")
     private int block_number;

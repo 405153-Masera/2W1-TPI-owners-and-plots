@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 /**
- * DTO que representa una respuesta que contiene la infromación de
+ * DTO que representa una respuesta que contiene la información de
  * un lote.
  */
 @Data
@@ -43,7 +43,7 @@ public class GetPlotDto {
     private double built_area_in_m2;
 
     /**
-     * Estado del lote (disponible, vendido, etc).
+     * Estado del lote (disponible, vendido, etc.).
      */
     private String plot_state;
 

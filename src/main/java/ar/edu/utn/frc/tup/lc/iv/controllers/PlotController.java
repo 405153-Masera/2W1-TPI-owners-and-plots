@@ -87,7 +87,7 @@ public class PlotController {
     }
 
     /**
-     * Obtiene todos los lotes con el id de su owner.
+     * Obtiene todos los lotes con el ID de su owner.
      *
      * @return una lista con todos los lotes.
      */
@@ -119,7 +119,7 @@ public class PlotController {
     }
 
     /**
-     * Obtiene una lista de lotes por id de propieatrio.
+     * Obtiene una lista de lotes por ID de propietario.
      *
      * @param ownerId id del propietario asignado al lote.
      * @return una lista de lotes.

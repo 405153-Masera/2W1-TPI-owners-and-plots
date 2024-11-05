@@ -8,5 +8,12 @@ import java.util.List;
 
 @Service
 public interface PlotOwnerService {
+
+    /**
+     * Devuelve una lista de GetPlotOwnerDto que contiene los identificadores
+     * de los propietarios y los lotes.
+     *
+     * @return una lista de GetPlotOwnerDto.
+     */
     List<GetPlotOwnerDto> getAllPlotOwner();
 }

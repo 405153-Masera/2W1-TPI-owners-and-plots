@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO que representa una respuesta que contiene la infromación del
+ * DTO que representa una respuesta que contiene la información del
  * tipo de situación fiscal.
  */
 @Data

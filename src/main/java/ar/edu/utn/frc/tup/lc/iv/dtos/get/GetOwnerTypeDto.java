@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO que representa una respuesta que contiene la infromación de
+ * DTO que representa una respuesta que contiene la información de
  * un tipo de propietario.
  */
 @NoArgsConstructor
