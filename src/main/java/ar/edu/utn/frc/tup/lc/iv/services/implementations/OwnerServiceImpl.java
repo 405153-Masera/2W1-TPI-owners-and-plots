@@ -24,7 +24,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -497,6 +499,18 @@ public class OwnerServiceImpl implements OwnerService {
                 .map(this::buildGetOwnerWithHisPlots)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Map<String, Long> getOwnerCountByStatus() {
+        List<OwnerEntity> owners = ownerRepository.findAll();
+        Map<String, Long> ownersCountByStatus = owners.stream()
+                .collect(Collectors.groupingBy(
+                        owner -> owner.getActive() ? "Activos" : "Inactivos",
+                        Collectors.counting()
+                ));
+        return ownersCountByStatus;
+    }
+
 
     private GetOwnerWithHisPlots buildGetOwnerWithHisPlots(OwnerEntity ownerEntity) {
         GetOwnerWithHisPlots getOwnerWithHisPlots = new GetOwnerWithHisPlots();

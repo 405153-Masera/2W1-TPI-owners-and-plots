@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/owners")
@@ -145,6 +146,12 @@ public class OwnerController {
         }
         return ResponseEntity.ok(ownerAndPlot);
     }
+
+    @GetMapping("/count-by-status")
+    public Map<String,Long>  getOwnersCountByStatus() {
+        return ownerService.getOwnerCountByStatus();
+    }
+
 
     /**
      * Baja lógica de un propietario.

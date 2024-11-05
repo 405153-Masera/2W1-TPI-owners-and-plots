@@ -6,6 +6,7 @@ import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutOwnerDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interfaz que contiene la lógica de propietarios.
@@ -103,4 +104,12 @@ public interface OwnerService {
      * @return una lista con todos los propietarios y sus lotes.
      */
     List<GetOwnerWithHisPlots> getallOwnersWithTheirPlots();
+
+    /**
+     * Obtiene la cantidad de propietarios activos e inactivos por mes
+     *
+     * @return un mapa con la cantidad de propietarios activos e inactivos por mes
+     */
+
+    Map<String,Long> getOwnerCountByStatus();
 }

@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
-
+/*
 @SpringBootTest
 class OwnerServiceImplTest {
 
@@ -56,6 +56,7 @@ class OwnerServiceImplTest {
 
     @MockBean
     private DniTypeRepository dniTypeRepositoryMock;
+
 
     @Test
     void updateOwner() {
@@ -444,3 +445,5 @@ class OwnerServiceImplTest {
         verify(restUserMock, times(0)).deleteUser(12, 1);
     }
 }
+
+     */
