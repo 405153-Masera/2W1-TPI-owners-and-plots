@@ -336,7 +336,7 @@ public class OwnerServiceImpl implements OwnerService {
         owner.setName(dto.getName());
         owner.setLastname(dto.getLastname());
         owner.setDni(dto.getDni());
-        owner.setDni_type_id(dniTypeRepository.findById(dto.getDni_type_id())
+        owner.setDni_type_id(dniTypeRepository.findById(dto.getDniTypeId())
                 .orElseThrow(() -> new EntityNotFoundException("Dni type not found")));
         owner.setDateBirth(dto.getDateBirth());
         owner.setOwnerType(findOwnerType(dto.getOwnerTypeId()));

@@ -36,7 +36,7 @@ public class PutOwnerDto {
      * Tipo de DNI del propietario.
      */
     @NotNull(message = "El tipo de DNI no puede ser nulo")
-    private Integer dni_type_id;
+    private Integer dniTypeId;
 
     /**
      * DNI del propietario.
