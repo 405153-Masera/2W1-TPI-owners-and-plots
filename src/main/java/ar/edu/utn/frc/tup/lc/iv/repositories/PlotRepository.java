@@ -28,4 +28,12 @@ public interface PlotRepository extends JpaRepository<PlotEntity, Integer> {
      */
     @Query("SELECT p FROM PlotEntity p WHERE p.plotState.name = 'Disponible'")
     List<PlotEntity> findPlotsAvailables();
+
+    /**
+     * Busca si existe un lote coincidente a un numero de lote.
+     *
+     * @param plotNumber numero de lote.
+     * @return un booleano.
+     */
+    boolean existsByPlotNumber(int plotNumber);
 }
