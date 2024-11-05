@@ -424,6 +424,21 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     /**
+     * Obtiene todos los tipos de documentos(DNI , Pasaporte , Cuit/Cuil).
+     *
+     * @return una lista con los tipos de documentos.
+     */
+    @Override
+    public List<GetDniTypeDto> getDniTypes() {
+        List<DniTypeEntity> dniTypeEntities = dniTypeRepository.findAll();
+        List<GetDniTypeDto> dniTypeDtos = new ArrayList<>();
+        for (DniTypeEntity dniTypeEntity : dniTypeEntities) {
+            dniTypeDtos.add(modelMapper.map(dniTypeEntity, GetDniTypeDto.class));
+        }
+        return dniTypeDtos;
+    }
+
+    /**
      * Obtiene todos los tipos de propietarios (personas física, jurídica, otros).
      *
      * @return una lista con los tipos de propietarios.

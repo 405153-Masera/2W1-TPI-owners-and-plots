@@ -79,6 +79,11 @@ public class OwnerController {
         return ResponseEntity.ok(ownerService.getOwnerTypes());
     }
 
+    @GetMapping("/dnitypes")
+    public ResponseEntity<List<GetDniTypeDto>> getDniTypes() {
+        return ResponseEntity.ok(ownerService.getDniTypes());
+    }
+
     /**
      * Obtiene todos los propietarios.
      *

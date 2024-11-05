@@ -46,6 +46,13 @@ public interface OwnerService {
     List<GetTaxStatusDto> getTaxStatus();
 
     /**
+     * Obtiene los tipos de documento.
+     *
+     * @return una lista de los tipos de documento.
+     */
+    List<GetDniTypeDto> getDniTypes();
+
+    /**
      * Obtiene todos los tipos de propietarios (personas física, jurídica, otros).
      *
      * @return una lista con los tipos de propietarios.
