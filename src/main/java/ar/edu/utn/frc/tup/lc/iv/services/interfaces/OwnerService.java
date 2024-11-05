@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Interfaz que contiene la lógica de propietarios.
+ */
 @Service
 public interface OwnerService {
 
@@ -86,4 +89,6 @@ public interface OwnerService {
      * @return el propietario, su lote y su usuario.
      */
     GetOwnerAndPlot getOwnerAndPlotById(Integer ownerId);
+
+    List<GetOwnerWithHisPlots> getallOwnersWithTheirPlots();
 }

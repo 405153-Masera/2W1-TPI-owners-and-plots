@@ -3,6 +3,7 @@ package ar.edu.utn.frc.tup.lc.iv.controllers;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotStateDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotTypeDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotWithHisOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotService;
@@ -86,6 +87,16 @@ public class PlotController {
     }
 
     /**
+     * Obtiene todos los lotes con el id de su owner.
+     *
+     * @return una lista con todos los lotes.
+     */
+    @GetMapping("/withHisOwner")
+    public ResponseEntity<List<GetPlotWithHisOwnerDto>> getPlotsWithHisOwner() {
+        return ResponseEntity.ok(plotService.getPlotsWithHisOwner());
+    }
+
+    /**
      * Obtiene todos los lotes disponibles.
      *
      * @return una lista con todos los lotes disponibles.
@@ -105,5 +116,16 @@ public class PlotController {
     public ResponseEntity<GetPlotDto> getPlotById(@PathVariable Integer plotId) {
         return ResponseEntity.ok(plotService.getPlotById(plotId));
 
+    }
+
+    /**
+     * Obtiene una lista de lotes por id de propieatrio.
+     *
+     * @param ownerId id del propietario asignado al lote.
+     * @return una lista de lotes.
+     */
+    @GetMapping("/{ownerId}/owner")
+    public ResponseEntity<List<GetPlotDto>> getPlotByOwnerId(@PathVariable Integer ownerId) {
+        return ResponseEntity.ok(plotService.getPlotByOwnerId(ownerId));
     }
 }

@@ -1,11 +1,14 @@
 package ar.edu.utn.frc.tup.lc.iv.dtos.get;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * DTO que representa una respuesta que contiene la infromación de
@@ -14,6 +17,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class OwnerDto {
 
     /**
@@ -32,14 +36,15 @@ public class OwnerDto {
     private String lastname;
 
     /**
+     * Tipo de DNI del propietario.
+     */
+    private String dni_type;
+
+    /**
      * DNI del propietario.
      */
     private String dni;
 
-    /**
-     * CUIT/CUIL del propietario.
-     */
-    private String cuitCuil;
 
     /**
      * Fecha de nacimiento del propietario.
@@ -61,4 +66,14 @@ public class OwnerDto {
      * Tipo de propietario (persona física o jurídica).
      */
     private String ownerType;
+
+    /**
+     * Situcación fiscal del propietario.
+     */
+    private String taxStatus;
+
+    /**
+     * Lista de archivos asociados al propietario.
+     */
+    private List<FileDto> files;
 }

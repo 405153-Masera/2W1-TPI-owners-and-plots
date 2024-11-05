@@ -2,13 +2,14 @@ package ar.edu.utn.frc.tup.lc.iv.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 /**
- * La clase {@code OwnerTypeEntity} representa la tabla de tipos de propietarios.
+ * La clase {@code OwnerTypeEntity} representa un tipo de propietario.
  * Referencia a la tabla llamada "ownerstypes".
  */
 @Entity
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class OwnerTypeEntity {
 
     /**

@@ -1,6 +1,5 @@
 package ar.edu.utn.frc.tup.lc.iv.dtos.get;
 
-import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.GetUserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,13 +9,13 @@ import java.util.List;
 
 /**
  * DTO que representa una respuesta que contiene la información de
- * un propietario, su lote y su usuario.
+ * un propietario, y su lote
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class GetOwnerAndPlot {
+public class GetOwnerWithHisPlots {
 
     /**
      * Datos del propietario.
@@ -26,10 +25,6 @@ public class GetOwnerAndPlot {
     /**
      * Datos del lote del propietario.
      */
-    private List<GetPlotDto> plot;
+    private List<Integer> plot;
 
-    /**
-     * Datos del usuario del propietario.
-     */
-    private GetUserDto user;
 }

@@ -27,6 +27,7 @@ public class FilePlotEntity {
 
     /**
      * Identificador único de un archivo.
+     * Representa la relación muchos a uno entre la tabla filesplots y files.
      */
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "file_id")
@@ -34,6 +35,7 @@ public class FilePlotEntity {
 
     /**
      * Identificador único de un lote.
+     * Representa la relación muchos a uno entre la tabla filesplots y plots.
      */
     @ManyToOne
     @JoinColumn(name = "plot_id")

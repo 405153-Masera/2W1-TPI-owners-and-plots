@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.NumberFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -21,87 +22,90 @@ public class PostOwnerDto {
     /**
      * Nombre del propietario.
      */
-    @NotBlank(message = "Name cannot be blank")
-    @Size(min = 1, max = 50, message = "Name must be between 1 and 50 characters")
+    @NotBlank(message = "El  nombre no puede estar vacío")
+    @Size(min = 3, max = 50, message = "El nombre debe tener entre 3 y 50 caracteres")
     private String name;
 
     /**
      * Apellido del propietario.
      */
-    @NotBlank(message = "Last name cannot be blank")
-    @Size(min = 1, max = 50, message = "Lastname must be between 1 and 50 characters")
+    @NotBlank(message = "El apellido no puede estar vacío")
+    @Size(min = 3, max = 50, message = "El apellido debe tener entre 3 y 50 caracteres")
     private String lastname;
+
+    /**
+     * Tipo de DNI del propietario.
+     */
+    @NotNull(message = "El tipo de DNI no puede ser nulo")
+    private Integer dni_type_id;
 
     /**
      * DNI del propietario.
      */
-    @NotBlank(message = "DNI cannot be blank")
+    @NotBlank(message = "El DNI no puede estar vacío")
+    @Size(min = 8, message = "El DNI debe tener al menos 8 caracteres")
+    @Pattern(regexp = "\\d+", message = "El DNI debe contener solo números")
     private String dni;
-
-    /**
-     * CUIT/CUIL del propietario.
-     */
-    @NotBlank(message = "CUIT/CUIL cannot be blank")
-    private String cuitCuil;
 
     /**
      * Fecha de nacimiento del propietario.
      */
-    @Past(message = "Date of birth must be in the past")
+    @Past(message = "La fecha de nacimiento debe ser anterior a la fecha actual")
     private LocalDate dateBirth;
 
     /**
      * Identificador del tipo de propietario.
      */
-    @NotNull(message = "Owner type cannot be null")
+    @NotNull(message = "El tipo de propietario no puede ser nulo")
     private Integer ownerTypeId;
 
     /**
      * Identificador de la situacion fiscal.
      */
-    @NotNull(message = "Tax status cannot be null")
+    @NotNull(message = "El estado fiscal no puede ser nulo")
     private Integer taxStatusId;
 
     /**
      * Nombre del negocio del propietario.
      */
-    @Size(min = 1, max = 50, message = "Business name must be between 1 and 50 characters")
+    @Size(max = 50, message = "El nombre del negocio debe tener como máximo 50 caracteres")
     private String businessName;
 
     /**
      * Representa sí el propietario está activo o no.
      */
-    @NotNull(message = "Active status cannot be null")
+    @NotNull(message = "El estado no puede ser nulo")
     private Boolean active;
 
     /**
      * Nombre de usuario utilizado en el login.
      */
-    @NotBlank(message = "Username cannot be blank")
-    @Size(min = 1, max = 30, message = "Username must be between 1 and 30 characters")
+    @NotBlank(message = "El nombre de usuario no puede estar vacío")
+    @Size(min = 1, max = 30, message = "El nombre de usuario debe tener entre 1 y 30 caracteres")
     private String username;
 
     /**
      * Contraseña del usuario utilizada en el login.
      */
-    @NotBlank(message = "Password cannot be blank")
-    @Size(min = 6, max = 10, message = "Password must be between 6 and 10 characters")
+    @NotBlank(message = "La contraseña no puede estar vacía")
+    @Size(min = 6, max = 30, message = "La contraseña debe tener entre 6 y 30 caracteres")
     private String password;
 
     /**
      * Correo electronico del usuario utilizado en el login
      * que se guarda en el microservicio de contactos.
      */
-    @NotBlank(message = "Email cannot be blank")
-    @Email(message = "Email format is invalid")
+    @NotBlank(message = "El correo electrónico no puede estar vacío")
+    @Email(message = "El formato del correo electrónico es inválido")
     private String email;
 
     /**
      * Telefono del usuario del usuario que se guarda en
      * el microservicio de contactos.
      */
-    @NotBlank(message = "Phone number cannot be blank")
-    @Pattern(regexp = "\\d+", message = "Phone number must be numeric")
+    @NotBlank(message = "El número de teléfono no puede estar vacío")
+    @Size(min = 10, max = 20, message = "El número de teléfono debe tener entre 8 y 20 caracteres")
+    @Pattern(regexp = "\\d+", message = "El número de teléfono debe ser numérico")
     private String phoneNumber;
 
     /**
@@ -112,14 +116,14 @@ public class PostOwnerDto {
     /**
      * Lista de roles asignados al usuario.
      */
-    @NotNull(message = "Roles cannot be null")
+    @NotNull(message = "Los roles no pueden ser nulos")
     private String[] roles;
 
     /**
      * Identificador de lote asociada al propietario y al usuario.
      */
-    @NotNull(message = "Plot ID cannot be null")
-    private Integer plotId;
+    @NotNull(message = "El ID del lote no puede ser nulo")
+    private Integer[] plotId;
 
     /**
      * Identificador de la plataforma telegram utilizada en notificaciones.
@@ -129,7 +133,7 @@ public class PostOwnerDto {
     /**
      * Identificador del usuario que crea el propietario y el usuario.
      */
-    @NotNull(message = "User creation ID cannot be null")
+    @NotNull(message = "El ID del usuario creador no puede ser nulo")
     private Integer userCreateId;
 
     /**

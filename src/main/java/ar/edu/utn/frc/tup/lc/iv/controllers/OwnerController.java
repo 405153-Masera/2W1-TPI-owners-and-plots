@@ -14,22 +14,23 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/owners")
+
 public class OwnerController {
 
     /**
      * Servicio para manejar la lógica de propietarios.
      */
-    private final OwnerService ownerService;
+    @Autowired
+    private OwnerService ownerService;
 
     /**
      * Constructor de OwnerController.
      *
      * @param ownerService servicio de propietarios.
      */
-    @Autowired
-    public OwnerController(OwnerService ownerService) {
-        this.ownerService = ownerService;
-    }
+//    public OwnerController(OwnerService ownerService) {
+//        this.ownerService = ownerService;
+//    }
 
     /**
      * Guarda un nuevo propietario.
@@ -123,6 +124,16 @@ public class OwnerController {
     @GetMapping("/ownersandplots")
     public ResponseEntity<List<GetOwnerAndPlot>> getOwnersPlots() {
         return ResponseEntity.ok(ownerService.getOwersAndPlots());
+    }
+
+    /**
+     * Obtiene todos los propietarios activos, junto con su lote y su usuario.
+     *
+     * @return una lista con todos los propietarios activos, su lote y su usuario.
+     */
+    @GetMapping("/allOwnersWithTheirPlots")
+    public ResponseEntity<List<GetOwnerWithHisPlots>> getallOwnersWithTheirPlots() {
+        return ResponseEntity.ok(ownerService.getallOwnersWithTheirPlots());
     }
 
     /**

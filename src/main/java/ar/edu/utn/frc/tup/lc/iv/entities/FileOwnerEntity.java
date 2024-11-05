@@ -27,6 +27,7 @@ public class FileOwnerEntity {
 
     /**
      * Identificador único de un archivo.
+     * Representa la relación muchos a uno entre la tabla filesowners y files.
      */
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "file_id")
@@ -34,7 +35,7 @@ public class FileOwnerEntity {
 
     /**
      * Identificador único de un propietario, representa la relación muchos a uno entre
-     * la tabla filesowners y owner.
+     * la tabla filesowners y owners.
      */
     @ManyToOne
     @JoinColumn(name = "owner_id")

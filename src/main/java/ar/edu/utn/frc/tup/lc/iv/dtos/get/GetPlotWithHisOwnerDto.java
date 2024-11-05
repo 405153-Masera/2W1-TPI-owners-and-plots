@@ -7,15 +7,11 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-/**
- * DTO que representa una respuesta que contiene la infromación de
- * un lote.
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class GetPlotDto {
+public class GetPlotWithHisOwnerDto {
 
     /**
      * Identificador único del lote.
@@ -56,4 +52,9 @@ public class GetPlotDto {
      * Lista de archivos asociados al lote.
      */
     private List<FileDto> files;
+
+    /**
+     * Id del propietario dueño del plot
+     */
+    private Integer ownerId;
 }
