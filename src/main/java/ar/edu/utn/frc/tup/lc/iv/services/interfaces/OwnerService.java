@@ -106,10 +106,17 @@ public interface OwnerService {
     List<GetOwnerWithHisPlots> getallOwnersWithTheirPlots();
 
     /**
-     * Obtiene la cantidad de propietarios activos e inactivos por mes
+     * Obtiene la cantidad de propietarios activos e inactivos
      *
-     * @return un mapa con la cantidad de propietarios activos e inactivos por mes
+     * @return un mapa con la cantidad de propietarios activos e inactivos
      */
 
     Map<String,Long> getOwnerCountByStatus();
+
+    /**
+     * Obtiene la cantidad de propietarios activos e inactivos por mes
+     * @return un mapa con la cantidad de propietarios activos o inactivos por mes
+     */
+
+    Map<String,Map<String,Long>> getOwnerCountByStatusPerMonth();
 }

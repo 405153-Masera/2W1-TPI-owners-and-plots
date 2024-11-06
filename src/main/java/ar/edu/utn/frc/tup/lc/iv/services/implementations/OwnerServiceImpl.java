@@ -22,10 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.format.TextStyle;
+import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -509,6 +507,20 @@ public class OwnerServiceImpl implements OwnerService {
                         Collectors.counting()
                 ));
         return ownersCountByStatus;
+    }
+
+    @Override
+    public Map<String, Map<String, Long>> getOwnerCountByStatusPerMonth() {
+        List<OwnerEntity> owners = ownerRepository.findAll();
+        Map<String, Map<String, Long>> ownersCountByStatusPerMonth = owners.stream()
+                .collect(Collectors.groupingBy(
+                        owner -> owner.getCreatedDatetime().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()),
+                        Collectors.groupingBy(
+                                owner -> owner.getActive() ? "Activos" : "Inactivos",
+                                Collectors.counting()
+                        )
+                ));
+        return ownersCountByStatusPerMonth;
     }
 
 
