@@ -106,7 +106,9 @@ public class OwnerServiceImpl implements OwnerService {
     @Override
     @Transactional
     public GetOwnerDto createOwner(PostOwnerDto postOwnerDto) {
-
+        if(postOwnerDto.getDni_type_id() == null){
+            postOwnerDto.setDni_type_id(1);
+        }
         OwnerEntity ownerEntity = createOwnerEntity(postOwnerDto);
         uploadFiles(postOwnerDto.getFiles(), postOwnerDto.getUserCreateId(), ownerEntity);
         OwnerEntity ownerSaved = ownerRepository.save(ownerEntity);
