@@ -592,12 +592,48 @@ public class OwnerServiceImpl implements OwnerService {
                 new EntityNotFoundException("Owner not found with id: " + ownerId)
         );
 
+        multiplePlotsChangeState (ownerId);
+        logicDeleteOwner(ownerEntity, userIdUpdate);
+
+        restUser.deleteUser(ownerEntity.getId(), userIdUpdate);
+    }
+
+    /**
+     * Metodo que cambia el estado de un lote a disponible.
+     *
+     * @param plotId el id del lote a dar de baja
+     * @throws EntityNotFoundException si no se encuentra el lote con esa id
+     */
+    public void changePlotToAvaible(Integer plotId) {
+        PlotEntity plotEntity = plotRepository.findById(plotId).orElseThrow(() ->
+                new EntityNotFoundException("Plot not found with id: " + plotId));
+        plotEntity.setPlotState(plotStateRepository.findById(1).get());
+        plotRepository.save(plotEntity);
+    }
+
+    /**
+     * Meotodo que recorre todos los lotes de un owner y los cambia a disponible.
+     *
+     * @param ownerId el id del propietario.
+     */
+    public void multiplePlotsChangeState (Integer ownerId) {
+        List<PlotOwnerEntity> plotOwnerEntity = plotOwnerRepository.findByOwnerId(ownerId);
+        for (PlotOwnerEntity plotOwnerEntities : plotOwnerEntity) {
+            changePlotToAvaible(plotOwnerEntities.getId());
+        }
+    }
+
+    /**
+     * Meotodo que da de baja logica a un propietario.
+     *
+     * @param ownerEntity un entidad de propietario.
+     * @param userIdUpdate la id del usuario que da baja logica.
+     */
+    public void logicDeleteOwner (OwnerEntity ownerEntity , Integer userIdUpdate) {
         ownerEntity.setActive(false);
         ownerEntity.setLastUpdatedDatetime(LocalDateTime.now());
         ownerEntity.setLastUpdatedUser(userIdUpdate);
         ownerRepository.save(ownerEntity);
-
-        restUser.deleteUser(ownerEntity.getId(), userIdUpdate);
     }
 
     /**
