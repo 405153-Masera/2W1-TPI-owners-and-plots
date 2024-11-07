@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+  app_ownersplots_microservice:
+    container_name: ownersplots_microservice
+    image: tpi_owners_and_plots:0.0.1-SNAPSHOT
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "9062:9062"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_ownersplots_db:3306/ownersplots?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      mysql_ownersplots_db:
+        condition: service_healthy
+
+  mysql_ownersplots_db:
+    container_name: mysql_ownersplots_db
+    image: mysql:8.0.33
+    ports:
+      - "9064:3306"
+    environment:
+      - MYSQL_DATABASE=ownersplots
+      - MYSQL_ROOT_PASSWORD=root
+      - TZ=America/Argentina/Buenos_Aires
+    volumes:
+      - db_ownersplots_data:/var/lib/mysql
+      - ./ownersplots.sql:/docker-entrypoint-initdb.d/ownersplots.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "mysql_ownersplots_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_ownersplots_data:
