@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 /**
  * Implementación de la interfaz OwnerService,
- * contiene toda la logica de propietarios.
+ * contiene toda la lógica de propietarios.
  */
 @Service
 @Data
