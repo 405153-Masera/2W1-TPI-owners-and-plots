@@ -46,11 +46,27 @@ public class DashboardController {
         return ResponseEntity.ok(stats);
     }
 
- 
+
+    /**
+     * Obtiene el conteo de propietarios por estado (activo/inactivo) por mes
+     * @return un mapa donde la clave es el mes y el valor es otro mapa con el estado
+     * y el conteo de los propietarios
+     */
 
     @GetMapping("/count-by-status-per-month")
     public Map<String, Map<String, Long>> getOwnersCountByStatusPerMonth() {
         return ownerStatsService.getOwnerCountByStatusPerMonth();
+    }
+
+    /**
+     * Obtiene el porcentaje de propietarios por estado fiscal
+     * @return un mapa donde la clave es el estado fiscal y el valor es el porcentaje
+     * de propietarios en ese estado
+     */
+
+    @GetMapping("/percentage-by-tax-status")
+    public Map<String, Double> getOwnerPercentageByTaxStatus() {
+        return ownerStatsService.getOwnerPercentageByTaxStatus();
     }
 
 

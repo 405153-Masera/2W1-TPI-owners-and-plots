@@ -56,6 +56,13 @@ public class OwnerStatsService implements OwnerStatsInterface {
         return new ArrayList<>(blockDataMap.values());
     }
 
+    /**
+     * Obtiene el conteo de propietarios por estado (activo/inactivo) por mes
+     *
+     * @return un mapa donde la clave es el nombre del mes y el valor es otro mapa con el estado(activo/inactivo)
+     * y el conteo de propietarios por ese estado
+     */
+
     public Map<String, Map<String, Long>> getOwnerCountByStatusPerMonth() {
         List<OwnerEntity> owners = ownerRepository.findAll();
         Map<String, Map<String, Long>> ownersCountByStatusPerMonth = owners.stream()
@@ -67,6 +74,25 @@ public class OwnerStatsService implements OwnerStatsInterface {
                         )
                 ));
         return ownersCountByStatusPerMonth;
+    }
+
+    /**
+     * Obtiene el porcentaje de propietarios por estado fiscal
+     * @return un mapa donde la clave es el estado fiscal y el valor es el porcentaje de propietarios en ese estado
+     */
+    public Map<String, Double> getOwnerPercentageByTaxStatus() {
+        List<OwnerEntity> owners = ownerRepository.findAll();
+        long totalOwners = owners.size();
+        Map<String, Long> countByTaxStatus = owners.stream()
+                .collect(Collectors.groupingBy(
+                        owner -> owner.getTaxStatus().getDescription(),
+                        Collectors.counting()
+                ));
+        return countByTaxStatus.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> (entry.getValue() * 100.0) / totalOwners
+                ));
     }
 
 
