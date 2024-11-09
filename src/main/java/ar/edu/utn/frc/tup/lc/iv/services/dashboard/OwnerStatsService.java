@@ -2,13 +2,22 @@ package ar.edu.utn.frc.tup.lc.iv.services.dashboard;
 
 import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.BlockData;
 import ar.edu.utn.frc.tup.lc.iv.entities.PlotEntity;
+
+import ar.edu.utn.frc.tup.lc.iv.entities.OwnerEntity;
+
 import ar.edu.utn.frc.tup.lc.iv.repositories.OwnerRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+
 import java.util.ArrayList;
 import java.util.List;
+
+import java.time.format.TextStyle;
+import java.util.List;
+import java.util.Locale;
+
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -25,6 +34,7 @@ public class OwnerStatsService implements OwnerStatsInterface {
      * Repositorio para manejar los datos de los lotes.
      */
     private final PlotRepository plotRepository;
+
 
     /**
      * Obtiene una lista de datos de las manzanas.
@@ -46,4 +56,19 @@ public class OwnerStatsService implements OwnerStatsInterface {
                 ));
         return new ArrayList<>(blockDataMap.values());
     }
+
+    public Map<String, Map<String, Long>> getOwnerCountByStatusPerMonth() {
+        List<OwnerEntity> owners = ownerRepository.findAll();
+        Map<String, Map<String, Long>> ownersCountByStatusPerMonth = owners.stream()
+                .collect(Collectors.groupingBy(
+                        owner -> owner.getCreatedDatetime().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()),
+                        Collectors.groupingBy(
+                                owner -> owner.getActive() ? "Activos" : "Inactivos",
+                                Collectors.counting()
+                        )
+                ));
+        return ownersCountByStatusPerMonth;
+    }
+
+
 }

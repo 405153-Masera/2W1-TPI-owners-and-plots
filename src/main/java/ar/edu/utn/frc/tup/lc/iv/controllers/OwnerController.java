@@ -152,10 +152,6 @@ public class OwnerController {
         return ownerService.getOwnerCountByStatus();
     }
 
-    @GetMapping("/count-by-status-per-month")
-    public Map<String, Map<String, Long>> getOwnersCountByStatusPerMonth() {
-        return ownerService.getOwnerCountByStatusPerMonth();
-    }
 
 
     /**
