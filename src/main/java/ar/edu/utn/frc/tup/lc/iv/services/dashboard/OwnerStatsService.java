@@ -46,4 +46,6 @@ public class OwnerStatsService implements OwnerStatsInterface {
                 ));
         return new ArrayList<>(blockDataMap.values());
     }
+
+
 }

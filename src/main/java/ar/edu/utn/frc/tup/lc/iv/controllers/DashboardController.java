@@ -4,6 +4,7 @@ import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.BlockData;
 import ar.edu.utn.frc.tup.lc.iv.services.dashboard.OwnerStatsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,7 +30,7 @@ public class DashboardController {
      * @return ResponseEntity con una lista de BlockData
      * que contiene datos de las manzanas.
      */
-    @RequestMapping("/blockStats")
+    @GetMapping("/blockStats")
     public ResponseEntity<List<BlockData>> getOwnerCountByRole() {
         List<BlockData> stats = ownerStatsService.getBlocksData();
         return ResponseEntity.ok(stats);
