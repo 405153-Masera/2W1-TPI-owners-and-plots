@@ -47,14 +47,6 @@ public class PutOwnerDto {
     private String dni;
 
     /**
-     * CUIT/CUIL del propietario.
-     */
-    @NotBlank(message = "CUIT/CUIL no puede estar vacío")
-    @Size(min = 11, max = 20, message = "El CUIT/CUIL debe tener entre 11 y 20 caracteres")
-    @Pattern(regexp = "\\d+", message = "El CUIT/CUIL debe contener solo números")
-    private String cuitCuil;
-
-    /**
      * Correo electrónico del usuario utilizado en el login que se
      * actualiza en el microservicio de contactos.
      */
@@ -111,4 +103,9 @@ public class PutOwnerDto {
      * Lista de archivos que se van a asignar al propietario.
      */
     private List<MultipartFile> files = new ArrayList<>();
+
+       /**
+     * Identificador del lote asociado al propietario.
+     */
+    private Integer[] plotId;
 }

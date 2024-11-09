@@ -308,12 +308,84 @@ public class OwnerServiceImpl implements OwnerService {
     public GetOwnerDto updateOwner(Integer ownerId, PutOwnerDto putOwnerDto) {
         OwnerEntity ownerEntity = findOwnerById(ownerId);
         updateOwnerFields(ownerEntity, putOwnerDto);
+
         ownerEntity.getFiles().clear();
         ownerRepository.save(ownerEntity);
+
         uploadFiles(putOwnerDto.getFiles(), putOwnerDto.getUserUpdateId(), ownerEntity);
+
+        // Actualizar los plots asociados al propietario
+        updatePlotsForOwner(ownerId, ownerEntity, putOwnerDto);
 
         OwnerEntity ownerSaved = ownerRepository.save(ownerEntity);
         return createGetOwnerDto(ownerSaved);
+    }
+
+    /**
+     * Actualiza los plots asociados a un propietario.
+     *
+     * @param ownerId el id del propietario.
+     * @param ownerEntity la entidad del propietario.
+     * @param putOwnerDto el DTO con la información de los nuevos plots.
+     */
+    private void updatePlotsForOwner(Integer ownerId, OwnerEntity ownerEntity, PutOwnerDto putOwnerDto) {
+        Integer[] actualPlots = getActualPlots(ownerId);
+        Integer[] newPlots = putOwnerDto.getPlotId();
+        PostOwnerDto post = modelMapper.map(putOwnerDto, PostOwnerDto.class);
+
+        addNewPlots(ownerEntity, post, newPlots, actualPlots, putOwnerDto.getUserUpdateId());
+        removeOldPlots(ownerId, newPlots, actualPlots);
+    }
+
+    /**
+     * Obtiene los plots actuales asociados a un propietario.
+     *
+     * @param ownerId el id del propietario.
+     * @return un arreglo de ids de plots actuales.
+     */
+    private Integer[] getActualPlots(Integer ownerId) {
+        return plotOwnerRepository.findByOwnerId(ownerId).stream()
+                .map(plotOwner -> plotOwner.getPlot().getId())
+                .toArray(Integer[]::new);
+    }
+
+    /**
+     * Agrega los nuevos plots que no están en los actuales para
+     * actualizar.
+     *
+     * @param ownerEntity la entidad del propietario.
+     * @param post el DTO de publicación del propietario.
+     * @param newPlots los nuevos plots.
+     * @param actualPlots los plots actuales.
+     * @param userUpdateId el id del usuario que actualiza.
+     */
+    private void addNewPlots(OwnerEntity ownerEntity, PostOwnerDto post, Integer[] newPlots, Integer[] actualPlots, Integer userUpdateId) {
+        for (Integer plotId : newPlots) {
+            if (!Arrays.asList(actualPlots).contains(plotId)) {
+                PlotOwnerEntity plotOwnerEntity = mapPlotOwnerEntity(ownerEntity, post, plotId);
+                plotOwnerEntity.setCreatedUser(userUpdateId);
+                plotOwnerEntity.setLastUpdatedUser(userUpdateId);
+                validatePlot(plotOwnerEntity);
+                plotOwnerRepository.save(plotOwnerEntity);
+                changePlotState(plotId, post);
+            }
+        }
+    }
+
+    /**
+     * Elimina los plots actuales que no están en los nuevos para actualizar.
+     *
+     * @param ownerId el id del propietario.
+     * @param newPlots los nuevos plots.
+     * @param actualPlots los plots actuales.
+     */
+    private void removeOldPlots(Integer ownerId, Integer[] newPlots, Integer[] actualPlots) {
+        for (Integer plotId : actualPlots) {
+            if (!Arrays.asList(newPlots).contains(plotId)) {
+                plotOwnerRepository.deleteByOwnerIdAndPlotId(ownerId, plotId);
+                changePlotToAvaible(plotId);
+            }
+        }
     }
 
     /**
