@@ -1,5 +1,6 @@
 package ar.edu.utn.frc.tup.lc.iv.repositories;
 
+import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.PlotByPlotTypeCountDTO;
 import ar.edu.utn.frc.tup.lc.iv.entities.PlotEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -43,4 +44,12 @@ public interface PlotRepository extends JpaRepository<PlotEntity, Integer> {
             "GROUP BY ps.name",
             nativeQuery = true)
     List<Object[]> countPlotsByState();
+
+
+    @Query(value = "SELECT pt.name AS typeName, COUNT(p.id) AS count " +
+            "FROM plots p " +
+            "JOIN plottypes pt ON pt.id = p.plot_type_id " +
+            "GROUP BY pt.name", nativeQuery = true)
+    List<Object[]> countPlotsByType();
+
 }
