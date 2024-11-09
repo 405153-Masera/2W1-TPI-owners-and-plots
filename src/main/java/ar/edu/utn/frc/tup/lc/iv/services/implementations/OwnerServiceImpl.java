@@ -511,19 +511,6 @@ public class OwnerServiceImpl implements OwnerService {
         return ownersCountByStatus;
     }
 
-    @Override
-    public Map<String, Map<String, Long>> getOwnerCountByStatusPerMonth() {
-        List<OwnerEntity> owners = ownerRepository.findAll();
-        Map<String, Map<String, Long>> ownersCountByStatusPerMonth = owners.stream()
-                .collect(Collectors.groupingBy(
-                        owner -> owner.getCreatedDatetime().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()),
-                        Collectors.groupingBy(
-                                owner -> owner.getActive() ? "Activos" : "Inactivos",
-                                Collectors.counting()
-                        )
-                ));
-        return ownersCountByStatusPerMonth;
-    }
 
 
     private GetOwnerWithHisPlots buildGetOwnerWithHisPlots(OwnerEntity ownerEntity) {

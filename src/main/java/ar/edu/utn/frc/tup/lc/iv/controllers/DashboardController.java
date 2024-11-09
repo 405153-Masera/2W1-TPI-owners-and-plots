@@ -2,6 +2,7 @@ package ar.edu.utn.frc.tup.lc.iv.controllers;
 
 import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.BlockData;
 import ar.edu.utn.frc.tup.lc.iv.services.dashboard.OwnerStatsService;
+import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,14 @@ import java.util.List;
  * Controlador REST para manejar las operaciones
  * relacionadas con el dashboard.
  */
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
+
+
 @RestController
 @RequestMapping("/dashboard")
 @RequiredArgsConstructor
@@ -23,6 +32,7 @@ public class DashboardController {
      * Servicio para manejar las estadísticas de los gráficos.
      */
     private final OwnerStatsService ownerStatsService;
+
 
     /**
      * Maneja las estadísticas de las manzanas.
@@ -35,4 +45,13 @@ public class DashboardController {
         List<BlockData> stats = ownerStatsService.getBlocksData();
         return ResponseEntity.ok(stats);
     }
+
+ 
+
+    @GetMapping("/count-by-status-per-month")
+    public Map<String, Map<String, Long>> getOwnersCountByStatusPerMonth() {
+        return ownerStatsService.getOwnerCountByStatusPerMonth();
+    }
+
+
 }
