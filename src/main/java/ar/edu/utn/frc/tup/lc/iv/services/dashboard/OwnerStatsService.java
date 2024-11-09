@@ -1,6 +1,7 @@
 package ar.edu.utn.frc.tup.lc.iv.services.dashboard;
 
 import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.BlockData;
+import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.PlotByPlotStateCountDTO;
 import ar.edu.utn.frc.tup.lc.iv.entities.PlotEntity;
 
 import ar.edu.utn.frc.tup.lc.iv.entities.OwnerEntity;
@@ -95,6 +96,17 @@ public class OwnerStatsService implements OwnerStatsInterface {
                 ));
     }
 
+
+    public List<PlotByPlotStateCountDTO> countPlotsByState() {
+        List<Object[]> result = plotRepository.countPlotsByState();
+        List<PlotByPlotStateCountDTO> dtoList = new ArrayList<>();
+        for (Object[] row : result) {
+            String stateName = (String) row[0];  // El primer valor del Object[] es el 'stateName'
+            long count = (long) row[1];           // El segundo valor del Object[] es el 'count'
+            dtoList.add(new PlotByPlotStateCountDTO(stateName, count));
+        }
+        return dtoList;
+    }
 
 
 

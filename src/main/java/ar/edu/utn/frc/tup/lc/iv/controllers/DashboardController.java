@@ -1,6 +1,7 @@
 package ar.edu.utn.frc.tup.lc.iv.controllers;
 
 import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.BlockData;
+import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.PlotByPlotStateCountDTO;
 import ar.edu.utn.frc.tup.lc.iv.services.dashboard.OwnerStatsService;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
 import lombok.RequiredArgsConstructor;
@@ -67,6 +68,13 @@ public class DashboardController {
     @GetMapping("/percentage-by-tax-status")
     public Map<String, Double> getOwnerPercentageByTaxStatus() {
         return ownerStatsService.getOwnerPercentageByTaxStatus();
+    }
+
+
+    @GetMapping("/Plot-By-State-Count")
+    public ResponseEntity<List<PlotByPlotStateCountDTO>> getPlotByStateCount() {
+        List<PlotByPlotStateCountDTO> stats = ownerStatsService.countPlotsByState();
+        return ResponseEntity.ok(stats);
     }
 
 
