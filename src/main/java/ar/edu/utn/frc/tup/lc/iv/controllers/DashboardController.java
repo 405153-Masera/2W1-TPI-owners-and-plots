@@ -6,8 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -73,18 +75,27 @@ public class DashboardController {
     }
 
     @GetMapping("/plots-stats")
-    public ResponseEntity<PlotsStats> getGeneralStats() {
-        return ResponseEntity.ok(ownerStatsService.getStatsOfPlots());
+    public ResponseEntity<PlotsStats> getGeneralStats(@RequestParam(required = false) LocalDate startDate,
+                                                      @RequestParam(required = false) LocalDate endDate,
+                                                      @RequestParam(required = false) String plotType,
+                                                      @RequestParam(required = false) String plotStatus) {
+        return ResponseEntity.ok(ownerStatsService.getStatsOfPlots(startDate, endDate, plotType, plotStatus));
     }
 
     @GetMapping("/plots-by-block")
-    public ResponseEntity<List<PlotsByBlock>> getPlotsByBlock() {
-        return ResponseEntity.ok(ownerStatsService.getPlotsByBlock());
+    public ResponseEntity<List<PlotsByBlock>> getPlotsByBlock(@RequestParam(required = false) LocalDate startDate,
+                                                              @RequestParam(required = false) LocalDate endDate,
+                                                              @RequestParam(required = false) String plotType,
+                                                              @RequestParam(required = false) String plotStatus) {
+        return ResponseEntity.ok(ownerStatsService.getPlotsByBlock(startDate, endDate, plotType, plotStatus));
     }
 
     @GetMapping("/owners-distribution")
-    public ResponseEntity<List<OwnersPlotsDistribution>> getOwnershipDistribution() {
-        return ResponseEntity.ok(ownerStatsService.getOwnersPlotsDistribution());
+    public ResponseEntity<List<OwnersPlotsDistribution>> getOwnershipDistribution(@RequestParam(required = false) LocalDate startDate,
+                                                                                  @RequestParam(required = false) LocalDate endDate,
+                                                                                  @RequestParam(required = false) String plotType,
+                                                                                  @RequestParam(required = false) String plotStatus) {
+        return ResponseEntity.ok(ownerStatsService.getOwnersPlotsDistribution(startDate, endDate, plotType, plotStatus));
     }
 
     @GetMapping("/construction-progress")

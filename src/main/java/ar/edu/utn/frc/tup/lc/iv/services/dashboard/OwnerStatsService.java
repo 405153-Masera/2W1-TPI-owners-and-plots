@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDate;
 import java.util.*;
 
 import java.time.format.TextStyle;
@@ -98,6 +99,11 @@ public class OwnerStatsService implements OwnerStatsInterface {
     }
 
 
+    /**
+     * Obtiene la cantidad de lotes por el estado del lote.
+     *
+     * @return una lista con la cantidad de lotes por estado de lote.
+     */
     public List<PlotByPlotStateCountDTO> countPlotsByState() {
         List<Object[]> result = plotRepository.countPlotsByState();
 
@@ -111,6 +117,11 @@ public class OwnerStatsService implements OwnerStatsInterface {
         return dtoList;
     }
 
+    /**
+     * Obtiene la cantidad de lotes por tipo de lote.
+     *
+     * @return una lista con la cantidad de lotes por tipo de lote.
+     */
     public List<PlotByPlotTypeCountDTO> countPlotsByType() {
         List<Object[]> result = plotRepository.countPlotsByType();
         List<PlotByPlotTypeCountDTO> dtoList = new ArrayList<>();
@@ -125,10 +136,14 @@ public class OwnerStatsService implements OwnerStatsInterface {
     /**
      * Calcula las estadísticas generales de los lotes.
      *
+     * @param startDate la fecha de inicio del filtro (opcional)
+     * @param endDate la fecha de fin del filtro (opcional)
+     * @param plotType el tipo de lote (opcional)
+     * @param plotStatus el estado del lote (opcional)
      * @return un objeto con las estadísticas de los lotes.
      */
-    public PlotsStats getStatsOfPlots() {
-        List<PlotEntity> plots = plotRepository.findAll();
+    public PlotsStats getStatsOfPlots(LocalDate startDate, LocalDate endDate, String plotType, String plotStatus) {
+        List<PlotEntity> plots = this.getFiltersPlots(startDate, endDate, plotType, plotStatus);
 
         long totalPlots = plots.size();
         long availablePlots = plots.stream().filter(plot -> plot.getPlotState().getId() == 1L).count();
@@ -143,10 +158,14 @@ public class OwnerStatsService implements OwnerStatsInterface {
     /**
      * Agrupa los lotes por manzana y calcula sus estadísticas.
      *
-     * @return una lista  con las estadísticas de los lotes agrupados por manzana.
+     * @param startDate la fecha de inicio del filtro (opcional)
+     * @param endDate la fecha de fin del filtro (opcional)
+     * @param plotType el tipo de lote (opcional)
+     * @param plotStatus el estado del lote (opcional)
+     * @return una lista con las estadísticas de los lotes agrupados por manzana.
      */
-    public List<PlotsByBlock> getPlotsByBlock() {
-        List<PlotEntity> plots = plotRepository.findAll();
+    public List<PlotsByBlock> getPlotsByBlock(LocalDate startDate, LocalDate endDate, String plotType, String plotStatus) {
+        List<PlotEntity> plots = this.getFiltersPlots(startDate, endDate, plotType, plotStatus);
 
         return plots.stream()
                 .collect(Collectors.groupingBy(PlotEntity::getBlockNumber))
@@ -164,20 +183,67 @@ public class OwnerStatsService implements OwnerStatsInterface {
                 .collect(Collectors.toList());
     }
 
-    public List<OwnersPlotsDistribution> getOwnersPlotsDistribution() {
+    /**
+     * Obtiene la distribución de los lotes por propietario.
+     *
+     * @param startDate la fecha de inicio del filtro (opcional)
+     * @param endDate la fecha de fin del filtro (opcional)
+     * @param plotType el tipo de lote (opcional)
+     * @param plotStatus el estado del lote (opcional)
+     * @return una lista con las estadísticas de la distribución de los lotes por propietario.
+     */
+    public List<OwnersPlotsDistribution> getOwnersPlotsDistribution(LocalDate startDate, LocalDate endDate,
+                                                                    String plotType, String plotStatus) {
         List<PlotOwnerEntity> plotOwners = plotOwnerRepository.findAll();
 
+        if (startDate != null && endDate != null) {
+            plotOwners = plotOwners.stream()
+                    .filter(plotOwner -> plotOwner.getPlot().getCreatedDatetime()
+                            .isAfter(startDate.atStartOfDay()) && plotOwner.getPlot()
+                            .getCreatedDatetime().isBefore(endDate.atStartOfDay().plusDays(1))).toList();
+        }
+
+        List<PlotEntity> plots = this.getFiltersPlots(null, null, plotType, plotStatus);
+
+        List<Integer> filteredPlotIds = plots.stream()
+                .map(PlotEntity::getId).toList();
+
+        plotOwners = plotOwners.stream()
+                .filter(plotOwner -> filteredPlotIds.contains(plotOwner.getPlot().getId()))
+                .collect(Collectors.toList());
+        return createOwnersPlotsDistribution(plotOwners);
+    }
+
+    /**
+     * Obtiene las construcciones a lo largo de los años.
+     *
+     * @return una lista con las construcciones a lo largo de los años.
+     */
+    public List<ConstructionProgress> getConstructionProgress() {
+        List<PlotEntity> plots = plotRepository.findAll();
+
+        return plots.stream()
+                .filter(plot -> plot.getPlotState().getId() == 3L)
+                .collect(Collectors.groupingBy(plot -> plot.getCreatedDatetime().getYear()))
+                .entrySet().stream()
+                .map(entry -> new ConstructionProgress(entry.getKey(), entry.getValue().size()))
+                .sorted(Comparator.comparing(ConstructionProgress::getYear))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Crea la distribución de los lotes por propietario.
+     *
+     * @param plotOwners la lista que tiene las relaciones entre propietarios y lotes.
+     * @return una lista con las estadísticas de la distribución de los lotes por propietario.
+     */
+    public List<OwnersPlotsDistribution> createOwnersPlotsDistribution(List<PlotOwnerEntity> plotOwners) {
         return plotOwners.stream()
                 .collect(Collectors.groupingBy(PlotOwnerEntity::getOwner))
                 .entrySet().stream()
                 .map(entry -> {
                     OwnerEntity owner = entry.getKey();
-
-                    System.out.println(owner.getName());
-
-
                     List<PlotOwnerEntity> ownerPlots = entry.getValue();
-                    System.out.println(ownerPlots);
 
                     String ownerName = owner.getName() == null ? "Sin Propietario" : (owner
                             .getOwnerType().getId() == 1L ? owner.getName() + " " + owner.getLastname() : owner.getBusinessName());
@@ -195,15 +261,35 @@ public class OwnerStatsService implements OwnerStatsInterface {
                 .collect(Collectors.toList());
     }
 
-    public List<ConstructionProgress> getConstructionProgress() {
+    /**
+     * Filtra los lotes según los parámetros recibidos.
+     *
+     * @param startDate la fecha de inicio del filtro (opcional)
+     * @param endDate la fecha de fin del filtro (opcional)
+     * @param plotType el tipo de lote (opcional)
+     * @param plotStatus el estado del lote (opcional)
+     * @return una lista con los lotes filtrados.
+     */
+    public List<PlotEntity> getFiltersPlots(LocalDate startDate, LocalDate endDate, String plotType, String plotStatus) {
         List<PlotEntity> plots = plotRepository.findAll();
+        if (startDate != null && endDate != null) {
+            plots = plots.stream()
+                    .filter(plot -> plot.getCreatedDatetime()
+                            .isAfter(startDate.atStartOfDay()) && plot.getCreatedDatetime()
+                            .isBefore(endDate.atStartOfDay().plusDays(1))).toList();
+        }
 
-        return plots.stream()
-                .filter(plot -> plot.getPlotState().getId() == 3L)
-                .collect(Collectors.groupingBy(plot -> plot.getCreatedDatetime().getYear()))
-                .entrySet().stream()
-                .map(entry -> new ConstructionProgress(entry.getKey(), entry.getValue().size()))
-                .sorted(Comparator.comparing(ConstructionProgress::getYear))
-                .collect(Collectors.toList());
+        if (plotType != null && !plotType.isEmpty()) {
+            plots = plots.stream()
+                    .filter(plot -> plot.getPlotType().getName().equals(plotType))
+                    .collect(Collectors.toList());
+        }
+
+        if (plotStatus != null && !plotStatus.isEmpty()) {
+            plots = plots.stream()
+                    .filter(plot -> plot.getPlotState().getName().equals(plotStatus))
+                    .collect(Collectors.toList());
+        }
+        return plots;
     }
 }
