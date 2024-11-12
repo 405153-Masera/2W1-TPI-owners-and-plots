@@ -1,10 +1,7 @@
 package ar.edu.utn.frc.tup.lc.iv.controllers;
 
-import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.BlockData;
-import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.PlotByPlotStateCountDTO;
-import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.PlotByPlotTypeCountDTO;
+import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.*;
 import ar.edu.utn.frc.tup.lc.iv.services.dashboard.OwnerStatsService;
-import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,19 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controlador REST para manejar las operaciones
  * relacionadas con el dashboard.
  */
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
-
-
 @RestController
 @RequestMapping("/dashboard")
 @RequiredArgsConstructor
@@ -50,22 +40,20 @@ public class DashboardController {
 
 
     /**
-     * Obtiene el conteo de propietarios por estado (activo/inactivo) por mes
+     * Obtiene el conteo de propietarios por estado (activo/inactivo) por mes.
      * @return un mapa donde la clave es el mes y el valor es otro mapa con el estado
      * y el conteo de los propietarios
      */
-
     @GetMapping("/count-by-status-per-month")
     public Map<String, Map<String, Long>> getOwnersCountByStatusPerMonth() {
         return ownerStatsService.getOwnerCountByStatusPerMonth();
     }
 
     /**
-     * Obtiene el porcentaje de propietarios por estado fiscal
+     * Obtiene el porcentaje de propietarios por estado fiscal.
      * @return un mapa donde la clave es el estado fiscal y el valor es el porcentaje
      * de propietarios en ese estado
      */
-
     @GetMapping("/percentage-by-tax-status")
     public Map<String, Double> getOwnerPercentageByTaxStatus() {
         return ownerStatsService.getOwnerPercentageByTaxStatus();
@@ -84,5 +72,28 @@ public class DashboardController {
         return ResponseEntity.ok(stats);
     }
 
+    @GetMapping("/plots-stats")
+    public ResponseEntity<PlotsStats> getGeneralStats() {
+        return ResponseEntity.ok(ownerStatsService.getStatsOfPlots());
+    }
 
+    @GetMapping("/plots-by-block")
+    public ResponseEntity<List<PlotsByBlock>> getPlotsByBlock() {
+        return ResponseEntity.ok(ownerStatsService.getPlotsByBlock());
+    }
+
+    @GetMapping("/owners-distribution")
+    public ResponseEntity<List<OwnersPlotsDistribution>> getOwnershipDistribution() {
+        return ResponseEntity.ok(ownerStatsService.getOwnersPlotsDistribution());
+    }
+
+   /* @GetMapping("/plot-state-distribution")
+    public ResponseEntity<List<PlotStateDistributionDTO>> getPlotStateDistribution() {
+        return ResponseEntity.ok(dashboardService.getPlotStateDistribution());
+    }*/
+
+    @GetMapping("/construction-progress")
+    public ResponseEntity<List<ConstructionProgress>> getConstructionProgress() {
+        return ResponseEntity.ok(ownerStatsService.getConstructionProgress());
+    }
 }
