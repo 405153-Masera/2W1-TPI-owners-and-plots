@@ -87,11 +87,6 @@ public class DashboardController {
         return ResponseEntity.ok(ownerStatsService.getOwnersPlotsDistribution());
     }
 
-   /* @GetMapping("/plot-state-distribution")
-    public ResponseEntity<List<PlotStateDistributionDTO>> getPlotStateDistribution() {
-        return ResponseEntity.ok(dashboardService.getPlotStateDistribution());
-    }*/
-
     @GetMapping("/construction-progress")
     public ResponseEntity<List<ConstructionProgress>> getConstructionProgress() {
         return ResponseEntity.ok(ownerStatsService.getConstructionProgress());

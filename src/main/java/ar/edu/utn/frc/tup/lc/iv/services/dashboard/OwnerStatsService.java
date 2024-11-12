@@ -195,29 +195,6 @@ public class OwnerStatsService implements OwnerStatsInterface {
                 .collect(Collectors.toList());
     }
 
-    /*public List<PlotsStateDistribution> getPlotStateDistribution() {
-        List<PlotEntity> plots = plotRepository.findAll();
-
-        Map<Long, PlotsStateDistribution> stateDistributionMap = plots.stream()
-                .collect(Collectors.groupingBy(plot -> plot.getPlotState().getId(),
-                        Collectors.collectingAndThen(
-                                Collectors.toList(),
-                                statePlots -> {
-                                    String stateName = statePlots.get(0).getPlotState().getName();
-                                    String color = switch (statePlots.get(0).getPlotState().getId().intValue()) {
-                                        case 1 -> "#4CAF50"; // Available
-                                        case 2 -> "#2196F3"; // Sold
-                                        case 3 -> "#FFC107"; // Under Construction
-                                        default -> "#000000"; // Default color if needed
-                                    };
-                                    return new PlotsStateDistribution(stateName, statePlots.size(), color);
-                                }
-                        )
-                ));
-
-        return new ArrayList<>(stateDistributionMap.values());
-    }*/
-
     public List<ConstructionProgress> getConstructionProgress() {
         List<PlotEntity> plots = plotRepository.findAll();
 
