@@ -45,8 +45,8 @@ public class OwnerStatsService implements OwnerStatsInterface {
      * @return una lista de datos de las manzanas
      */
     @Override
-    public List<BlockData> getBlocksData() {
-        List<PlotEntity> plots = plotRepository.findAll();
+    public List<BlockData> getBlocksData(LocalDate startDate, LocalDate endDate) {
+        List<PlotEntity> plots = this.getFiltersPlots(startDate, endDate, null, null);
         Map<Integer, BlockData> blockDataMap = plots.stream()
                 .collect(Collectors.toMap(
                         PlotEntity::getBlockNumber,

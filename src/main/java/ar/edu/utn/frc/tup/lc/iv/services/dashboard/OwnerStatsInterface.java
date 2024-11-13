@@ -3,6 +3,7 @@ package ar.edu.utn.frc.tup.lc.iv.services.dashboard;
 import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.BlockData;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -15,10 +16,11 @@ public interface OwnerStatsInterface {
 
     /**
      * Obtiene una lista de datos de las manzanas.
-     *
+     * @param startDate fecha de inicio
+     * @param endDate fecha de fin
      * @return una lista de datos de las manzanas
      */
-    List<BlockData> getBlocksData();
+    List<BlockData> getBlocksData(LocalDate startDate, LocalDate endDate);
 
     /**
      * Obtiene el porcentaje de propietarios por estado fiscal.
