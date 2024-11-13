@@ -84,10 +84,8 @@ public class DashboardController {
 
     @GetMapping("/plots-by-block")
     public ResponseEntity<List<PlotsByBlock>> getPlotsByBlock(@RequestParam(required = false) LocalDate startDate,
-                                                              @RequestParam(required = false) LocalDate endDate,
-                                                              @RequestParam(required = false) String plotType,
-                                                              @RequestParam(required = false) String plotStatus) {
-        return ResponseEntity.ok(ownerStatsService.getPlotsByBlock(startDate, endDate, plotType, plotStatus));
+                                                              @RequestParam(required = false) LocalDate endDate) {
+        return ResponseEntity.ok(ownerStatsService.getPlotsByBlock(startDate, endDate));
     }
 
     @GetMapping("/owners-distribution")

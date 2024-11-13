@@ -160,12 +160,10 @@ public class OwnerStatsService implements OwnerStatsInterface {
      *
      * @param startDate la fecha de inicio del filtro (opcional)
      * @param endDate la fecha de fin del filtro (opcional)
-     * @param plotType el tipo de lote (opcional)
-     * @param plotStatus el estado del lote (opcional)
      * @return una lista con las estadísticas de los lotes agrupados por manzana.
      */
-    public List<PlotsByBlock> getPlotsByBlock(LocalDate startDate, LocalDate endDate, String plotType, String plotStatus) {
-        List<PlotEntity> plots = this.getFiltersPlots(startDate, endDate, plotType, plotStatus);
+    public List<PlotsByBlock> getPlotsByBlock(LocalDate startDate, LocalDate endDate) {
+        List<PlotEntity> plots = this.getFiltersPlots(startDate, endDate, null, null);
 
         return plots.stream()
                 .collect(Collectors.groupingBy(PlotEntity::getBlockNumber))
@@ -257,7 +255,6 @@ public class OwnerStatsService implements OwnerStatsInterface {
                     return new OwnersPlotsDistribution(ownerName, countPlots, totalArea);
                 })
                 .sorted(Comparator.comparingLong(OwnersPlotsDistribution::getPlotCount).reversed())
-                .limit(6)
                 .collect(Collectors.toList());
     }
 
