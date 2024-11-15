@@ -6,6 +6,7 @@ import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutOwnerDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interfaz que contiene la lógica de propietarios.
@@ -44,6 +45,13 @@ public interface OwnerService {
      * @return una lista de los tipos de situación fiscal.
      */
     List<GetTaxStatusDto> getTaxStatus();
+
+    /**
+     * Obtiene los tipos de documento.
+     *
+     * @return una lista de los tipos de documento.
+     */
+    List<GetDniTypeDto> getDniTypes();
 
     /**
      * Obtiene todos los tipos de propietarios (personas física, jurídica, otros).
@@ -90,5 +98,21 @@ public interface OwnerService {
      */
     GetOwnerAndPlot getOwnerAndPlotById(Integer ownerId);
 
+    /**
+     * Obtiene todos los propietarios con sus lotes.
+     *
+     * @return una lista con todos los propietarios y sus lotes.
+     */
     List<GetOwnerWithHisPlots> getallOwnersWithTheirPlots();
+
+    /**
+     * Obtiene la cantidad de propietarios activos e inactivos
+     *
+     * @return un mapa con la cantidad de propietarios activos e inactivos
+     */
+
+    Map<String,Long> getOwnerCountByStatus();
+
+
+
 }

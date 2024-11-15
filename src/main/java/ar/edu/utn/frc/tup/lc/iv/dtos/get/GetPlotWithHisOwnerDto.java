@@ -39,7 +39,7 @@ public class GetPlotWithHisOwnerDto {
     private double built_area_in_m2;
 
     /**
-     * Estado del lote (disponible, vendido, etc).
+     * Estado del lote (disponible, vendido, etc.).
      */
     private String plot_state;
 
@@ -54,7 +54,7 @@ public class GetPlotWithHisOwnerDto {
     private List<FileDto> files;
 
     /**
-     * Id del propietario dueño del plot
+     * Id del propietario dueño del plot.
      */
     private Integer ownerId;
 }

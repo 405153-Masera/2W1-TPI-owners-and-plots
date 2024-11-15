@@ -5,21 +5,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO que representa una respuesta que contiene la información del
- * tipo de situación fiscal.
+ * DTO que representa una respuesta que contiene la infromación del
+ * tipo de documento que puede tener un propietario.
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetTaxStatusDto {
+public class GetDniTypeDto {
 
     /**
-     * Identificador único del tipo de situación fiscal.
+     * Identificador único del tipo de documento
      */
     private int id;
 
     /**
-     * Nombre de la situación fiscal.
+     * Descripción del tipo de documento..
      */
     private String description;
 }

@@ -22,14 +22,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.format.TextStyle;
+import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
  * Implementación de la interfaz OwnerService,
- * contiene toda la logica de propietarios.
+ * contiene toda la lógica de propietarios.
  */
 @Service
 @Data
@@ -106,7 +106,9 @@ public class OwnerServiceImpl implements OwnerService {
     @Override
     @Transactional
     public GetOwnerDto createOwner(PostOwnerDto postOwnerDto) {
-
+        if(postOwnerDto.getDni_type_id() == null){
+            postOwnerDto.setDni_type_id(1);
+        }
         OwnerEntity ownerEntity = createOwnerEntity(postOwnerDto);
         uploadFiles(postOwnerDto.getFiles(), postOwnerDto.getUserCreateId(), ownerEntity);
         OwnerEntity ownerSaved = ownerRepository.save(ownerEntity);
@@ -167,7 +169,7 @@ public class OwnerServiceImpl implements OwnerService {
     public void assignPlots(OwnerEntity owner, PostOwnerDto postOwnerDto) {
         Integer[] plots = postOwnerDto.getPlotId();
         for (Integer plot : plots) {
-            PlotOwnerEntity plotOwnerEntity = mapPlotOwnerEntity(owner,postOwnerDto,plot);
+            PlotOwnerEntity plotOwnerEntity = mapPlotOwnerEntity(owner, postOwnerDto, plot);
             validatePlot(plotOwnerEntity);
             plotOwnerRepository.save(plotOwnerEntity);
             changePlotState(plot, postOwnerDto);
@@ -306,12 +308,84 @@ public class OwnerServiceImpl implements OwnerService {
     public GetOwnerDto updateOwner(Integer ownerId, PutOwnerDto putOwnerDto) {
         OwnerEntity ownerEntity = findOwnerById(ownerId);
         updateOwnerFields(ownerEntity, putOwnerDto);
+
         ownerEntity.getFiles().clear();
         ownerRepository.save(ownerEntity);
+
         uploadFiles(putOwnerDto.getFiles(), putOwnerDto.getUserUpdateId(), ownerEntity);
+
+        // Actualizar los plots asociados al propietario
+        updatePlotsForOwner(ownerId, ownerEntity, putOwnerDto);
 
         OwnerEntity ownerSaved = ownerRepository.save(ownerEntity);
         return createGetOwnerDto(ownerSaved);
+    }
+
+    /**
+     * Actualiza los plots asociados a un propietario.
+     *
+     * @param ownerId el id del propietario.
+     * @param ownerEntity la entidad del propietario.
+     * @param putOwnerDto el DTO con la información de los nuevos plots.
+     */
+    private void updatePlotsForOwner(Integer ownerId, OwnerEntity ownerEntity, PutOwnerDto putOwnerDto) {
+        Integer[] actualPlots = getActualPlots(ownerId);
+        Integer[] newPlots = putOwnerDto.getPlotId();
+        PostOwnerDto post = modelMapper.map(putOwnerDto, PostOwnerDto.class);
+
+        addNewPlots(ownerEntity, post, newPlots, actualPlots, putOwnerDto.getUserUpdateId());
+        removeOldPlots(ownerId, newPlots, actualPlots);
+    }
+
+    /**
+     * Obtiene los plots actuales asociados a un propietario.
+     *
+     * @param ownerId el id del propietario.
+     * @return un arreglo de ids de plots actuales.
+     */
+    private Integer[] getActualPlots(Integer ownerId) {
+        return plotOwnerRepository.findByOwnerId(ownerId).stream()
+                .map(plotOwner -> plotOwner.getPlot().getId())
+                .toArray(Integer[]::new);
+    }
+
+    /**
+     * Agrega los nuevos plots que no están en los actuales para
+     * actualizar.
+     *
+     * @param ownerEntity la entidad del propietario.
+     * @param post el DTO de publicación del propietario.
+     * @param newPlots los nuevos plots.
+     * @param actualPlots los plots actuales.
+     * @param userUpdateId el id del usuario que actualiza.
+     */
+    private void addNewPlots(OwnerEntity ownerEntity, PostOwnerDto post, Integer[] newPlots, Integer[] actualPlots, Integer userUpdateId) {
+        for (Integer plotId : newPlots) {
+            if (!Arrays.asList(actualPlots).contains(plotId)) {
+                PlotOwnerEntity plotOwnerEntity = mapPlotOwnerEntity(ownerEntity, post, plotId);
+                plotOwnerEntity.setCreatedUser(userUpdateId);
+                plotOwnerEntity.setLastUpdatedUser(userUpdateId);
+                validatePlot(plotOwnerEntity);
+                plotOwnerRepository.save(plotOwnerEntity);
+                changePlotState(plotId, post);
+            }
+        }
+    }
+
+    /**
+     * Elimina los plots actuales que no están en los nuevos para actualizar.
+     *
+     * @param ownerId el id del propietario.
+     * @param newPlots los nuevos plots.
+     * @param actualPlots los plots actuales.
+     */
+    private void removeOldPlots(Integer ownerId, Integer[] newPlots, Integer[] actualPlots) {
+        for (Integer plotId : actualPlots) {
+            if (!Arrays.asList(newPlots).contains(plotId)) {
+                plotOwnerRepository.deleteByOwnerIdAndPlotId(ownerId, plotId);
+                changePlotToAvaible(plotId);
+            }
+        }
     }
 
     /**
@@ -336,7 +410,7 @@ public class OwnerServiceImpl implements OwnerService {
         owner.setName(dto.getName());
         owner.setLastname(dto.getLastname());
         owner.setDni(dto.getDni());
-        owner.setDni_type_id(dniTypeRepository.findById(dto.getDni_type_id())
+        owner.setDni_type_id(dniTypeRepository.findById(dto.getDniTypeId())
                 .orElseThrow(() -> new EntityNotFoundException("Dni type not found")));
         owner.setDateBirth(dto.getDateBirth());
         owner.setOwnerType(findOwnerType(dto.getOwnerTypeId()));
@@ -424,6 +498,21 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     /**
+     * Obtiene todos los tipos de documentos(DNI , Pasaporte , Cuit/Cuil).
+     *
+     * @return una lista con los tipos de documentos.
+     */
+    @Override
+    public List<GetDniTypeDto> getDniTypes() {
+        List<DniTypeEntity> dniTypeEntities = dniTypeRepository.findAll();
+        List<GetDniTypeDto> dniTypeDtos = new ArrayList<>();
+        for (DniTypeEntity dniTypeEntity : dniTypeEntities) {
+            dniTypeDtos.add(modelMapper.map(dniTypeEntity, GetDniTypeDto.class));
+        }
+        return dniTypeDtos;
+    }
+
+    /**
      * Obtiene todos los tipos de propietarios (personas física, jurídica, otros).
      *
      * @return una lista con los tipos de propietarios.
@@ -482,6 +571,19 @@ public class OwnerServiceImpl implements OwnerService {
                 .map(this::buildGetOwnerWithHisPlots)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Map<String, Long> getOwnerCountByStatus() {
+        List<OwnerEntity> owners = ownerRepository.findAll();
+        Map<String, Long> ownersCountByStatus = owners.stream()
+                .collect(Collectors.groupingBy(
+                        owner -> owner.getActive() ? "Activos" : "Inactivos",
+                        Collectors.counting()
+                ));
+        return ownersCountByStatus;
+    }
+
+
 
     private GetOwnerWithHisPlots buildGetOwnerWithHisPlots(OwnerEntity ownerEntity) {
         GetOwnerWithHisPlots getOwnerWithHisPlots = new GetOwnerWithHisPlots();
@@ -551,12 +653,48 @@ public class OwnerServiceImpl implements OwnerService {
                 new EntityNotFoundException("Owner not found with id: " + ownerId)
         );
 
+        multiplePlotsChangeState (ownerId);
+        logicDeleteOwner(ownerEntity, userIdUpdate);
+
+        restUser.deleteUser(ownerEntity.getId(), userIdUpdate);
+    }
+
+    /**
+     * Metodo que cambia el estado de un lote a disponible.
+     *
+     * @param plotId el id del lote a dar de baja
+     * @throws EntityNotFoundException si no se encuentra el lote con esa id
+     */
+    public void changePlotToAvaible(Integer plotId) {
+        PlotEntity plotEntity = plotRepository.findById(plotId).orElseThrow(() ->
+                new EntityNotFoundException("Plot not found with id: " + plotId));
+        plotEntity.setPlotState(plotStateRepository.findById(1).get());
+        plotRepository.save(plotEntity);
+    }
+
+    /**
+     * Meotodo que recorre todos los lotes de un owner y los cambia a disponible.
+     *
+     * @param ownerId el id del propietario.
+     */
+    public void multiplePlotsChangeState (Integer ownerId) {
+        List<PlotOwnerEntity> plotOwnerEntity = plotOwnerRepository.findByOwnerId(ownerId);
+        for (PlotOwnerEntity plotOwnerEntities : plotOwnerEntity) {
+            changePlotToAvaible(plotOwnerEntities.getId());
+        }
+    }
+
+    /**
+     * Meotodo que da de baja logica a un propietario.
+     *
+     * @param ownerEntity un entidad de propietario.
+     * @param userIdUpdate la id del usuario que da baja logica.
+     */
+    public void logicDeleteOwner (OwnerEntity ownerEntity , Integer userIdUpdate) {
         ownerEntity.setActive(false);
         ownerEntity.setLastUpdatedDatetime(LocalDateTime.now());
         ownerEntity.setLastUpdatedUser(userIdUpdate);
         ownerRepository.save(ownerEntity);
-
-        restUser.deleteUser(ownerEntity.getId(), userIdUpdate);
     }
 
     /**
@@ -607,8 +745,5 @@ public class OwnerServiceImpl implements OwnerService {
 
         return getOwnerAndPlot;
     }
-
-
-
 
 }

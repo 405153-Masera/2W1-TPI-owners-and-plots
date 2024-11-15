@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * DTO que representa una respuesta que contiene la información de
- * un propietario, y su lote
+ * un propietario, y su lote.
  */
 @Data
 @AllArgsConstructor

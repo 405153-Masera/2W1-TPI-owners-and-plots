@@ -35,12 +35,12 @@ public class UserPost {
     private String password;
 
     /**
-     * Correo electronico del usuario utilizado en el login.
+     * Correo electrónico del usuario utilizado en el login.
      */
     private String email;
 
     /**
-     * Telefono del usuario.
+     * Teléfono del usuario.
      */
     private String phone_number;
 

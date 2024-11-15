@@ -86,5 +86,10 @@ public interface PlotService {
      */
     void mapPlotEntityToGetPlotDto(PlotEntity plotEntity, GetPlotDto getPlotDto);
 
+    /**
+     * Obtiene todos los lotes con sus propietarios.
+     *
+     * @return una lista con todos los lotes y sus propietarios.
+     */
     List<GetPlotWithHisOwnerDto> getPlotsWithHisOwner();
 }
