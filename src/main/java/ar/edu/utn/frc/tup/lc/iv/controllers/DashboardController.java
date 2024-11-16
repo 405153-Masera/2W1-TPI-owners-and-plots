@@ -28,10 +28,12 @@ public class DashboardController {
     private final OwnerStatsService ownerStatsService;
 
     /**
-     * Maneja las estadísticas de las manzanas.
+     * Obtiene el conteo de propietarios por manzana en un rango de fechas.
      *
+     * @param startDate fecha de inicio del rango (opcional).
+     * @param endDate   fecha de fin del rango (opcional).
      * @return ResponseEntity con una lista de BlockData
-     * que contiene datos de las manzanas.
+     *         que contiene datos de las manzanas.
      */
     @GetMapping("/blockStats")
     public ResponseEntity<List<BlockData>> getOwnerCountByRole(@RequestParam(required = false) LocalDate startDate,
@@ -61,19 +63,38 @@ public class DashboardController {
         return ownerStatsService.getOwnerPercentageByTaxStatus();
     }
 
-
+    /**
+     * Obtiene el conteo de lotes por estado.
+     *
+     * @return Una lista de {@link PlotByPlotStateCountDTO}.
+     */
     @GetMapping("/Plot-By-State-Count")
     public ResponseEntity<List<PlotByPlotStateCountDTO>> getPlotByStateCount() {
         List<PlotByPlotStateCountDTO> stats = ownerStatsService.countPlotsByState();
         return ResponseEntity.ok(stats);
     }
 
+
+    /**
+     * Obtiene el conteo de lotes por tipo.
+     *
+     * @return Una lista de {@link PlotByPlotTypeCountDTO}.
+     */
     @GetMapping("/Plot-By-Type-Count")
     public ResponseEntity<List<PlotByPlotTypeCountDTO>> getPlotByTypeCount() {
         List<PlotByPlotTypeCountDTO> stats = ownerStatsService.countPlotsByType();
         return ResponseEntity.ok(stats);
     }
 
+    /**
+     * Obtiene estadísticas generales de lotes en un rango de fechas.
+     *
+     * @param startDate fecha de inicio del rango (opcional).
+     * @param endDate   fecha de fin del rango (opcional).
+     * @param plotType  tipo de parcela para filtrar (opcional).
+     * @param plotStatus estado de la parcela para filtrar (opcional).
+     * @return ResponseEntity con estadísticas de las parcelas.
+     */
     @GetMapping("/plots-stats")
     public ResponseEntity<PlotsStats> getGeneralStats(@RequestParam(required = false) LocalDate startDate,
                                                       @RequestParam(required = false) LocalDate endDate,
@@ -82,12 +103,28 @@ public class DashboardController {
         return ResponseEntity.ok(ownerStatsService.getStatsOfPlots(startDate, endDate, plotType, plotStatus));
     }
 
+    /**
+     * Obtiene las lotes agrupadas por manzana en un rango de fechas.
+     *
+     * @param startDate fecha de inicio del rango (opcional).
+     * @param endDate   fecha de fin del rango (opcional).
+     * @return ResponseEntity con una lista de PlotsByBlock agrupados por manzana.
+     */
     @GetMapping("/plots-by-block")
     public ResponseEntity<List<PlotsByBlock>> getPlotsByBlock(@RequestParam(required = false) LocalDate startDate,
                                                               @RequestParam(required = false) LocalDate endDate) {
         return ResponseEntity.ok(ownerStatsService.getPlotsByBlock(startDate, endDate));
     }
 
+    /**
+     * Obtiene la distribución de propietarios según parcelas en un rango de fechas.
+     *
+     * @param startDate fecha de inicio del rango (opcional).
+     * @param endDate   fecha de fin del rango (opcional).
+     * @param plotType  tipo de parcela para filtrar (opcional).
+     * @param plotStatus estado de la parcela para filtrar (opcional).
+     * @return ResponseEntity con la distribución de propietarios y parcelas.
+     */
     @GetMapping("/owners-distribution")
     public ResponseEntity<List<OwnersPlotsDistribution>> getOwnershipDistribution(@RequestParam(required = false) LocalDate startDate,
                                                                                   @RequestParam(required = false) LocalDate endDate,
@@ -96,6 +133,12 @@ public class DashboardController {
         return ResponseEntity.ok(ownerStatsService.getOwnersPlotsDistribution(startDate, endDate, plotType, plotStatus));
     }
 
+
+    /**
+     * Obtiene el progreso de construcción.
+     *
+     * @return Una lista de {@link ConstructionProgress}.
+     */
     @GetMapping("/construction-progress")
     public ResponseEntity<List<ConstructionProgress>> getConstructionProgress() {
         return ResponseEntity.ok(ownerStatsService.getConstructionProgress());

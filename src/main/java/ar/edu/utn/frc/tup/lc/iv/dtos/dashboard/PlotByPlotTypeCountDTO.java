@@ -5,13 +5,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO que representa un Contador por tipo de lote
+ * Representa la cantidad de terrenos agrupados por su tipo.
+ * Incluye el tipo de terreno y el conteo correspondiente.
  */
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlotByPlotTypeCountDTO {
+
+    /**
+     * Tipo de terreno.
+     */
     private String type;
+
+    /**
+     * Cantidad de terrenos de este tipo.
+     */
     private long count;
 }
+

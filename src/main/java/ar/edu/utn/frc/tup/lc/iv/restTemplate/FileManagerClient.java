@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FileManagerClient {
 
+
     /**
      * RestTemplate para realizar las peticiones HTTP.
      */
@@ -36,14 +37,17 @@ public class FileManagerClient {
      */
     public FileClient uploadFile(MultipartFile file) {
 
-        String uploadUrl = baseUrl + "/savefile";        HttpHeaders headers = new HttpHeaders();
+        String uploadUrl = baseUrl + "/savefile";
+
+        // Declarar las variables en líneas separadas
+        HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-
         body.add("file", file.getResource());
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
         ResponseEntity<FileClient> response = restTemplate.exchange(
                 uploadUrl,
                 HttpMethod.POST,

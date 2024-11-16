@@ -80,15 +80,20 @@ public class OwnerController {
         return ResponseEntity.ok(ownerService.getOwnerTypes());
     }
 
+    /**
+     * Obtiene los tipos de documentos.
+     *
+     * @return lista de los tipos de documentos.
+     */
     @GetMapping("/dnitypes")
     public ResponseEntity<List<GetDniTypeDto>> getDniTypes() {
         return ResponseEntity.ok(ownerService.getDniTypes());
     }
 
     /**
-     * Obtiene todos los propietarios.
+     * Obtiene una lista con todos los propietarios.
      *
-     * @return una lista con todos los propietarios.
+     * @return lista con todos los propietarios.
      */
     @GetMapping()
     public ResponseEntity<List<GetOwnerDto>> getOwners() {
@@ -147,18 +152,21 @@ public class OwnerController {
         return ResponseEntity.ok(ownerAndPlot);
     }
 
+    /**
+     * Obtiene el conteo de propietarios agrupados por estado.
+     *
+     * @return un mapa con el estado como clave y el conteo como valor.
+     */
     @GetMapping("/count-by-status")
-    public Map<String,Long>  getOwnersCountByStatus() {
+    public Map<String, Long>  getOwnersCountByStatus() {
         return ownerService.getOwnerCountByStatus();
     }
-
-
 
     /**
      * Baja lógica de un propietario.
      *
      * @param ownerId id del propietario a dar de baja.
-     * @param userIdUpdate id del usuario realiza la baja.
+     * @param userIdUpdate id del usuario que realiza la baja.
      * @return respuesta vacía.
      */
     @DeleteMapping("/{id}/{userIdUpdate}")
