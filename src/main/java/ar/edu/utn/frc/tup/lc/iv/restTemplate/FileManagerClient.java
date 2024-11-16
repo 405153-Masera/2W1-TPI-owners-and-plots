@@ -1,6 +1,7 @@
 package ar.edu.utn.frc.tup.lc.iv.restTemplate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -22,6 +23,12 @@ public class FileManagerClient {
     private RestTemplate restTemplate;
 
     /**
+     * URL base del servicio de File Manager configurada en application.properties.
+     */
+    @Value("${file.manager.url}")
+    private String baseUrl;
+
+    /**
      * Sube un archivo al servidor.
      *
      * @param file archivo a subir.
@@ -29,8 +36,7 @@ public class FileManagerClient {
      */
     public FileClient uploadFile(MultipartFile file) {
 
-        String uploadUrl = "http://localhost:8084/fileManager/savefile";
-        HttpHeaders headers = new HttpHeaders();
+        String uploadUrl = baseUrl + "/savefile";        HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
@@ -44,27 +50,6 @@ public class FileManagerClient {
                 requestEntity,
                 FileClient.class
         );
-
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            return null;
-        }
-
-        return response.getBody();
-    }
-
-    /**
-     * Obtiene un archivo del servidor.
-     *
-     * @param fileId UUID del archivo a obtener.
-     * @return el archivo en formato byte[].
-     */
-    public byte[] getFile(String fileId) {
-        String downloadUrl = "http://localhost:8084/fileManager/getFile/" + fileId.toString();
-        System.out.println("Download URL: " + downloadUrl);
-        HttpHeaders headers = new HttpHeaders();
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        ResponseEntity<byte[]> response = restTemplate.exchange(downloadUrl, HttpMethod.GET, entity, byte[].class);
 
         if (!response.getStatusCode().is2xxSuccessful()) {
             return null;
