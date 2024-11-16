@@ -300,21 +300,21 @@ VALUES
 
 INSERT INTO owners_types (description, created_datetime, last_updated_datetime, created_user, last_updated_user)
 VALUES
-    ('Persona Física' , NOW(), NOW(), 1, 1),
-    ('Persona Jurídica', NOW(), NOW(), 1, 1),
+    ('Persona Fisica' , NOW(), NOW(), 1, 1),
+    ('Persona Juridica', NOW(), NOW(), 1, 1),
     ('Otro', NOW(), NOW(), 1, 1);
 
 INSERT INTO plot_states (name, created_datetime, last_updated_datetime, created_user, last_updated_user)
 VALUES
     ('Disponible', NOW(), NOW(), 1, 1),
     ('Habitado', NOW(), NOW(), 1, 1),
-    ('En construcción', NOW(), NOW(), 1, 1);
+    ('En construccion', NOW(), NOW(), 1, 1);
 
 INSERT INTO plot_types (name, created_datetime, last_updated_datetime, created_user, last_updated_user)
 VALUES
     ('Comercial', NOW(), NOW(), 1, 1),
     ('Residencial', NOW(), NOW(), 1, 1),
-    ('Baldío', NOW(), NOW(), 1, 1);
+    ('Baldio', NOW(), NOW(), 1, 1);
 
 -- Insertar tipos de DNI
 INSERT INTO dni_types (description, created_datetime, last_updated_datetime, created_user, last_updated_user)
@@ -374,7 +374,7 @@ VALUES
     (19, 10, NOW(), 1, NOW(), 1),
     (20, 10, NOW(), 1, NOW(), 1);
 
-/*
+
 DELIMITER $$
 
 CREATE TRIGGER trg_taxstatus_insert
@@ -593,5 +593,3 @@ DELIMITER $$
 
                                                     DELIMITER ;
 
-
-*/
