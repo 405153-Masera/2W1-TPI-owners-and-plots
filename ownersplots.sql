@@ -454,9 +454,9 @@ DELIMITER $$
                 BEGIN
                     DECLARE version_number INT;
 
-                    SELECT IFNULL(MAX(version), 0) + 1 INTO version_number FROM Owners_audit WHERE id = OLD.id;
+                    SELECT IFNULL(MAX(version), 0) + 1 INTO version_number FROM owners_audit WHERE id = OLD.id;
 
-                    INSERT INTO Owners_audit
+                    INSERT INTO owners_audit
                     (id, version, name, lastname, dni, dni_type_id, date_birth, tax_status_id, owner_type_id, business_name, active, created_datetime, created_user, last_updated_datetime, last_updated_user)
                     VALUES
                         (OLD.id, version_number, OLD.name, OLD.lastname, OLD.dni, OLD.dni_type_id, OLD.date_birth, OLD.tax_status_id, OLD.owner_type_id, OLD.business_name, OLD.active, OLD.created_datetime, OLD.created_user, OLD.last_updated_datetime, OLD.last_updated_user);
