@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controlador REST para gestionar operaciones relacionadas con lotes (plots).
+ */
 @RestController
 @RequestMapping("/plots")
 public class PlotController {
