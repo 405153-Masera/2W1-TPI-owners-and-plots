@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Interfaz que define los métodos relacionados con los propietarios de los lotes.
+ */
 @Service
 public interface PlotOwnerService {
 

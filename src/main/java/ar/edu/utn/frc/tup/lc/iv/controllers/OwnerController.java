@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controlador REST para gestionar operaciones relacionadas con propietarios.
+ */
 @RestController
 @RequestMapping("/owners")
 @RequiredArgsConstructor

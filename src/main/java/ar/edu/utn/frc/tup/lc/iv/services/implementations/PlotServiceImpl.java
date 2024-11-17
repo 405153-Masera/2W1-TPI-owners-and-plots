@@ -103,6 +103,7 @@ public class PlotServiceImpl implements PlotService {
      * @param postPlotDto Dto de solicitud de alta de lote.
      * @throws IllegalArgumentException si es de tipo baldio y tiene metros construidos.
      */
+    @Override
     public void validateWasteland(PostPlotDto postPlotDto) {
         if (postPlotDto.getPlot_type_id() == 3 && postPlotDto.getBuilt_area_in_m2() > 0) {
             throw new IllegalArgumentException("Error , a westland plot cannot have a built area");
@@ -115,6 +116,7 @@ public class PlotServiceImpl implements PlotService {
      * @param postPlotDto Dto de solicitud de alta de lote.
      * @throws IllegalArgumentException si el area construida es mayor al area total.
      */
+    @Override
     public void validateBuiltArea(PostPlotDto postPlotDto) {
         if (postPlotDto.getBuilt_area_in_m2() > postPlotDto.getTotal_area_in_m2()) {
             throw new IllegalArgumentException("Error , built area is bigger than total area");
@@ -129,6 +131,7 @@ public class PlotServiceImpl implements PlotService {
      * @param userId id del usuario que sube los archivos.
      * @param plotEntity entidad del lote al que se le suben los archivos.
      */
+    @Override
     public void uploadFiles(List<MultipartFile> files, Integer userId, PlotEntity plotEntity) {
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
@@ -146,6 +149,7 @@ public class PlotServiceImpl implements PlotService {
      * @param plotEntity entidad del lote al que se le sube el archivo.
      * @return entidad de archivo de lote creada.
      */
+    @Override
     public FilePlotEntity createFilePlotEntity(MultipartFile file, Integer userId, PlotEntity plotEntity) {
         String fileUuid = fileManagerClient.uploadFile(file).getUuid().toString();
 
@@ -230,6 +234,7 @@ public class PlotServiceImpl implements PlotService {
      * @throws EntityNotFoundException si el lote no existe.
      * @return el lote encontrado.
      */
+    @Override
     public PlotEntity getPlotEntityById(Integer plotId) {
         return plotRepository.findById(plotId)
                 .orElseThrow(() -> new EntityNotFoundException("Plot not found with id: " + plotId));
@@ -241,6 +246,7 @@ public class PlotServiceImpl implements PlotService {
      * @param plotEntity lote a actualizar.
      * @param plotDto datos del lote a actualizar.
      */
+    @Override
     public void updatePlotFields(PlotEntity plotEntity, PutPlotDto plotDto) {
         plotEntity.setTotalAreaInM2(plotDto.getTotal_area_in_m2());
         plotEntity.setBuiltAreaInM2(plotDto.getBuilt_area_in_m2());
@@ -305,6 +311,7 @@ public class PlotServiceImpl implements PlotService {
      * @param plotEntity entidad de lote a mapear.
      * @param getPlotDto dto de lote a mapear.
      */
+    @Override
     public void mapPlotEntityToGetPlotWithHisOwnerDto(PlotEntity plotEntity, GetPlotWithHisOwnerDto getPlotDto) {
         getPlotDto.setPlot_number(plotEntity.getPlotNumber());
         getPlotDto.setBlock_number(plotEntity.getBlockNumber());
@@ -340,6 +347,7 @@ public class PlotServiceImpl implements PlotService {
      * @throws EntityNotFoundException si el lote no existe.
      * @return el lote encontrado.
      */
+    @Override
     public GetPlotDto getPlotById(Integer plotId) {
         PlotEntity plotEntity = plotRepository.findById(plotId)
                 .orElseThrow(() -> new EntityNotFoundException("Plot not found with id: " + plotId));
@@ -375,6 +383,7 @@ public class PlotServiceImpl implements PlotService {
      * @param plotNumber número de lote a validar.
      * @throws IllegalArgumentException si el lote ya existe.
      */
+    @Override
     public void validatePlotNumber(Integer plotNumber) {
         if (plotRepository.findByPlotNumber(plotNumber) != null) {
             throw new IllegalArgumentException("Error creating plot: Plot already exist.");
@@ -387,6 +396,7 @@ public class PlotServiceImpl implements PlotService {
      * @param postPlotDto datos del lote a mapear.
      * @return entidad de lote mapeada.
      */
+    @Override
     public PlotEntity mapPlotPostToPlotEntity(PostPlotDto postPlotDto) {
         PlotEntity plotEntity = new PlotEntity();
         mapPlotPostToPlotEntity(plotEntity, postPlotDto);
@@ -401,6 +411,7 @@ public class PlotServiceImpl implements PlotService {
      * @param plotEntity entidad de lote a mapear.
      * @param postPlotDto datos del lote a mapear.
      */
+    @Override
     public void mapPlotPostToPlotEntity(PlotEntity plotEntity, PostPlotDto postPlotDto) {
         plotEntity.setPlotNumber(postPlotDto.getPlot_number());
         plotEntity.setBlockNumber(postPlotDto.getBlock_number());
@@ -419,6 +430,7 @@ public class PlotServiceImpl implements PlotService {
      * @throws EntityNotFoundException si el estado de lote no existe.
      * @return el estado de lote encontrado.
      */
+    @Override
     public PlotStateEntity getPlotState(Integer id) {
         return plotStateRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("PlotState not found with id: " + id));
@@ -431,6 +443,7 @@ public class PlotServiceImpl implements PlotService {
      * @throws EntityNotFoundException si el tipo de lote no existe.
      * @return el tipo de lote encontrado.
      */
+    @Override
     public PlotTypeEntity getPlotType(Integer id) {
         return plotTypeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("PlotType not found with id: " + id));

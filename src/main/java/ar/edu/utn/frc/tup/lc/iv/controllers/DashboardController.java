@@ -44,9 +44,9 @@ public class DashboardController {
 
 
     /**
-     * Obtiene el conteo de propietarios por estado (activo/inactivo) por mes.
-     * @return un mapa donde la clave es el mes y el valor es otro mapa con el estado
-     * y el conteo de los propietarios
+     * Obtiene el conteo mensual de propietarios por estado.
+     *
+     * @return Mapa con mes como clave y otro mapa (estado y conteo) como valor.
      */
     @GetMapping("/count-by-status-per-month")
     public Map<String, Map<String, Long>> getOwnersCountByStatusPerMonth() {
