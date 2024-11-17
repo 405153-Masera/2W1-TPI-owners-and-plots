@@ -6,7 +6,6 @@ import ar.edu.utn.frc.tup.lc.iv.entities.PlotEntity;
 import ar.edu.utn.frc.tup.lc.iv.entities.OwnerEntity;
 
 import ar.edu.utn.frc.tup.lc.iv.entities.PlotOwnerEntity;
-import ar.edu.utn.frc.tup.lc.iv.repositories.OwnerRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotOwnerRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +21,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class OwnerStatsService implements OwnerStatsInterface {
-
-    /**
-     * Repositorio para manejar los datos de los propietarios.
-     */
-    private final OwnerRepository ownerRepository;
 
     /**
      * Repositorio para manejar los datos de los lotes.
@@ -67,7 +61,7 @@ public class OwnerStatsService implements OwnerStatsInterface {
      * @param plotType el tipo de lote (opcional)
      * @return una lista con la cantidad de lotes por estado de lote.
      */
-    public List<PlotByPlotStateCountDTO> countPlotsByState(LocalDate startDate, LocalDate endDate, String plotType) {
+    public List<PlotByPlotStateCountDTO> countPlotsByState(LocalDate startDate, LocalDate endDate, Integer plotType) {
         List<Object[]> result = plotRepository.countPlotsByState(startDate, endDate, plotType);
 
         List<PlotByPlotStateCountDTO> dtoList = new ArrayList<>();

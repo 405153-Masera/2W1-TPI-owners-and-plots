@@ -44,20 +44,20 @@ public interface PlotRepository extends JpaRepository<PlotEntity, Integer> {
             "FROM plots p " +
             "JOIN plotstates ps ON ps.id = p.plot_state_id " +
             "WHERE (:plotType IS NULL OR p.plot_type_id = :plotType) " +
-            "AND (:startDate IS NULL OR p.created_date >= :startDate) " + // Si startDate no es null, filtra por startDate
-            "AND (:endDate IS NULL OR p.created_date <= :endDate) " +
+            "AND (:startDate IS NULL OR p.created_datetime >= :startDate) " + // Si startDate no es null, filtra por startDate
+            "AND (:endDate IS NULL OR p.created_datetime <= :endDate) " +
             "GROUP BY ps.name",
             nativeQuery = true)
     List<Object[]> countPlotsByState(@Param("startDate") LocalDate startDate,
                                      @Param("endDate") LocalDate endDate,
-                                     @Param("plotType") String plotType);
+                                     @Param("plotType") Integer plotType);
 
 
     @Query(value = "SELECT pt.name AS typeName, COUNT(p.id) AS count " +
             "FROM plots p " +
             "JOIN plottypes pt ON pt.id = p.plot_type_id " +
-            "WHERE (:startDate IS NULL OR p.created_date >= :startDate) " +
-            "AND (:endDate IS NULL OR p.created_date <= :endDate) " +
+            "WHERE (:startDate IS NULL OR p.created_datetime >= :startDate) " +
+            "AND (:endDate IS NULL OR p.created_datetime <= :endDate) " +
             "GROUP BY pt.name", nativeQuery = true)
     List<Object[]> countPlotsByType(@Param("startDate") LocalDate startDate,
                                     @Param("endDate") LocalDate endDate);

@@ -51,7 +51,7 @@ public class DashboardController {
     @GetMapping("/Plot-By-State-Count")
     public ResponseEntity<List<PlotByPlotStateCountDTO>> getPlotByStateCount(@RequestParam(required = false) LocalDate startDate,
                                                                              @RequestParam(required = false) LocalDate endDate,
-                                                                             @RequestParam(required = false) String plotType) {
+                                                                             @RequestParam(required = false) Integer plotType) {
         List<PlotByPlotStateCountDTO> stats = ownerStatsService.countPlotsByState(startDate, endDate, plotType);
         return ResponseEntity.ok(stats);
     }
