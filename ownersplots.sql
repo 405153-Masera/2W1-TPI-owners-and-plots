@@ -374,7 +374,6 @@ VALUES
     (19, 10, NOW(), 1, NOW(), 1),
     (20, 10, NOW(), 1, NOW(), 1);
 
-
 DELIMITER $$
 
 CREATE TRIGGER trg_taxstatus_insert
@@ -551,9 +550,9 @@ DELIMITER $$
                                         BEGIN
                                             DECLARE version_number INT;
 
-                                            SELECT IFNULL(MAX(version), 0) + 1 INTO version_number FROM Plots_audit WHERE id = OLD.id;
+                                            SELECT IFNULL(MAX(version), 0) + 1 INTO version_number FROM plots_audit WHERE id = OLD.id;
 
-                                            INSERT INTO Plots_audit
+                                            INSERT INTO plots_audit
                                             (id, version, plot_number, block_number, plot_state_id, plot_type_id, total_area_in_m2, built_area_in_m2, created_datetime, created_user, last_updated_datetime, last_updated_user)
                                             VALUES
                                                 (OLD.id, version_number, OLD.plot_number, OLD.block_number, OLD.plot_state_id, OLD.plot_type_id, OLD.total_area_in_m2, OLD.built_area_in_m2, OLD.created_datetime, OLD.created_user, OLD.last_updated_datetime, OLD.last_updated_user);
