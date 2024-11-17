@@ -60,7 +60,8 @@ public class RestUser {
 
       UserPost userPost = mapToUserPost(postOwnerDto);
         try {
-            ResponseEntity<Void> response = restTemplate.postForEntity(baseUrl + "/post/owner", userPost, Void.class);
+            //Ema le agregue /users
+            ResponseEntity<Void> response = restTemplate.postForEntity(baseUrl + "/users/post/owner", userPost, Void.class);
             return response.getStatusCode().is2xxSuccessful();
 
         } catch (HttpClientErrorException e) {
@@ -79,7 +80,8 @@ public class RestUser {
      * @throws EntityNotFoundException si no se encuentra el usuario.
      */
     public GetUserDto getUser(Integer plotId) {
-        String endpoint = String.format("%s/get/owner/%d", baseUrl, plotId);
+        //Ema le agregue /users
+        String endpoint = String.format("%s/get/owner/%d", baseUrl + "/users", plotId);
         ResponseEntity<GetUserDto> response = restTemplate.getForEntity(endpoint, GetUserDto.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
@@ -103,7 +105,8 @@ public class RestUser {
         }
 
         try {
-            restTemplate.delete(String.format("%s/delete/%d/%d", baseUrl, ownerUser.getId(), userIdUpdate));
+            //Ema le agregue /users
+            restTemplate.delete(String.format("%s/delete/%d/%d", baseUrl + "/users", ownerUser.getId(), userIdUpdate));
         } catch (HttpClientErrorException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getMessage());
         } catch (Exception e) {
@@ -139,7 +142,8 @@ public class RestUser {
      * @return un DTO con la información del usuario propietario.
      */
     public GetUserDto findOwnerUser(Integer userId) {
-        String endpoint = String.format("%s/byOwner/%d", baseUrl, userId);
+        //Ema le agregue /users
+        String endpoint = String.format("%s/byOwner/%d", baseUrl + "/users", userId);
         ResponseEntity<List<GetUserDto>> response = restTemplate.exchange(
                 endpoint,
                 HttpMethod.GET,

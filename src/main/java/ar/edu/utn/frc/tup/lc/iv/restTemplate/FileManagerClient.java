@@ -36,8 +36,8 @@ public class FileManagerClient {
      * @return el UUID del archivo subido.
      */
     public FileClient uploadFile(MultipartFile file) {
-
-        String uploadUrl = baseUrl + "/savefile";
+        //Ema le agregue /fileManager
+        String uploadUrl = baseUrl + "/fileManager/savefile";
 
         // Declarar las variables en líneas separadas
         HttpHeaders headers = new HttpHeaders();
