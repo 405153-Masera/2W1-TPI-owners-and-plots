@@ -127,7 +127,7 @@ public class PostOwnerDto {
     /**
      * Identificador de la plataforma telegram utilizada en notificaciones.
      */
-    private Integer telegramId;
+    private Long telegramId;
 
     /**
      * Identificador del usuario que crea el propietario y el usuario.
