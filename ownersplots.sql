@@ -1,5 +1,3 @@
-CREATE DATABASE IF NOT EXISTS ownersplots;
-USE ownersplots;
 
 -- Tabla DniTypes
 CREATE TABLE dni_types (
