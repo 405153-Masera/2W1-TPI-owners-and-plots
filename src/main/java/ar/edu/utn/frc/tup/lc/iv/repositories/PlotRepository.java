@@ -4,8 +4,10 @@ import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.PlotByPlotTypeCountDTO;
 import ar.edu.utn.frc.tup.lc.iv.entities.PlotEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -41,15 +43,23 @@ public interface PlotRepository extends JpaRepository<PlotEntity, Integer> {
     @Query(value = "SELECT ps.name as stateName, COUNT(p.id) as count " +
             "FROM plots p " +
             "JOIN plotstates ps ON ps.id = p.plot_state_id " +
+            "WHERE (:plotType IS NULL OR p.plot_type_id = :plotType) " +
+            "AND (:startDate IS NULL OR p.created_date >= :startDate) " + // Si startDate no es null, filtra por startDate
+            "AND (:endDate IS NULL OR p.created_date <= :endDate) " +
             "GROUP BY ps.name",
             nativeQuery = true)
-    List<Object[]> countPlotsByState();
+    List<Object[]> countPlotsByState(@Param("startDate") LocalDate startDate,
+                                     @Param("endDate") LocalDate endDate,
+                                     @Param("plotType") String plotType);
 
 
     @Query(value = "SELECT pt.name AS typeName, COUNT(p.id) AS count " +
             "FROM plots p " +
             "JOIN plottypes pt ON pt.id = p.plot_type_id " +
+            "WHERE (:startDate IS NULL OR p.created_date >= :startDate) " +
+            "AND (:endDate IS NULL OR p.created_date <= :endDate) " +
             "GROUP BY pt.name", nativeQuery = true)
-    List<Object[]> countPlotsByType();
+    List<Object[]> countPlotsByType(@Param("startDate") LocalDate startDate,
+                                    @Param("endDate") LocalDate endDate);
 
 }

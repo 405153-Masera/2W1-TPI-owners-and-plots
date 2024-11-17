@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Interfaz que contiene la lógica de negocio para obtener estadísticas de los propietarios y
@@ -21,19 +20,4 @@ public interface OwnerStatsInterface {
      * @return una lista de datos de las manzanas
      */
     List<BlockData> getBlocksData(LocalDate startDate, LocalDate endDate);
-
-    /**
-     * Obtiene el porcentaje de propietarios por estado fiscal.
-     *
-     * @return un mapa donde la clave es el estado fiscal y el valor es el porcentaje de propietarios en ese estado.
-     */
-    Map<String, Double> getOwnerPercentageByTaxStatus();
-
-    /**
-     * Obtiene el conteo de propietarios por estado (activo/inactivo) por mes.
-     *
-     * @return un mapa donde la clave es el nombre del mes y el valor es otro mapa con el estado (activo/inactivo)
-     * y el conteo de propietarios en ese estado.
-     */
-    Map<String, Map<String, Long>> getOwnerCountByStatusPerMonth();
 }

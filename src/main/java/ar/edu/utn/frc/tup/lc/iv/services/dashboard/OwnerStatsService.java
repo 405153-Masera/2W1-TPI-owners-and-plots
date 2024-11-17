@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.*;
 
-import java.time.format.TextStyle;
 
 import java.util.stream.Collectors;
 
@@ -61,51 +60,15 @@ public class OwnerStatsService implements OwnerStatsInterface {
     }
 
     /**
-     * Obtiene el conteo de propietarios por estado (activo/inactivo) por mes.
-     *
-     * @return un mapa donde la clave es el nombre del mes y el valor es otro mapa con el estado(activo/inactivo)
-     * y el conteo de propietarios por ese estado
-     */
-    public Map<String, Map<String, Long>> getOwnerCountByStatusPerMonth() {
-        List<OwnerEntity> owners = ownerRepository.findAll();
-        Map<String, Map<String, Long>> ownersCountByStatusPerMonth = owners.stream()
-                .collect(Collectors.groupingBy(
-                        owner -> owner.getCreatedDatetime().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()),
-                        Collectors.groupingBy(
-                                owner -> owner.getActive() ? "Activos" : "Inactivos",
-                                Collectors.counting()
-                        )
-                ));
-        return ownersCountByStatusPerMonth;
-    }
-
-    /**
-     * Obtiene el porcentaje de propietarios por estado fiscal.
-     * @return un mapa donde la clave es el estado fiscal y el valor es el porcentaje de propietarios en ese estado
-     */
-    public Map<String, Double> getOwnerPercentageByTaxStatus() {
-        List<OwnerEntity> owners = ownerRepository.findAll();
-        long totalOwners = owners.size();
-        Map<String, Long> countByTaxStatus = owners.stream()
-                .collect(Collectors.groupingBy(
-                        owner -> owner.getTaxStatus().getDescription(),
-                        Collectors.counting()
-                ));
-        return countByTaxStatus.entrySet().stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> (entry.getValue() * 100.0) / totalOwners
-                ));
-    }
-
-
-    /**
      * Obtiene la cantidad de lotes por el estado del lote.
      *
+     * @param startDate la fecha de inicio del filtro (opcional)
+     * @param endDate la fecha de fin del filtro (opcional)
+     * @param plotType el tipo de lote (opcional)
      * @return una lista con la cantidad de lotes por estado de lote.
      */
-    public List<PlotByPlotStateCountDTO> countPlotsByState() {
-        List<Object[]> result = plotRepository.countPlotsByState();
+    public List<PlotByPlotStateCountDTO> countPlotsByState(LocalDate startDate, LocalDate endDate, String plotType) {
+        List<Object[]> result = plotRepository.countPlotsByState(startDate, endDate, plotType);
 
         List<PlotByPlotStateCountDTO> dtoList = new ArrayList<>();
 
@@ -120,10 +83,12 @@ public class OwnerStatsService implements OwnerStatsInterface {
     /**
      * Obtiene la cantidad de lotes por tipo de lote.
      *
+     * @param startDate la fecha de inicio del filtro (opcional)
+     * @param endDate la fecha de fin del filtro (opcional)
      * @return una lista con la cantidad de lotes por tipo de lote.
      */
-    public List<PlotByPlotTypeCountDTO> countPlotsByType() {
-        List<Object[]> result = plotRepository.countPlotsByType();
+    public List<PlotByPlotTypeCountDTO> countPlotsByType(LocalDate startDate, LocalDate endDate) {
+        List<Object[]> result = plotRepository.countPlotsByType(startDate, endDate);
         List<PlotByPlotTypeCountDTO> dtoList = new ArrayList<>();
         for (Object[] row : result) {
             String typeName = (String) row[0];  // El primer valor es 'typeName'

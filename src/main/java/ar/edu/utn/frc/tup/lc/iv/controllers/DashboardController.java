@@ -43,22 +43,30 @@ public class DashboardController {
     /**
      * Cuenta la cantidad de lotes por estado.
      *
+     * @param startDate Fecha de inicio del rango de fechas.
+     * @param endDate Fecha de fin del rango de fechas.
+     * @param plotType Tipo de lote.
      * @return una lista de PlotByPlotStateCountDTO que contiene la cantidad de lotes por estado.
      */
     @GetMapping("/Plot-By-State-Count")
-    public ResponseEntity<List<PlotByPlotStateCountDTO>> getPlotByStateCount() {
-        List<PlotByPlotStateCountDTO> stats = ownerStatsService.countPlotsByState();
+    public ResponseEntity<List<PlotByPlotStateCountDTO>> getPlotByStateCount(@RequestParam(required = false) LocalDate startDate,
+                                                                             @RequestParam(required = false) LocalDate endDate,
+                                                                             @RequestParam(required = false) String plotType) {
+        List<PlotByPlotStateCountDTO> stats = ownerStatsService.countPlotsByState(startDate, endDate, plotType);
         return ResponseEntity.ok(stats);
     }
 
     /**
      * Cuenta la cantidad de lotes por tipo.
      *
+     * @param startDate Fecha de inicio del rango de fechas.
+     * @param endDate Fecha de fin del rango de fechas.
      * @return una lista de PlotByPlotTypeCountDTO que contiene la cantidad de lotes por tipo.
      */
     @GetMapping("/Plot-By-Type-Count")
-    public ResponseEntity<List<PlotByPlotTypeCountDTO>> getPlotByTypeCount() {
-        List<PlotByPlotTypeCountDTO> stats = ownerStatsService.countPlotsByType();
+    public ResponseEntity<List<PlotByPlotTypeCountDTO>> getPlotByTypeCount(@RequestParam(required = false) LocalDate startDate,
+                                                                           @RequestParam(required = false) LocalDate endDate) {
+        List<PlotByPlotTypeCountDTO> stats = ownerStatsService.countPlotsByType(startDate, endDate);
         return ResponseEntity.ok(stats);
     }
 
