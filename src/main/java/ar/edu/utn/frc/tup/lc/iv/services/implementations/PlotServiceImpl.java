@@ -340,6 +340,7 @@ public class PlotServiceImpl implements PlotService {
      * @throws EntityNotFoundException si el lote no existe.
      * @return el lote encontrado.
      */
+    @Override
     public GetPlotDto getPlotById(Integer plotId) {
         PlotEntity plotEntity = plotRepository.findById(plotId)
                 .orElseThrow(() -> new EntityNotFoundException("Plot not found with id: " + plotId));

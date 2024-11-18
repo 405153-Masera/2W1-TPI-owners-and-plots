@@ -54,16 +54,15 @@ public class RestUser {
      */
     public boolean createUser(PostOwnerDto postOwnerDto) {
 
-      UserPost userPost = mapToUserPost(postOwnerDto);
+        UserPost userPost = mapToUserPost(postOwnerDto);
         try {
             ResponseEntity<Void> response = restTemplate.postForEntity(url + "/post/owner", userPost, Void.class);
             return response.getStatusCode().is2xxSuccessful();
-
         } catch (HttpClientErrorException e) {
-            throw new ResponseStatusException(e.getStatusCode(), e.getMessage());
+            throw new ResponseStatusException(e.getStatusCode(), e.getMessage(), e);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Server error while creating the user" + e.getMessage());
+                    "Server error while creating the user: " + e.getMessage(), e);
         }
     }
 
@@ -97,19 +96,19 @@ public class RestUser {
      * el usuario tipo propietario.
      */
     public void deleteUser(Integer userId, Integer userIdUpdate) {
-      GetUserDto ownerUser = findOwnerUser(userId);
+        GetUserDto ownerUser = findOwnerUser(userId);
 
-       if (ownerUser == null) {
-           throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with role 'Propietario' not found");
-       }
-       try {
-           restTemplate.delete(url + "/delete/" + ownerUser.getId() + "/" + userIdUpdate);
-       } catch (HttpClientErrorException e) {
-           throw new ResponseStatusException(e.getStatusCode(), e.getMessage());
-       } catch (Exception e) {
-           throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                   "Server error while deleting the user :" + e.getMessage());
-       }
+        if (ownerUser == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with role 'Propietario' not found");
+        }
+        try {
+            restTemplate.delete(url + "/delete/" + ownerUser.getId() + "/" + userIdUpdate);
+        } catch (HttpClientErrorException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getMessage(), e);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Server error while deleting the user: " + e.getMessage(), e);
+        }
     }
 
     private UserPost mapToUserPost(PostOwnerDto postOwnerDto) {
