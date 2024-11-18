@@ -92,4 +92,13 @@ public interface PlotService {
      * @return una lista con todos los lotes y sus propietarios.
      */
     List<GetPlotWithHisOwnerDto> getPlotsWithHisOwner();
+
+    /**
+     * Transfiere un lote de un propietario a otro.
+     *
+     * @param plotId id del lote a transferir.
+     * @param ownerId id del nuevo propietario.
+     * @param userId id del usuario que realiza la transferencia.
+     */
+    void transferPlot(Integer plotId, Integer ownerId, Integer userId);
 }

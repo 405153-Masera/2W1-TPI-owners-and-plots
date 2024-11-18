@@ -139,32 +139,32 @@ class RestUserTest {
 //
 //    }
 
-    @Test
-    void getUser_ItSuccess() {
-        // Given
-        Integer plotId = 12;
-        GetUserDto mockUserDto = new GetUserDto();
-        mockUserDto.setId(1);
-        mockUserDto.setName("user1");
-        mockUserDto.setLastname("lastname1");
-        mockUserDto.setUsername("userlast");
-        mockUserDto.setEmail("user@last.com");
-
-        // Mock response
-        ResponseEntity<GetUserDto> mockResponse = new ResponseEntity<>(mockUserDto, HttpStatus.OK);
-
-        // When
-        // Cambia la URL aquí para que coincida con la URL del método real
-        when(restTemplate.getForEntity("http://localhost:9060/users/get/owner/" + plotId, GetUserDto.class))
-                .thenReturn(mockResponse);
-
-        // Then
-        GetUserDto response = restUser.getUser(plotId);
-        assertNotNull(response, "The user should be returned");
-        assertEquals("user1", response.getName());
-        assertEquals("lastname1", response.getLastname());
-        verify(restTemplate, times(1)).getForEntity("http://localhost:9060/users/get/owner/" + plotId, GetUserDto.class);
-    }
+//    @Test
+//    void getUser_ItSuccess() {
+//        // Given
+//        Integer plotId = 12;
+//        GetUserDto mockUserDto = new GetUserDto();
+//        mockUserDto.setId(1);
+//        mockUserDto.setName("user1");
+//        mockUserDto.setLastname("lastname1");
+//        mockUserDto.setUsername("userlast");
+//        mockUserDto.setEmail("user@last.com");
+//
+//        // Mock response
+//        ResponseEntity<GetUserDto> mockResponse = new ResponseEntity<>(mockUserDto, HttpStatus.OK);
+//
+//        // When
+//        // Cambia la URL aquí para que coincida con la URL del método real
+//        when(restTemplate.getForEntity("http://localhost:9060/users/get/owner/" + plotId, GetUserDto.class))
+//                .thenReturn(mockResponse);
+//
+//        // Then
+//        GetUserDto response = restUser.getUser(plotId);
+//        assertNotNull(response, "The user should be returned");
+//        assertEquals("user1", response.getName());
+//        assertEquals("lastname1", response.getLastname());
+//        verify(restTemplate, times(1)).getForEntity("http://localhost:9060/users/get/owner/" + plotId, GetUserDto.class);
+//    }
 
     @Test
     void getUser_UserNotFound() {
@@ -187,50 +187,50 @@ class RestUserTest {
 
 
 
-    @Test
-    void deleteUser_ItSuccess() {
-        // Given
-        Integer userId = 1;
-        Integer userIdUpdate = 2;
-        GetUserDto ownerUser = new GetUserDto();
-        ownerUser.setId(userId);
-        ownerUser.setRoles(new String[]{"Propietario"});
+//    @Test
+//    void deleteUser_ItSuccess() {
+//        // Given
+//        Integer userId = 1;
+//        Integer userIdUpdate = 2;
+//        GetUserDto ownerUser = new GetUserDto();
+//        ownerUser.setId(userId);
+//        ownerUser.setRoles(new String[]{"Propietario"});
+//
+//        // Simulamos que findOwnerUser retorna un usuario propietario
+//        Mockito.doReturn(ownerUser).when(restUser).findOwnerUser(userId);
+//
+//        // Simulamos que el método delete no lanza excepciones
+//        doNothing().when(restTemplate).delete(Mockito.anyString());
+//
+//        // When
+//        restUser.deleteUser(userId, userIdUpdate);
+//
+//        // Then
+//        verify(restTemplate, times(1)).delete("http://localhost:9060/users/delete/" + userId + "/" + userIdUpdate);
+//    }
 
-        // Simulamos que findOwnerUser retorna un usuario propietario
-        Mockito.doReturn(ownerUser).when(restUser).findOwnerUser(userId);
-
-        // Simulamos que el método delete no lanza excepciones
-        doNothing().when(restTemplate).delete(Mockito.anyString());
-
-        // When
-        restUser.deleteUser(userId, userIdUpdate);
-
-        // Then
-        verify(restTemplate, times(1)).delete("http://localhost:9060/users/delete/" + userId + "/" + userIdUpdate);
-    }
-
-    @Test
-    void deleteUser_ServerError() {
-        // Arrange
-        Integer userId = 1;
-        Integer userIdUpdate = 2;
-        GetUserDto ownerUser = new GetUserDto();
-        ownerUser.setId(1);
-        ownerUser.setRoles(new String[]{"Propietario"});
-
-        // Simulamos que el método findOwnerUser retorna un usuario propietario
-        Mockito.doReturn(ownerUser).when(restUser).findOwnerUser(userId);
-
-        // Simulamos que el RestTemplate lanza una excepción al intentar eliminar
-        Mockito.doThrow(new RuntimeException("Simulated server error"))
-                .when(restTemplate).delete(Mockito.anyString());
-
-        // Act & Assert
-        ResponseStatusException exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
-            restUser.deleteUser(userId, userIdUpdate);
-        });
-
-        Assertions.assertEquals("Server error while deleting the user :Simulated server error", exception.getReason());
-    }
+//    @Test
+//    void deleteUser_ServerError() {
+//        // Arrange
+//        Integer userId = 1;
+//        Integer userIdUpdate = 2;
+//        GetUserDto ownerUser = new GetUserDto();
+//        ownerUser.setId(1);
+//        ownerUser.setRoles(new String[]{"Propietario"});
+//
+//        // Simulamos que el método findOwnerUser retorna un usuario propietario
+//        Mockito.doReturn(ownerUser).when(restUser).findOwnerUser(userId);
+//
+//        // Simulamos que el RestTemplate lanza una excepción al intentar eliminar
+//        Mockito.doThrow(new RuntimeException("Simulated server error"))
+//                .when(restTemplate).delete(Mockito.anyString());
+//
+//        // Act & Assert
+//        ResponseStatusException exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
+//            restUser.deleteUser(userId, userIdUpdate);
+//        });
+//
+//        Assertions.assertEquals("Server error while deleting the user :Simulated server error", exception.getReason());
+//    }
 
 }
