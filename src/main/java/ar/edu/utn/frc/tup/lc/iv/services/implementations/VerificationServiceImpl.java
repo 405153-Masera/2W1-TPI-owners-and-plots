@@ -23,6 +23,8 @@ public class VerificationServiceImpl implements VerificationService {
      * @param plotNumber numero de lote.
      */
     @Override
-    public boolean isPlotNumberUnique(Integer plotNumber) { return !plotRepository.existsByPlotNumber(plotNumber);
+    public boolean isPlotNumberUnique(Integer plotNumber) {
+        return !plotRepository.existsByPlotNumber(plotNumber);
     }
+
 }

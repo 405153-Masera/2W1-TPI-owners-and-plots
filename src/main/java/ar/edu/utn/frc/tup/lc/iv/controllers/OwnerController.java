@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controlador para manejar la lógica de propietarios.
+ */
 @RestController
 @RequestMapping("/owners")
 @RequiredArgsConstructor
@@ -80,6 +83,11 @@ public class OwnerController {
         return ResponseEntity.ok(ownerService.getOwnerTypes());
     }
 
+    /**
+     * Obtiene los tipos de documentos.
+     *
+     * @return lista de los tipos de documentos.
+     */
     @GetMapping("/dnitypes")
     public ResponseEntity<List<GetDniTypeDto>> getDniTypes() {
         return ResponseEntity.ok(ownerService.getDniTypes());
@@ -147,8 +155,14 @@ public class OwnerController {
         return ResponseEntity.ok(ownerAndPlot);
     }
 
+    /**
+     * Meotodo para contar propietarios por estado.
+     *
+     *
+     * @return contador de propietarios por estado.
+     */
     @GetMapping("/count-by-status")
-    public Map<String,Long>  getOwnersCountByStatus() {
+    public Map<String, Long>  getOwnersCountByStatus() {
         return ownerService.getOwnerCountByStatus();
     }
 
