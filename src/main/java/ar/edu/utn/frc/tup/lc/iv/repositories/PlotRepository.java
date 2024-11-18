@@ -45,7 +45,7 @@ public interface PlotRepository extends JpaRepository<PlotEntity, Integer> {
      */
     @Query(value = "SELECT ps.name as stateName, COUNT(p.id) as count "
             + "FROM plots p "
-            + "JOIN plotstates ps ON ps.id = p.plot_state_id "
+            + "JOIN plot_states ps ON ps.id = p.plot_state_id "
             + "GROUP BY ps.name",
             nativeQuery = true)
     List<Object[]> countPlotsByState();
