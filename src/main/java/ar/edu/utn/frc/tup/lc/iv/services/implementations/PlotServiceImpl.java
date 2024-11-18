@@ -340,6 +340,7 @@ public class PlotServiceImpl implements PlotService {
      * @throws EntityNotFoundException si el lote no existe.
      * @return el lote encontrado.
      */
+    @Override
     public GetPlotDto getPlotById(Integer plotId) {
         PlotEntity plotEntity = plotRepository.findById(plotId)
                 .orElseThrow(() -> new EntityNotFoundException("Plot not found with id: " + plotId));
@@ -367,6 +368,28 @@ public class PlotServiceImpl implements PlotService {
             plotDtos.add(getPlotDto);
         }
         return plotDtos;
+    }
+
+    /**
+     * Transfiere un lote de un propietario a otro.
+     *
+     * @param plotId id del lote a transferir.
+     * @param ownerId id del nuevo propietario.
+     * @param userId id del usuario que realiza la transferencia.
+     */
+    public void transferPlot(Integer plotId, Integer ownerId, Integer userId) {
+        PlotEntity plotEntity = plotRepository.findById(plotId)
+                .orElseThrow(() -> new EntityNotFoundException("Plot not found with id: " + plotId));
+
+        PlotOwnerEntity plotOwnerEntity = plotOwnerRepository.findByPlotId(plotEntity.getId());
+
+        if (plotOwnerRepository.findByPlotId(plotId) != null) {
+            plotOwnerService.deletePlotOwner(plotId, plotOwnerEntity.getOwner().getId());
+
+        }
+
+        plotOwnerService.createPlotOwner(ownerId, plotId, userId);
+
     }
 
     /**

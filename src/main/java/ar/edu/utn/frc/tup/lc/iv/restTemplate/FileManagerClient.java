@@ -59,7 +59,7 @@ public class FileManagerClient {
      * @return el archivo en formato byte[].
      */
     public byte[] getFile(String fileId) {
-        String downloadUrl = "http://localhost:8084/fileManager/getFile/" + fileId.toString();
+        String downloadUrl = "http://localhost:8084/fileManager/getFile/" + fileId;
         System.out.println("Download URL: " + downloadUrl);
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> entity = new HttpEntity<>(headers);

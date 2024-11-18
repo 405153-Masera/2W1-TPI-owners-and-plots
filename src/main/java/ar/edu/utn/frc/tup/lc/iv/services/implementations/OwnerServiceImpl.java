@@ -210,10 +210,9 @@ public class OwnerServiceImpl implements OwnerService {
             throw new EntityNotFoundException("Plot not found with id: " + plotOwner.getPlot().getId());
         }
 
-        if (!plotOwnerRepository.findByPlotId(plotOwner.getPlot().getId()).isEmpty()) {
-            if (ownerRepository.existsByIdAndActive(plotOwner.getOwner().getId(), true)) {
-                throw new IllegalArgumentException("Plot already has an active owner.");
-            }
+        if (plotOwnerRepository.findByPlotId(plotOwner.getPlot().getId()) != null
+                && ownerRepository.existsByIdAndActive(plotOwner.getOwner().getId(), true)) {
+            throw new IllegalArgumentException("Plot already has an active owner.");
         }
     }
 
@@ -377,7 +376,7 @@ public class OwnerServiceImpl implements OwnerService {
      * @param newPlots los nuevos plots.
      * @param actualPlots los plots actuales.
      */
-    private void removeOldPlots(Integer ownerId, Integer[] newPlots, Integer[] actualPlots) {
+    private void removeOldPlots(Integer ownerId, Integer[] actualPlots, Integer... newPlots) {
         for (Integer plotId : actualPlots) {
             if (!Arrays.asList(newPlots).contains(plotId)) {
                 plotOwnerRepository.deleteByOwnerIdAndPlotId(ownerId, plotId);
@@ -578,13 +577,11 @@ public class OwnerServiceImpl implements OwnerService {
      */
     @Override
     public Map<String, Long> getOwnerCountByStatus() {
-        List<OwnerEntity> owners = ownerRepository.findAll();
-        Map<String, Long> ownersCountByStatus = owners.stream()
+        return ownerRepository.findAll().stream()
                 .collect(Collectors.groupingBy(
                         owner -> owner.getActive() ? "Activos" : "Inactivos",
                         Collectors.counting()
                 ));
-        return ownersCountByStatus;
     }
 
 
@@ -633,14 +630,9 @@ public class OwnerServiceImpl implements OwnerService {
             throw new EntityNotFoundException("Owners not found");
         }
 
-        List<OwnerEntity> ownerEntities = ownerEntitiesOptional.get();
-        List<OwnerDto> ownerDtos = ownerEntities.stream()
+        return ownerEntitiesOptional.get().stream()
                 .map(this::mapOwnerEntityToOwnerDto)
                 .collect(Collectors.toList());
-
-        //Todo: falta agregar los archivos
-
-        return ownerDtos;
     }
 
     /**
@@ -653,13 +645,11 @@ public class OwnerServiceImpl implements OwnerService {
     @Override
     @Transactional
     public void deleteOwner(Integer ownerId, Integer userIdUpdate) {
-        OwnerEntity ownerEntity = ownerRepository.findById(ownerId).orElseThrow(() ->
-                new EntityNotFoundException("Owner not found with id: " + ownerId)
-        );
+        OwnerEntity ownerEntity = ownerRepository.findById(ownerId)
+                .orElseThrow(() -> new EntityNotFoundException("Owner not found with id: " + ownerId));
 
         multiplePlotsChangeState(ownerId);
         logicDeleteOwner(ownerEntity, userIdUpdate);
-
         restUser.deleteUser(ownerEntity.getId(), userIdUpdate);
     }
 

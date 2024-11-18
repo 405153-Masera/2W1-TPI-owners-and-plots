@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * Referencia a la tabla llamada "plottypes".
  */
 @Entity
-@Table(name = "plottypes")
+@Table(name = "plot_types")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

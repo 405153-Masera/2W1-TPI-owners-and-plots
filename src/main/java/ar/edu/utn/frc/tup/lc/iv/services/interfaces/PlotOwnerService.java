@@ -16,4 +16,20 @@ public interface PlotOwnerService {
      * @return una lista de GetPlotOwnerDto.
      */
     List<GetPlotOwnerDto> getAllPlotOwner();
+
+    /**
+     * Borra la relacion entre un propietario y un lote.
+     *
+     * @param ownerId el identificador del propietario.
+     * @param plotId el identificador del lote.
+     */
+    void deletePlotOwner(Integer ownerId, Integer plotId);
+
+    /**
+     * Crea la relacion entre un propietario y un lote.
+     *
+     * @param ownerId el identificador del propietario.
+     * @param plotId el identificador del lote.
+     */
+    void createPlotOwner(Integer ownerId, Integer plotId, Integer userId);
 }
