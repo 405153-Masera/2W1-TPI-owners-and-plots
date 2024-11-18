@@ -4,10 +4,7 @@ import ar.edu.utn.frc.tup.lc.iv.dtos.get.*;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.entities.*;
-import ar.edu.utn.frc.tup.lc.iv.repositories.PlotOwnerRepository;
-import ar.edu.utn.frc.tup.lc.iv.repositories.PlotRepository;
-import ar.edu.utn.frc.tup.lc.iv.repositories.PlotStateRepository;
-import ar.edu.utn.frc.tup.lc.iv.repositories.PlotTypeRepository;
+import ar.edu.utn.frc.tup.lc.iv.repositories.*;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.FileManagerClient;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.FileService;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotOwnerService;
@@ -74,6 +71,7 @@ public class PlotServiceImpl implements PlotService {
      * Repositorio para manejar PlotOwner entities.
      */
     private final PlotOwnerRepository plotOwnerRepository;
+    private final OwnerRepository ownerRepository;
 
     /**
      * Crea un nuevo lote.
@@ -377,6 +375,8 @@ public class PlotServiceImpl implements PlotService {
      * @param ownerId id del nuevo propietario.
      * @param userId id del usuario que realiza la transferencia.
      */
+    @Transactional
+    @Override
     public void transferPlot(Integer plotId, Integer ownerId, Integer userId) {
         PlotEntity plotEntity = plotRepository.findById(plotId)
                 .orElseThrow(() -> new EntityNotFoundException("Plot not found with id: " + plotId));
@@ -385,7 +385,6 @@ public class PlotServiceImpl implements PlotService {
 
         if (plotOwnerRepository.findByPlotId(plotId) != null) {
             plotOwnerService.deletePlotOwner(plotId, plotOwnerEntity.getOwner().getId());
-
         }
 
         plotOwnerService.createPlotOwner(ownerId, plotId, userId);

@@ -1,6 +1,7 @@
 package ar.edu.utn.frc.tup.lc.iv.restTemplate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -22,6 +23,12 @@ public class FileManagerClient {
     private RestTemplate restTemplate;
 
     /**
+     * Dirección url donde se levanta el microservicio de file manager.
+     */
+    @Value("${file.manager.url}")
+    private String url;
+
+    /**
      * Sube un archivo al servidor.
      *
      * @param file archivo a subir.
@@ -29,7 +36,7 @@ public class FileManagerClient {
      */
     public FileClient uploadFile(MultipartFile file) {
 
-        String uploadUrl = "http://localhost:8084/fileManager/savefile";
+        String uploadUrl = url + "/fileManager/savefile";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
@@ -59,7 +66,7 @@ public class FileManagerClient {
      * @return el archivo en formato byte[].
      */
     public byte[] getFile(String fileId) {
-        String downloadUrl = "http://localhost:8084/fileManager/getFile/" + fileId;
+        String downloadUrl = url + "/fileManager/getFile/" + fileId;
         System.out.println("Download URL: " + downloadUrl);
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> entity = new HttpEntity<>(headers);

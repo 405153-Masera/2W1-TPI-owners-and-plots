@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
-/*
+
 @SpringBootTest
 class OwnerServiceImplTest {
 
@@ -57,6 +57,9 @@ class OwnerServiceImplTest {
     @MockBean
     private DniTypeRepository dniTypeRepositoryMock;
 
+    @MockBean
+    private PlotStateRepository plotStateRepositoryMock;
+
 
     @Test
     void updateOwner() {
@@ -66,20 +69,42 @@ class OwnerServiceImplTest {
         putOwnerDto.setName("Manu");
         putOwnerDto.setLastname("Ginóbili");
         putOwnerDto.setDni("45591511");
-        putOwnerDto.setDni_type_id(1);
+        putOwnerDto.setDniTypeId(1);
         putOwnerDto.setDateBirth(LocalDate.of(1977, 7, 28));
         putOwnerDto.setBusinessName("Ginóbili Enterprises");
         putOwnerDto.setOwnerTypeId(1);
         putOwnerDto.setTaxStatusId(1);
         putOwnerDto.setUserUpdateId(1);
-        putOwnerDto.setFiles(new ArrayList<>()); // Asumiendo que agregas archivos aquí
+        putOwnerDto.setFiles(new ArrayList<>());
+
+        Integer[] plots = new Integer[2];
+        plots[0] = 123;
+        plots[1] = 124;
+        putOwnerDto.setPlotId(plots);
 
         OwnerEntity ownerEntity = OwnerTestHelper.OWNER_ENTITY_1; // Utiliza un propietario de tu test helper
+        PlotOwnerEntity plotOwnerEntity = OwnerTestHelper.PLOT_OWNER_ENTITY_1;
+        PlotOwnerEntity plotOwnerEntity2 = OwnerTestHelper.PLOT_OWNER_ENTITY_2;
+
+        List<PlotOwnerEntity> listPlotOwnerEntity = new ArrayList<>();
+        listPlotOwnerEntity.add(plotOwnerEntity);
+        listPlotOwnerEntity.add(plotOwnerEntity2);
+
+        PlotEntity plotEntity = OwnerTestHelper.PLOT_ENTITY_1;
+        PlotStateEntity plotStateEntity = OwnerTestHelper.PLOT_STATE_ENTITY;
+
         when(ownerRepositoryMock.findById(ownerId)).thenReturn(Optional.of(ownerEntity));
         when(dniTypeRepositoryMock.findById(1)).thenReturn(Optional.of(OwnerTestHelper.DNI_TYPE_ENTITY_DNI));
         when(ownerTypeRepositoryMock.findById(1)).thenReturn(Optional.ofNullable(OwnerTestHelper.OWNER_TYPE_FISICA));
         when(taxStatusRepositoryMock.findById(1)).thenReturn(Optional.ofNullable(OwnerTestHelper.TAX_STATUS_RESPONSABLE_INSCRIPTO));
         when(ownerRepositoryMock.save(any(OwnerEntity.class))).thenReturn(ownerEntity); // Simulamos la persistencia
+        when(plotOwnerRepositoryMock.findByOwnerId(ownerId)).thenReturn(listPlotOwnerEntity);
+        when(plotRepositoryMock.findById(123)).thenReturn(Optional.of(plotEntity));
+        when(plotRepositoryMock.findById(124)).thenReturn(Optional.of(plotEntity));
+        when(plotRepositoryMock.existsById(1)).thenReturn(true);
+        when(plotStateRepositoryMock.findById(1)).thenReturn(Optional.of(plotStateEntity));
+        when(plotStateRepositoryMock.findById(2)).thenReturn(Optional.of(plotStateEntity));
+
 
         // Act
         GetOwnerDto result = ownerServiceSpy.updateOwner(ownerId, putOwnerDto);
@@ -103,7 +128,7 @@ class OwnerServiceImplTest {
         putOwnerDto.setName("UpdatedName");
         putOwnerDto.setLastname("UpdatedLastname");
         putOwnerDto.setDni("12345678");
-        putOwnerDto.setDni_type_id(1);
+        putOwnerDto.setDniTypeId(1);
         putOwnerDto.setDateBirth(LocalDate.of(1990, 1, 1));
         putOwnerDto.setOwnerTypeId(1);
         putOwnerDto.setTaxStatusId(1); // Este es el ID que buscamos
@@ -446,4 +471,4 @@ class OwnerServiceImplTest {
     }
 }
 
-     */
+

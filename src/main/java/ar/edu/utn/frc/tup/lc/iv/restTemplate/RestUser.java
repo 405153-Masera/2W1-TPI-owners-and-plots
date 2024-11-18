@@ -6,6 +6,7 @@ import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.UserPost;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -33,7 +34,8 @@ public class RestUser {
     /**
      * Dirección url donde se levanta el microservicio de usuarios.
      */
-    private String url = "http://localhost:9060/users";
+    @Value("${user.service.url}/users")
+    private String url;
 
     /**
      * Constructor de la clase.

@@ -172,23 +172,6 @@ public class OwnerStatsService implements OwnerStatsInterface {
     }
 
     /**
-     * Obtiene las construcciones a lo largo de los años.
-     *
-     * @return una lista con las construcciones a lo largo de los años.
-     */
-    public List<ConstructionProgress> getConstructionProgress() {
-        List<PlotEntity> plots = plotRepository.findAll();
-
-        return plots.stream()
-                .filter(plot -> plot.getPlotState().getId() == 3L)
-                .collect(Collectors.groupingBy(plot -> plot.getCreatedDatetime().getYear()))
-                .entrySet().stream()
-                .map(entry -> new ConstructionProgress(entry.getKey(), entry.getValue().size()))
-                .sorted(Comparator.comparing(ConstructionProgress::getYear))
-                .collect(Collectors.toList());
-    }
-
-    /**
      * Crea la distribución de los lotes por propietario.
      *
      * @param plotOwners la lista que tiene las relaciones entre propietarios y lotes.
