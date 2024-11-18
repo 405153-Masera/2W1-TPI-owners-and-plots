@@ -34,7 +34,7 @@ public class DashboardController {
      * @return una lista de BlockData que contiene datos de las manzanas.
      */
     @GetMapping("/blockStats")
-    public ResponseEntity<List<BlockData>> getOwnerCountByRole(@RequestParam(required = false) LocalDate startDate,
+    public ResponseEntity<List<BlockData>> getBlocksData(@RequestParam(required = false) LocalDate startDate,
                                                                @RequestParam(required = false) LocalDate endDate) {
         List<BlockData> stats = ownerStatsService.getBlocksData(startDate, endDate);
         return ResponseEntity.ok(stats);
