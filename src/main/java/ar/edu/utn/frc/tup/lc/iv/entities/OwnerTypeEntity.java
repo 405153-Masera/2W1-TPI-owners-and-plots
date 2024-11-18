@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * Referencia a la tabla llamada "ownerstypes".
  */
 @Entity
-@Table(name = "ownerstypes")
+@Table(name = "owners_types")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * Referencia a la tabla llamada "taxstatus".
  */
 @Entity
-@Table(name = "taxstatus")
+@Table(name = "tax_status")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -6,8 +6,12 @@ import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotTypeDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotWithHisOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutPlotDto;
+import ar.edu.utn.frc.tup.lc.iv.entities.FilePlotEntity;
 import ar.edu.utn.frc.tup.lc.iv.entities.PlotEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.PlotStateEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.PlotTypeEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -92,4 +96,100 @@ public interface PlotService {
      * @return una lista con todos los lotes y sus propietarios.
      */
     List<GetPlotWithHisOwnerDto> getPlotsWithHisOwner();
+
+    /**
+     * Valida si el lote es de tipo "wasteland" y no tiene metros construidos.
+     *
+     * @param postPlotDto Datos del lote a validar.
+     */
+    void validateWasteland(PostPlotDto postPlotDto);
+
+    /**
+     * Valida si el área construida es menor que el área total del lote.
+     *
+     * @param postPlotDto Datos del lote a validar.
+     */
+    void validateBuiltArea(PostPlotDto postPlotDto);
+
+    /**
+     * Sube archivos relacionados a un lote.
+     *
+     * @param files    Los archivos a subir.
+     * @param userId   El id del usuario que sube los archivos.
+     * @param plotEntity El lote al que se asociarán los archivos.
+     */
+    void uploadFiles(List<MultipartFile> files, Integer userId, PlotEntity plotEntity);
+
+    /**
+     * Crea una entidad de archivo de lote.
+     *
+     * @param file       El archivo a asociar al lote.
+     * @param userId     El id del usuario que sube el archivo.
+     * @param plotEntity El lote al que se asociará el archivo.
+     * @return La entidad de archivo creada.
+     */
+    FilePlotEntity createFilePlotEntity(MultipartFile file, Integer userId, PlotEntity plotEntity);
+
+    /**
+     * Encuentra un lote por su id.
+     *
+     * @param plotId El id del lote a buscar.
+     * @return La entidad de lote encontrada.
+     */
+    PlotEntity getPlotEntityById(Integer plotId);
+
+    /**
+     * Actualiza los campos de un lote.
+     *
+     * @param plotEntity la entidad de lote a actualizar.
+     * @param plotDto los nuevos datos del lote.
+     */
+    void updatePlotFields(PlotEntity plotEntity, PutPlotDto plotDto);
+
+    /**
+     * Mapea los datos de una entidad de lote a un DTO con los detalles del propietario.
+     *
+     * @param plotEntity          La entidad de lote a mapear.
+     * @param getPlotDto          El DTO de lote donde se mapearán los datos.
+     */
+    void mapPlotEntityToGetPlotWithHisOwnerDto(PlotEntity plotEntity, GetPlotWithHisOwnerDto getPlotDto);
+
+    /**
+     * Valida si un lote existe con el número de lote proporcionado.
+     *
+     * @param plotNumber El número del lote a validar.
+     */
+    void validatePlotNumber(Integer plotNumber);
+
+    /**
+     * Mapea los datos de un DTO post de lote a una entidad de lote.
+     *
+     * @param postPlotDto El DTO de lote con los datos para mapear.
+     * @return La entidad de lote creada a partir del DTO.
+     */
+     PlotEntity mapPlotPostToPlotEntity(PostPlotDto postPlotDto);
+
+    /**
+     * Mapea los datos de un DTO post de lote a una entidad de lote existente.
+     *
+     * @param plotEntity  La entidad de lote existente que será actualizada.
+     * @param postPlotDto El DTO con los nuevos datos para actualizar la entidad.
+     */
+    void mapPlotPostToPlotEntity(PlotEntity plotEntity, PostPlotDto postPlotDto);
+
+    /**
+     * Obtiene un estado de lote por su id.
+     *
+     * @param id El id del estado del lote a obtener.
+     * @return El estado de lote correspondiente al id.
+     */
+    PlotStateEntity getPlotState(Integer id);
+
+    /**
+     * Obtiene un tipo de lote por su id.
+     *
+     * @param id El id del tipo de lote a obtener.
+     * @return El tipo de lote correspondiente al id.
+     */
+    PlotTypeEntity getPlotType(Integer id);
 }

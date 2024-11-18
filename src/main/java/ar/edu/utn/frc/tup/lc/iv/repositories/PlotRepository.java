@@ -1,6 +1,6 @@
 package ar.edu.utn.frc.tup.lc.iv.repositories;
 
-import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.PlotByPlotTypeCountDTO;
+
 import ar.edu.utn.frc.tup.lc.iv.entities.PlotEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -40,6 +40,17 @@ public interface PlotRepository extends JpaRepository<PlotEntity, Integer> {
      */
     boolean existsByPlotNumber(int plotNumber);
 
+
+    /**
+     * Cuenta la cantidad de lotes agrupados por su estado.
+     *
+     * @return una lista de objetos donde cada uno contiene el nombre del estado y el conteo de lotes en ese estado.
+     */
+    @Query(value = "SELECT ps.name as stateName, COUNT(p.id) as count "
+            + "FROM plots p "
+            + "JOIN plot_states ps ON ps.id = p.plot_state_id "
+            + "GROUP BY ps.name",
+
     @Query(value = "SELECT ps.name as stateName, COUNT(p.id) as count " +
             "FROM plots p " +
             "JOIN plotstates ps ON ps.id = p.plot_state_id " +
@@ -53,6 +64,13 @@ public interface PlotRepository extends JpaRepository<PlotEntity, Integer> {
                                      @Param("plotType") Integer plotType);
 
 
+    /**
+     * Cuenta la cantidad de lotes agrupados por su tipo.
+     *
+     * @param startDate fecha de inicio a filtrar
+     * @param endDate fecha limite a filtrar
+     * @return una lista de objetos donde cada uno contiene el nombre del tipo y el conteo de lotes de ese tipo.
+     */
     @Query(value = "SELECT pt.name AS typeName, COUNT(p.id) AS count " +
             "FROM plots p " +
             "JOIN plottypes pt ON pt.id = p.plot_type_id " +
@@ -61,5 +79,6 @@ public interface PlotRepository extends JpaRepository<PlotEntity, Integer> {
             "GROUP BY pt.name", nativeQuery = true)
     List<Object[]> countPlotsByType(@Param("startDate") LocalDate startDate,
                                     @Param("endDate") LocalDate endDate);
+
 
 }

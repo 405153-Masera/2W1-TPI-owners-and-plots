@@ -7,6 +7,11 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * DTO para representar un lote junto con la información de su propietario.
+ * Incluye detalles como número de lote, manzana, áreas, estado, tipo de lote
+ * y archivos asociados, además del identificador del propietario.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -98,5 +98,5 @@ public class GetUserDto {
     /**
      * Identificador de la plataforma telegram utilizada en notificaciones.
      */
-    private Integer telegram_id;
+    private Long telegram_id;
 }
