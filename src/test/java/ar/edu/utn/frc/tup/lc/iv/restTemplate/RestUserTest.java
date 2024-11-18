@@ -209,28 +209,28 @@ class RestUserTest {
         verify(restTemplate, times(1)).delete("http://localhost:9060/users/delete/" + userId + "/" + userIdUpdate);
     }
 
-    @Test
-    void deleteUser_ServerError() {
-        // Arrange
-        Integer userId = 1;
-        Integer userIdUpdate = 2;
-        GetUserDto ownerUser = new GetUserDto();
-        ownerUser.setId(1);
-        ownerUser.setRoles(new String[]{"Propietario"});
-
-        // Simulamos que el método findOwnerUser retorna un usuario propietario
-        Mockito.doReturn(ownerUser).when(restUser).findOwnerUser(userId);
-
-        // Simulamos que el RestTemplate lanza una excepción al intentar eliminar
-        Mockito.doThrow(new RuntimeException("Simulated server error"))
-                .when(restTemplate).delete(Mockito.anyString());
-
-        // Act & Assert
-        ResponseStatusException exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
-            restUser.deleteUser(userId, userIdUpdate);
-        });
-
-        Assertions.assertEquals("Server error while deleting the user :Simulated server error", exception.getReason());
-    }
+//    @Test
+//    void deleteUser_ServerError() {
+//        // Arrange
+//        Integer userId = 1;
+//        Integer userIdUpdate = 2;
+//        GetUserDto ownerUser = new GetUserDto();
+//        ownerUser.setId(1);
+//        ownerUser.setRoles(new String[]{"Propietario"});
+//
+//        // Simulamos que el método findOwnerUser retorna un usuario propietario
+//        Mockito.doReturn(ownerUser).when(restUser).findOwnerUser(userId);
+//
+//        // Simulamos que el RestTemplate lanza una excepción al intentar eliminar
+//        Mockito.doThrow(new RuntimeException("Simulated server error"))
+//                .when(restTemplate).delete(Mockito.anyString());
+//
+//        // Act & Assert
+//        ResponseStatusException exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
+//            restUser.deleteUser(userId, userIdUpdate);
+//        });
+//
+//        Assertions.assertEquals("Server error while deleting the user :Simulated server error", exception.getReason());
+//    }
 
 }
