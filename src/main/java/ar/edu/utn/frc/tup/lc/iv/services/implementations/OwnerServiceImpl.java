@@ -22,9 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.time.format.TextStyle;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -106,7 +104,7 @@ public class OwnerServiceImpl implements OwnerService {
     @Override
     @Transactional
     public GetOwnerDto createOwner(PostOwnerDto postOwnerDto) {
-        if(postOwnerDto.getDni_type_id() == null){
+        if (postOwnerDto.getDni_type_id() == null) {
             postOwnerDto.setDni_type_id(1);
         }
         OwnerEntity ownerEntity = createOwnerEntity(postOwnerDto);
@@ -572,6 +570,12 @@ public class OwnerServiceImpl implements OwnerService {
                 .collect(Collectors.toList());
     }
 
+
+    /**
+     * Obtiene la cantidad de propietarios por estado.
+     *
+     * @return un mapa con la cantidad de propietarios por estado.
+     */
     @Override
     public Map<String, Long> getOwnerCountByStatus() {
         List<OwnerEntity> owners = ownerRepository.findAll();
@@ -653,7 +657,7 @@ public class OwnerServiceImpl implements OwnerService {
                 new EntityNotFoundException("Owner not found with id: " + ownerId)
         );
 
-        multiplePlotsChangeState (ownerId);
+        multiplePlotsChangeState(ownerId);
         logicDeleteOwner(ownerEntity, userIdUpdate);
 
         restUser.deleteUser(ownerEntity.getId(), userIdUpdate);
@@ -677,7 +681,7 @@ public class OwnerServiceImpl implements OwnerService {
      *
      * @param ownerId el id del propietario.
      */
-    public void multiplePlotsChangeState (Integer ownerId) {
+    public void multiplePlotsChangeState(Integer ownerId) {
         List<PlotOwnerEntity> plotOwnerEntity = plotOwnerRepository.findByOwnerId(ownerId);
         for (PlotOwnerEntity plotOwnerEntities : plotOwnerEntity) {
             changePlotToAvaible(plotOwnerEntities.getId());
@@ -690,7 +694,7 @@ public class OwnerServiceImpl implements OwnerService {
      * @param ownerEntity un entidad de propietario.
      * @param userIdUpdate la id del usuario que da baja logica.
      */
-    public void logicDeleteOwner (OwnerEntity ownerEntity , Integer userIdUpdate) {
+    public void logicDeleteOwner(OwnerEntity ownerEntity, Integer userIdUpdate) {
         ownerEntity.setActive(false);
         ownerEntity.setLastUpdatedDatetime(LocalDateTime.now());
         ownerEntity.setLastUpdatedUser(userIdUpdate);

@@ -1,6 +1,5 @@
 package ar.edu.utn.frc.tup.lc.iv.repositories;
 
-import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.PlotByPlotTypeCountDTO;
 import ar.edu.utn.frc.tup.lc.iv.entities.PlotEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -40,25 +39,39 @@ public interface PlotRepository extends JpaRepository<PlotEntity, Integer> {
      */
     boolean existsByPlotNumber(int plotNumber);
 
-    @Query(value = "SELECT ps.name as stateName, COUNT(p.id) as count " +
-            "FROM plots p " +
-            "JOIN plotstates ps ON ps.id = p.plot_state_id " +
-            "WHERE (:plotType IS NULL OR p.plot_type_id = :plotType) " +
-            "AND (:startDate IS NULL OR p.created_datetime >= :startDate) " + // Si startDate no es null, filtra por startDate
-            "AND (:endDate IS NULL OR p.created_datetime <= :endDate) " +
-            "GROUP BY ps.name",
+    /**
+     * Busca una lista de lotes que estén ocupados.
+     *
+     * @param startDate fecha de inicio.
+     * @param endDate fecha de fin.
+     * @param plotType tipo de lote.
+     * @return una lista de {@link PlotEntity}.
+     */
+    @Query(value = "SELECT ps.name as stateName, COUNT(p.id) as count "
+            + "FROM plots p "
+            + "JOIN plotstates ps ON ps.id = p.plot_state_id "
+            + "WHERE (:plotType IS NULL OR p.plot_type_id = :plotType) "
+            + "AND (:startDate IS NULL OR p.created_datetime >= :startDate) "
+            + "AND (:endDate IS NULL OR p.created_datetime <= :endDate) "
+            + "GROUP BY ps.name",
             nativeQuery = true)
     List<Object[]> countPlotsByState(@Param("startDate") LocalDate startDate,
                                      @Param("endDate") LocalDate endDate,
                                      @Param("plotType") Integer plotType);
 
 
-    @Query(value = "SELECT pt.name AS typeName, COUNT(p.id) AS count " +
-            "FROM plots p " +
-            "JOIN plottypes pt ON pt.id = p.plot_type_id " +
-            "WHERE (:startDate IS NULL OR p.created_datetime >= :startDate) " +
-            "AND (:endDate IS NULL OR p.created_datetime <= :endDate) " +
-            "GROUP BY pt.name", nativeQuery = true)
+    /**
+        * Cuenta lotes por tipo con un filtro.
+        * @param startDate fecha de inicio.
+        * @param endDate fecha de fin.
+        * @return una lista.
+     */
+    @Query(value = "SELECT pt.name AS typeName, COUNT(p.id) AS count "
+            + "FROM plots p "
+            + "JOIN plottypes pt ON pt.id = p.plot_type_id "
+            + "WHERE (:startDate IS NULL OR p.created_datetime >= :startDate) "
+            + "AND (:endDate IS NULL OR p.created_datetime <= :endDate) "
+            + "GROUP BY pt.name", nativeQuery = true)
     List<Object[]> countPlotsByType(@Param("startDate") LocalDate startDate,
                                     @Param("endDate") LocalDate endDate);
 
