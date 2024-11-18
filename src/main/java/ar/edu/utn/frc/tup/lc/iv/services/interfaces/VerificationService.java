@@ -1,6 +1,6 @@
 package ar.edu.utn.frc.tup.lc.iv.services.interfaces;
 
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
@@ -10,10 +10,8 @@ import org.springframework.stereotype.Service;
 public interface VerificationService {
 
     /**
-     * Método que valida si el número de lote es único.
-     *
-     * @param plotNumber número de lote.
-     * @return true si el número de lote es único, false en caso contrario.
+     * Metodo que valida si el número de lote es único.
+     * @param plotNumber numero de lote.
      */
     boolean isPlotNumberUnique(Integer plotNumber);
 

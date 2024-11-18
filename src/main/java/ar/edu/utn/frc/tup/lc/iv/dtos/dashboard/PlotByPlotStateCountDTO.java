@@ -5,8 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Representa la cantidad de terrenos agrupados por su estado.
- * Incluye el estado y el conteo correspondiente.
+ * DTO que representa un Contador por estado de lote.
  */
 @Data
 @NoArgsConstructor
@@ -19,14 +18,7 @@ public class PlotByPlotStateCountDTO {
     private String state;
 
     /**
-     * Cantidad de terrenos en el estado especificado.
-     */
-    private long count;
-}
-
-     /**
      * Cantidad de lotes en ese estado.
      */
     private long count;
 }
-

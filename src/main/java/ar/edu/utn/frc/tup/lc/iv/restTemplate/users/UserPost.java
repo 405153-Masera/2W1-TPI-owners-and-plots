@@ -87,5 +87,5 @@ public class UserPost {
     /**
      * Identificador de la plataforma telegram utilizada en notificaciones.
      */
-    private Long telegram_id;
+    private Integer telegram_id;
 }

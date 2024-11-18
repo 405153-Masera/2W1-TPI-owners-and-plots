@@ -13,9 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Servicio que maneja las estadísticas relacionadas con los propietarios y los lotes.
- */
 @Service
 @Data
 @RequiredArgsConstructor

@@ -5,10 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * DTO para representar la relación entre un lote y su propietario.
- * Contiene los identificadores del lote y del propietario correspondiente.
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
