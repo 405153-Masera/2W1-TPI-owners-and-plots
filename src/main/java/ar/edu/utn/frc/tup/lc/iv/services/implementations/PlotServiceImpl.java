@@ -1,6 +1,7 @@
 package ar.edu.utn.frc.tup.lc.iv.services.implementations;
 
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.*;
+import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.entities.*;
@@ -134,6 +135,23 @@ public class PlotServiceImpl implements PlotService {
                 plotEntity.getFiles().add(filePlotEntity);
             }
         }
+    }
+
+    /**
+     * Cambia el estado de un lote a vendido.
+     *
+     * @param plotId id del lote a vender.
+     * @param userId id del usuario que actualiza.
+     */
+    @Override
+    public void changePlotState(Integer plotId, Integer userId) {
+        PlotEntity updatePlot = plotRepository.findById(plotId)
+                .orElseThrow(() -> new EntityNotFoundException("Plot not found"));
+
+        updatePlot.setPlotState(plotStateRepository.findById(2).orElseThrow(() -> new EntityNotFoundException("Plot State not found")));
+        updatePlot.setLastUpdatedUser(userId);
+        updatePlot.setLastUpdatedDatetime(LocalDateTime.now());
+        plotRepository.save(updatePlot);
     }
 
     /**
@@ -386,9 +404,11 @@ public class PlotServiceImpl implements PlotService {
         if (plotOwnerRepository.findByPlotId(plotId) != null) {
             plotOwnerService.deletePlotOwner(plotId, plotOwnerEntity.getOwner().getId());
         }
+        else {
+            changePlotState(plotId, userId); //Cambia el estado a habitado si es un lote que no tiene propietario
+        }
 
         plotOwnerService.createPlotOwner(ownerId, plotId, userId);
-
     }
 
     /**
