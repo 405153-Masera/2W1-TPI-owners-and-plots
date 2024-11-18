@@ -371,6 +371,28 @@ public class PlotServiceImpl implements PlotService {
     }
 
     /**
+     * Transfiere un lote de un propietario a otro.
+     *
+     * @param plotId id del lote a transferir.
+     * @param ownerId id del nuevo propietario.
+     * @param userId id del usuario que realiza la transferencia.
+     */
+    public void transferPlot(Integer plotId, Integer ownerId, Integer userId) {
+        PlotEntity plotEntity = plotRepository.findById(plotId)
+                .orElseThrow(() -> new EntityNotFoundException("Plot not found with id: " + plotId));
+
+        PlotOwnerEntity plotOwnerEntity = plotOwnerRepository.findByPlotId(plotEntity.getId());
+
+        if (plotOwnerRepository.findByPlotId(plotId) != null) {
+            plotOwnerService.deletePlotOwner(plotId, plotOwnerEntity.getOwner().getId());
+
+        }
+
+        plotOwnerService.createPlotOwner(ownerId, plotId, userId);
+
+    }
+
+    /**
      * Válida si un lote existe con el número de lote pasado.
      *
      * @param plotNumber número de lote a validar.

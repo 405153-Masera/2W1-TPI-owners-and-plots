@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * Referencia a la tabla llamada "filesplots".
  */
 @Entity
-@Table(name = "filesplots")
+@Table(name = "files_plots")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * Referencia a la tabla llamada "filesowners".
  */
 @Entity
-@Table(name = "filesowners")
+@Table(name = "files_owners")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

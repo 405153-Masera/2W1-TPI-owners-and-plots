@@ -210,7 +210,7 @@ public class OwnerServiceImpl implements OwnerService {
             throw new EntityNotFoundException("Plot not found with id: " + plotOwner.getPlot().getId());
         }
 
-        if (!plotOwnerRepository.findByPlotId(plotOwner.getPlot().getId()).isEmpty()
+        if (plotOwnerRepository.findByPlotId(plotOwner.getPlot().getId()) != null
                 && ownerRepository.existsByIdAndActive(plotOwner.getOwner().getId(), true)) {
             throw new IllegalArgumentException("Plot already has an active owner.");
         }
