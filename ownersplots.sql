@@ -458,5 +458,3 @@ DELIMITER $$
                     VALUES
                         (OLD.id, version_number, OLD.name, OLD.lastname, OLD.dni, OLD.dni_type_id, OLD.date_birth, OLD.tax_status_id, OLD.owner_type_id, OLD.business_name, OLD.active, OLD.created_datetime, OLD.created_user, OLD.last_updated_datetime, OLD.last_updated_user);
                     END$$
-
-                    DELIMITER ;
