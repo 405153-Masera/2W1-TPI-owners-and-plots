@@ -10,7 +10,7 @@ CREATE TABLE dni_types (
 );
 
 -- Tabla Tax_Status
-CREATE TABLE tax_status (
+CREATE TABLE TaxStatus (
                            id INT PRIMARY KEY AUTO_INCREMENT,
                            description VARCHAR(255),
                            created_datetime DATETIME,
@@ -20,7 +20,7 @@ CREATE TABLE tax_status (
 );
 
 -- Tabla OwnersTypes
-CREATE TABLE owners_types (
+CREATE TABLE OwnersTypes (
                              id INT PRIMARY KEY AUTO_INCREMENT,
                              description VARCHAR(255),
                              created_datetime DATETIME,
@@ -30,7 +30,7 @@ CREATE TABLE owners_types (
 );
 
 -- Tabla Owners
-CREATE TABLE owners (
+CREATE TABLE Owners (
                         id INT PRIMARY KEY AUTO_INCREMENT,
                         name VARCHAR(255),
                         lastname VARCHAR(255),
@@ -45,13 +45,13 @@ CREATE TABLE owners (
                         created_user INT,
                         last_updated_datetime DATETIME,
                         last_updated_user INT,
-                        FOREIGN KEY (tax_status_id) REFERENCES tax_status(id),
-                        FOREIGN KEY (owner_type_id) REFERENCES owners_types(id),
+                        FOREIGN KEY (tax_status_id) REFERENCES TaxStatus(id),
+                        FOREIGN KEY (owner_type_id) REFERENCES OwnersTypes(id),
                         FOREIGN KEY (dni_type_id) REFERENCES dni_types(id)
 );
 
 -- Tabla PlotStates
-CREATE TABLE plot_states (
+CREATE TABLE PlotStates (
                             id INT PRIMARY KEY AUTO_INCREMENT,
                             name VARCHAR(255),
                             created_datetime DATETIME,
@@ -61,7 +61,7 @@ CREATE TABLE plot_states (
 );
 
 -- Tabla PlotTypes
-CREATE TABLE plot_types (
+CREATE TABLE PlotTypes (
                            id INT PRIMARY KEY AUTO_INCREMENT,
                            name VARCHAR(255),
                            created_datetime DATETIME,
@@ -71,7 +71,7 @@ CREATE TABLE plot_types (
 );
 
 -- Tabla Plots
-CREATE TABLE plots (
+CREATE TABLE Plots (
                        id INT PRIMARY KEY AUTO_INCREMENT,
                        plot_number INT,
                        block_number INT,
@@ -83,12 +83,12 @@ CREATE TABLE plots (
                        created_user INT,
                        last_updated_datetime DATETIME,
                        last_updated_user INT,
-                       FOREIGN KEY (plot_state_id) REFERENCES plot_states(id),
-                       FOREIGN KEY (plot_type_id) REFERENCES plot_types(id)
+                       FOREIGN KEY (plot_state_id) REFERENCES PlotStates(id),
+                       FOREIGN KEY (plot_type_id) REFERENCES PlotTypes(id)
 );
 
 -- Tabla PlotOwners
-CREATE TABLE plot_owners (
+CREATE TABLE PlotOwners (
                             id INT PRIMARY KEY AUTO_INCREMENT,
                             plot_id INT,
                             owner_id INT,
@@ -96,13 +96,13 @@ CREATE TABLE plot_owners (
                             created_user INT,
                             last_updated_datetime DATETIME,
                             last_updated_user INT,
-                            FOREIGN KEY (plot_id) REFERENCES plots(id),
-                            FOREIGN KEY (owner_id) REFERENCES owners(id)
+                            FOREIGN KEY (plot_id) REFERENCES Plots(id),
+                            FOREIGN KEY (owner_id) REFERENCES Owners(id)
 );
 
 
 -- Tabla Files
-CREATE TABLE files (
+CREATE TABLE Files (
                        id INT PRIMARY KEY AUTO_INCREMENT,
                        file_uuid VARCHAR(255),
                        name VARCHAR(255),
@@ -113,7 +113,7 @@ CREATE TABLE files (
 );
 
 -- Tabla Files_Plots
-CREATE TABLE files_plots (
+CREATE TABLE Files_Plots (
                              id INT PRIMARY KEY AUTO_INCREMENT,
                              file_id INT,
                              plot_id INT,
@@ -121,12 +121,12 @@ CREATE TABLE files_plots (
                              created_user INT,
                              last_updated_datetime DATETIME,
                              last_updated_user INT,
-                             FOREIGN KEY (file_id) REFERENCES files(id),
-                             FOREIGN KEY (plot_id) REFERENCES plots(id)
+                             FOREIGN KEY (file_id) REFERENCES Files(id),
+                             FOREIGN KEY (plot_id) REFERENCES Plots(id)
 );
 
 -- Tabla Files_Owners
-CREATE TABLE files_owners (
+CREATE TABLE Files_Owners (
                               id INT PRIMARY KEY AUTO_INCREMENT,
                               file_id INT,
                               owner_id INT,
@@ -134,13 +134,13 @@ CREATE TABLE files_owners (
                               created_user INT,
                               last_updated_datetime DATETIME,
                               last_updated_user INT,
-                              FOREIGN KEY (file_id) REFERENCES files(id),
-                              FOREIGN KEY (owner_id) REFERENCES owners(id)
+                              FOREIGN KEY (file_id) REFERENCES Files(id),
+                              FOREIGN KEY (owner_id) REFERENCES Owners(id)
 );
 
 
 -- Tabla de auditoría para Owners
-CREATE TABLE owners_audit (
+CREATE TABLE Owners_audit (
                               version_id INT PRIMARY KEY AUTO_INCREMENT,
                               id INT,
                               version INT,
@@ -160,7 +160,7 @@ CREATE TABLE owners_audit (
 );
 
 -- Tabla de auditoría para PlotTypes
-CREATE TABLE plot_types_audit (
+CREATE TABLE PlotTypes_audit (
                                  version_id INT PRIMARY KEY AUTO_INCREMENT,
                                  id INT,
                                  version INT,
@@ -172,7 +172,7 @@ CREATE TABLE plot_types_audit (
 );
 
 -- Tabla de auditoría para PlotStates
-CREATE TABLE plot_states_audit (
+CREATE TABLE PlotStates_audit (
                                   version_id INT PRIMARY KEY AUTO_INCREMENT,
                                   id INT,
                                   version INT,
@@ -184,7 +184,7 @@ CREATE TABLE plot_states_audit (
 );
 
 -- Tabla de auditoría para Plots
-CREATE TABLE plots_audit (
+CREATE TABLE Plots_audit (
                              version_id INT PRIMARY KEY AUTO_INCREMENT,
                              id INT,
                              version INT,
@@ -201,7 +201,7 @@ CREATE TABLE plots_audit (
 );
 
 -- Tabla de auditoría para PlotOwners
-CREATE TABLE plot_owners_audit (
+CREATE TABLE PlotOwners_audit (
                                   version_id INT PRIMARY KEY AUTO_INCREMENT,
                                   id INT,
                                   version INT,
@@ -214,7 +214,7 @@ CREATE TABLE plot_owners_audit (
 );
 
 -- Tabla de auditoría para Files
-CREATE TABLE files_audit (
+CREATE TABLE Files_audit (
                              version_id INT PRIMARY KEY AUTO_INCREMENT,
                              id INT,
                              version INT,
@@ -227,7 +227,7 @@ CREATE TABLE files_audit (
 );
 
 -- Tabla de auditoría para Files_Plots
-CREATE TABLE files_plots_audit (
+CREATE TABLE Files_Plots_audit (
                                    version_id INT PRIMARY KEY AUTO_INCREMENT,
                                    id INT,
                                    version INT,
@@ -240,7 +240,7 @@ CREATE TABLE files_plots_audit (
 );
 
 -- Tabla de auditoría para Files_Owners
-CREATE TABLE files_owners_audit (
+CREATE TABLE Files_Owners_audit (
                                     version_id INT PRIMARY KEY AUTO_INCREMENT,
                                     id INT,
                                     version INT,
@@ -265,7 +265,7 @@ CREATE TABLE dni_types_audit (
 
 
 -- Tabla de auditoría para TaxStatus
-CREATE TABLE tax_status_audit (
+CREATE TABLE TaxStatus_audit (
                                  version_id INT PRIMARY KEY AUTO_INCREMENT,
                                  id INT,
                                  version INT,
@@ -277,7 +277,7 @@ CREATE TABLE tax_status_audit (
 );
 
 -- Tabla de auditoría para TaxStatus
-CREATE TABLE owners_types_audit (
+CREATE TABLE OwnersTypes_audit (
                                    version_id INT PRIMARY KEY AUTO_INCREMENT,
                                    id INT,
                                    version INT,
@@ -288,13 +288,14 @@ CREATE TABLE owners_types_audit (
                                    last_updated_user INT
 );
 
+
 DELIMITER $$
 
 CREATE TRIGGER trg_taxstatus_insert
-    AFTER INSERT ON tax_status
+    AFTER INSERT ON TaxStatus
     FOR EACH ROW
 BEGIN
-    INSERT INTO tax_status_audit
+    INSERT INTO TaxStatus_audit
     (id, version, description, created_datetime, created_user, last_updated_datetime, last_updated_user)
     VALUES
         (NEW.id, 1, NEW.description, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
@@ -331,7 +332,7 @@ DELIMITER ;
         DELIMITER $$
 
         CREATE TRIGGER trg_taxstatus_update
-            AFTER UPDATE ON tax_status
+            AFTER UPDATE ON TaxStatus
             FOR EACH ROW
         BEGIN
             DECLARE version_number INT;
@@ -349,10 +350,10 @@ DELIMITER ;
 DELIMITER $$
 
             CREATE TRIGGER trg_owners_insert
-                AFTER INSERT ON owners
+                AFTER INSERT ON Owners
                 FOR EACH ROW
             BEGIN
-                INSERT INTO owners_audit
+                INSERT INTO Owners_audit
                 (id, version, name, lastname, dni, dni_type_id, date_birth, tax_status_id, owner_type_id, business_name, active, created_datetime, created_user, last_updated_datetime, last_updated_user)
                 VALUES
                     (NEW.id, 1, NEW.name, NEW.lastname, NEW.dni,NEW.dni_type_id, NEW.date_birth, NEW.tax_status_id, NEW.owner_type_id, NEW.business_name, NEW.active, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
@@ -363,14 +364,14 @@ DELIMITER $$
 DELIMITER $$
 
                 CREATE TRIGGER trg_owners_update
-                    AFTER UPDATE ON owners
+                    AFTER UPDATE ON Owners
                     FOR EACH ROW
                 BEGIN
                     DECLARE version_number INT;
 
-                    SELECT IFNULL(MAX(version), 0) + 1 INTO version_number FROM owners_audit WHERE id = OLD.id;
+                    SELECT IFNULL(MAX(version), 0) + 1 INTO version_number FROM Owners_audit WHERE id = OLD.id;
 
-                    INSERT INTO owners_audit
+                    INSERT INTO Owners_audit
                     (id, version, name, lastname, dni, dni_type_id, date_birth, tax_status_id, owner_type_id, business_name, active, created_datetime, created_user, last_updated_datetime, last_updated_user)
                     VALUES
                         (OLD.id, version_number, OLD.name, OLD.lastname, OLD.dni, OLD.dni_type_id, OLD.date_birth, OLD.tax_status_id, OLD.owner_type_id, OLD.business_name, OLD.active, OLD.created_datetime, OLD.created_user, OLD.last_updated_datetime, OLD.last_updated_user);
@@ -381,10 +382,10 @@ DELIMITER $$
 DELIMITER $$
 
                     CREATE TRIGGER trg_plotstates_insert
-                        AFTER INSERT ON plot_states
+                        AFTER INSERT ON PlotStates
                         FOR EACH ROW
                     BEGIN
-                        INSERT INTO plot_states_audit
+                        INSERT INTO PlotStates_audit
                         (id, version, name, created_datetime, created_user, last_updated_datetime, last_updated_user)
                         VALUES
                             (NEW.id, 1, NEW.name, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
@@ -395,7 +396,7 @@ DELIMITER $$
 DELIMITER $$
 
                         CREATE TRIGGER trg_plotstates_update
-                            AFTER UPDATE ON plot_states
+                            AFTER UPDATE ON PlotStates
                             FOR EACH ROW
                         BEGIN
                             DECLARE version_number INT;
@@ -413,10 +414,10 @@ DELIMITER $$
 DELIMITER $$
 
                             CREATE TRIGGER trg_plottypes_insert
-                                AFTER INSERT ON plot_types
+                                AFTER INSERT ON PlotTypes
                                 FOR EACH ROW
                             BEGIN
-                                INSERT INTO plot_types_audit
+                                INSERT INTO PlotTypes_audit
                                 (id, version, name, created_datetime, created_user, last_updated_datetime, last_updated_user)
                                 VALUES
                                     (NEW.id, 1, NEW.name, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
@@ -427,7 +428,7 @@ DELIMITER $$
 DELIMITER $$
 
                                 CREATE TRIGGER trg_plottypes_update
-                                    AFTER UPDATE ON plot_types
+                                    AFTER UPDATE ON PlotTypes
                                     FOR EACH ROW
                                 BEGIN
                                     DECLARE version_number INT;
@@ -445,10 +446,10 @@ DELIMITER $$
 DELIMITER $$
 
                                     CREATE TRIGGER trg_plots_insert
-                                        AFTER INSERT ON plots
+                                        AFTER INSERT ON Plots
                                         FOR EACH ROW
                                     BEGIN
-                                        INSERT INTO plots_audit
+                                        INSERT INTO Plots_audit
                                         (id, version, plot_number, block_number, plot_state_id, plot_type_id, total_area_in_m2, built_area_in_m2, created_datetime, created_user, last_updated_datetime, last_updated_user)
                                         VALUES
                                             (NEW.id, 1, NEW.plot_number, NEW.block_number, NEW.plot_state_id, NEW.plot_type_id, NEW.total_area_in_m2, NEW.built_area_in_m2, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
@@ -459,14 +460,14 @@ DELIMITER $$
 DELIMITER $$
 
                                         CREATE TRIGGER trg_plots_update
-                                            AFTER UPDATE ON plots
+                                            AFTER UPDATE ON Plots
                                             FOR EACH ROW
                                         BEGIN
                                             DECLARE version_number INT;
 
-                                            SELECT IFNULL(MAX(version), 0) + 1 INTO version_number FROM plots_audit WHERE id = OLD.id;
+                                            SELECT IFNULL(MAX(version), 0) + 1 INTO version_number FROM Plots_audit WHERE id = OLD.id;
 
-                                            INSERT INTO plots_audit
+                                            INSERT INTO Plots_audit
                                             (id, version, plot_number, block_number, plot_state_id, plot_type_id, total_area_in_m2, built_area_in_m2, created_datetime, created_user, last_updated_datetime, last_updated_user)
                                             VALUES
                                                 (OLD.id, version_number, OLD.plot_number, OLD.block_number, OLD.plot_state_id, OLD.plot_type_id, OLD.total_area_in_m2, OLD.built_area_in_m2, OLD.created_datetime, OLD.created_user, OLD.last_updated_datetime, OLD.last_updated_user);
@@ -477,10 +478,10 @@ DELIMITER $$
 DELIMITER $$
 
                                             CREATE TRIGGER trg_plotowners_insert
-                                                AFTER INSERT ON plot_owners
+                                                AFTER INSERT ON PlotOwners
                                                 FOR EACH ROW
                                             BEGIN
-                                                INSERT INTO plot_owners_audit
+                                                INSERT INTO PlotOwners_audit
                                                 (id, version, plot_id, owner_id, created_datetime, created_user, last_updated_datetime, last_updated_user)
                                                 VALUES
                                                     (NEW.id, 1, NEW.plot_id, NEW.owner_id, NEW.created_datetime, NEW.created_user, NEW.last_updated_datetime, NEW.last_updated_user);
@@ -491,7 +492,7 @@ DELIMITER $$
 DELIMITER $$
 
                                                 CREATE TRIGGER trg_plotowners_update
-                                                    AFTER UPDATE ON plot_owners
+                                                    AFTER UPDATE ON PlotOwners
                                                     FOR EACH ROW
                                                 BEGIN
                                                     DECLARE version_number INT;
@@ -505,33 +506,35 @@ DELIMITER $$
                                                     END$$
 
                                                     DELIMITER ;
-                                                    
-                                                   
-INSERT INTO tax_status (description, created_datetime, last_updated_datetime, created_user, last_updated_user)
-VALUES
-    ('IVA Responsable inscripto', NOW(), NOW(), 1, 1),
-    ('IVA Responsable no inscripto', NOW(), NOW(), 1, 1),
-    ('IVA no Responsable', NOW(), NOW(), 1, 1),
-    ('IVA Sujeto Exento', NOW(), NOW(), 1, 1),
-    ('Monotributista', NOW(), NOW(), 1, 1);
 
-INSERT INTO owners_types (description, created_datetime, last_updated_datetime, created_user, last_updated_user)
-VALUES
-    ('Persona Fisica' , NOW(), NOW(), 1, 1),
-    ('Persona Juridica', NOW(), NOW(), 1, 1),
-    ('Otro', NOW(), NOW(), 1, 1);
 
-INSERT INTO plot_states (name, created_datetime, last_updated_datetime, created_user, last_updated_user)
-VALUES
-    ('Disponible', NOW(), NOW(), 1, 1),
-    ('Habitado', NOW(), NOW(), 1, 1),
-    ('En construccion', NOW(), NOW(), 1, 1);
 
-INSERT INTO plot_types (name, created_datetime, last_updated_datetime, created_user, last_updated_user)
-VALUES
-    ('Comercial', NOW(), NOW(), 1, 1),
-    ('Residencial', NOW(), NOW(), 1, 1),
-    ('Baldio', NOW(), NOW(), 1, 1);
+
+INSERT INTO TaxStatus (description, created_datetime, last_updated_datetime, created_user, last_updated_user)
+VALUES 
+('IVA Responsable inscripto', NOW(), NOW(), 1, 1),
+('IVA Responsable no inscripto', NOW(), NOW(), 1, 1),
+('IVA no Responsable', NOW(), NOW(), 1, 1),
+('IVA Sujeto Exento', NOW(), NOW(), 1, 1),
+('Monotributista', NOW(), NOW(), 1, 1);
+
+INSERT INTO OwnersTypes (description, created_datetime, last_updated_datetime, created_user, last_updated_user)
+VALUES 
+('Persona Física' , NOW(), NOW(), 1, 1), 
+('Persona Jurídica', NOW(), NOW(), 1, 1),
+('Otro', NOW(), NOW(), 1, 1);
+
+INSERT INTO PlotStates (name, created_datetime, last_updated_datetime, created_user, last_updated_user)
+VALUES 
+('Disponible', NOW(), NOW(), 1, 1),
+('Habitado', NOW(), NOW(), 1, 1),
+('En construcción', NOW(), NOW(), 1, 1);
+
+INSERT INTO PlotTypes (name, created_datetime, last_updated_datetime, created_user, last_updated_user)
+VALUES 
+('Comercial', NOW(), NOW(), 1, 1),
+('Residencial', NOW(), NOW(), 1, 1),
+('Baldío', NOW(), NOW(), 1, 1);
 
 -- Insertar tipos de DNI
 INSERT INTO dni_types (description, created_datetime, last_updated_datetime, created_user, last_updated_user)
@@ -540,55 +543,53 @@ VALUES
     ('Pasaporte', NOW(), NOW(), 1, 1),
     ('CUIT/CUIL', NOW(), NOW(), 1, 1);
 
-INSERT INTO owners (name, lastname, dni_type_id, dni, date_birth, tax_status_id, owner_type_id, business_name, active, created_datetime, created_user, last_updated_datetime, last_updated_user)
+INSERT INTO Owners (name, lastname, dni_type_id, dni, date_birth, tax_status_id, owner_type_id, business_name, active, created_datetime, created_user, last_updated_datetime, last_updated_user)
 VALUES
-    ('Carlos', 'Perez', 1, '41234567', '1985-04-12 00:00:00', 1, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
-    ('Maria', 'Gonzalez', 1, '39876543', '1990-08-25 00:00:00', 2, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
-    ('Juan', 'Lopez', 1, '41238945', '1978-03-15 00:00:00', 5, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
-    ('Ana', 'Martinez', 1, '44556677', '1995-07-19 00:00:00', 2, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
-    ('Pedro', 'Ramirez', 1, '40785621', '1982-01-05 00:00:00', 3, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
-    ('Sofia', 'Hernandez', 1, '43890123', '1993-11-11 00:00:00', 4, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
-    ('Luis', 'Garcia', 1, '42987654', '1988-09-30 00:00:00', 2, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
-    ('Laura', 'Rojas', 1, '40654321', '2000-02-20 00:00:00', 3, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
-    ('Jose', 'Torres', 1, '43210987', '1975-05-22 00:00:00', 4, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
-    ('Carmen', 'Diaz', 3, '23455948169', '1987-12-10 00:00:00', 2, 1, NULL , TRUE, NOW(), 1, NOW(), 1);
+('Carlos', 'Pérez', 1, '41234567', '1985-04-12 00:00:00', 1, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
+('María', 'González', 1, '39876543', '1990-08-25 00:00:00', 2, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
+('Juan', 'López', 1, '41238945', '1978-03-15 00:00:00', 5, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
+('Ana', 'Martínez', 1, '44556677', '1995-07-19 00:00:00', 2, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
+('Pedro', 'Ramírez', 1, '40785621', '1982-01-05 00:00:00', 3, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
+('Sofía', 'Hernández', 1, '43890123', '1993-11-11 00:00:00', 4, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
+('Luis', 'García', 1, '42987654', '1988-09-30 00:00:00', 2, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
+('Laura', 'Rojas', 1, '40654321', '2000-02-20 00:00:00', 3, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
+('José', 'Torres', 1, '43210987', '1975-05-22 00:00:00', 4, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
+('Carmen', 'Díaz', 3, '23455948169', '1987-12-10 00:00:00', 2, 1, NULL , TRUE, NOW(), 1, NOW(), 1);
 
-INSERT INTO plots (plot_number, block_number, plot_state_id, plot_type_id, total_area_in_m2, built_area_in_m2, created_datetime, created_user, last_updated_datetime, last_updated_user)
+INSERT INTO Plots (plot_number, block_number, plot_state_id, plot_type_id, total_area_in_m2, built_area_in_m2, created_datetime, created_user, last_updated_datetime, last_updated_user)
 VALUES
-    (1, 1, 2, 1, 1500.00, 1000.00, NOW(), 1, NOW(), 1),
-    (2, 1, 2, 2, 2500.00, 1500.00, NOW(), 1, NOW(), 1),
-    (3, 1, 2, 3, 1800.00, 0.00, NOW(), 1, NOW(), 1),
-    (4, 1, 3, 3, 500.00, 0.00, NOW(), 1, NOW(), 1),
-    (5, 2, 2, 2, 1200.00, 800.00, NOW(), 1, NOW(), 1),
-    (6, 2, 1, 3, 3000.00, 0.00, NOW(), 1, NOW(), 1),
-    (7, 2, 2, 1, 2100.00, 1500.00, NOW(), 1, NOW(), 1),
-    (8, 3, 1, 2, 900.00, 500.00, NOW(), 1, NOW(), 1),
-    (9, 3, 3, 3, 2600.00, 0.00, NOW(), 1, NOW(), 1),
-    (10, 3, 2, 1, 1300.00, 1100.00, NOW(), 1, NOW(), 1),
-    (11, 3, 2, 2, 2900.00, 1800.00, NOW(), 1, NOW(), 1),
-    (12, 4, 1, 3, 1100.00, 0.00, NOW(), 1, NOW(), 1),
-    (13, 4, 3, 3, 1500.00, 0.00, NOW(), 1, NOW(), 1),
-    (14, 4, 2, 2, 1700.00, 1200.00, NOW(), 1, NOW(), 1),
-    (15, 4, 1, 1, 2400.00, 1300.00, NOW(), 1, NOW(), 1),
-    (16, 5, 2, 3, 2000.00, 0.00, NOW(), 1, NOW(), 1),
-    (17, 5, 2, 1, 1900.00, 1500.00, NOW(), 1, NOW(), 1),
-    (18, 5, 3, 3, 2800.00, 0.00, NOW(), 1, NOW(), 1),
-    (19, 5, 2, 1, 2300.00, 1700.00, NOW(), 1, NOW(), 1),
-    (20, 5, 2, 2, 600.00, 400.00, NOW(), 1, NOW(), 1);
+(1, 1, 2, 1, 1500.00, 1000.00, NOW(), 1, NOW(), 1),
+(2, 1, 2, 2, 2500.00, 1500.00, NOW(), 1, NOW(), 1),
+(3, 1, 2, 3, 1800.00, 0.00, NOW(), 1, NOW(), 1),
+(4, 1, 3, 3, 500.00, 0.00, NOW(), 1, NOW(), 1),
+(5, 2, 2, 2, 1200.00, 800.00, NOW(), 1, NOW(), 1),
+(6, 2, 1, 3, 3000.00, 0.00, NOW(), 1, NOW(), 1),
+(7, 2, 2, 1, 2100.00, 1500.00, NOW(), 1, NOW(), 1),
+(8, 3, 1, 2, 900.00, 500.00, NOW(), 1, NOW(), 1),
+(9, 3, 3, 3, 2600.00, 0.00, NOW(), 1, NOW(), 1),
+(10, 3, 2, 1, 1300.00, 1100.00, NOW(), 1, NOW(), 1),
+(11, 3, 2, 2, 2900.00, 1800.00, NOW(), 1, NOW(), 1),
+(12, 4, 1, 3, 1100.00, 0.00, NOW(), 1, NOW(), 1),
+(13, 4, 3, 3, 1500.00, 0.00, NOW(), 1, NOW(), 1),
+(14, 4, 2, 2, 1700.00, 1200.00, NOW(), 1, NOW(), 1),
+(15, 4, 1, 1, 2400.00, 1300.00, NOW(), 1, NOW(), 1),
+(16, 5, 2, 3, 2000.00, 0.00, NOW(), 1, NOW(), 1),
+(17, 5, 2, 1, 1900.00, 1500.00, NOW(), 1, NOW(), 1),
+(18, 5, 3, 3, 2800.00, 0.00, NOW(), 1, NOW(), 1),
+(19, 5, 2, 1, 2300.00, 1700.00, NOW(), 1, NOW(), 1),
+(20, 5, 2, 2, 600.00, 400.00, NOW(), 1, NOW(), 1);
 
-INSERT INTO plot_owners (plot_id, owner_id, created_datetime, created_user, last_updated_datetime, last_updated_user)
+INSERT INTO PlotOwners (plot_id, owner_id, created_datetime, created_user, last_updated_datetime, last_updated_user)
 VALUES
-    (1, 1, NOW(), 1, NOW(), 1),
-    (2, 1, NOW(), 1, NOW(), 1),
-    (3, 2, NOW(), 1, NOW(), 1),
-    (5, 3, NOW(), 1, NOW(), 1),
-    (7, 4, NOW(), 1, NOW(), 1),
-    (10, 5, NOW(), 1, NOW(), 1),
-    (11, 6, NOW(), 1, NOW(), 1),
-    (14, 7, NOW(), 1, NOW(), 1),
-    (16, 8, NOW(), 1, NOW(), 1),
-    (17, 9, NOW(), 1, NOW(), 1),
-    (19, 10, NOW(), 1, NOW(), 1),
-    (20, 10, NOW(), 1, NOW(), 1);
-
-
+(1, 1, NOW(), 1, NOW(), 1),
+(2, 1, NOW(), 1, NOW(), 1),
+(3, 2, NOW(), 1, NOW(), 1),
+(5, 3, NOW(), 1, NOW(), 1),
+(7, 4, NOW(), 1, NOW(), 1),
+(10, 5, NOW(), 1, NOW(), 1),
+(11, 6, NOW(), 1, NOW(), 1),
+(14, 7, NOW(), 1, NOW(), 1),
+(16, 8, NOW(), 1, NOW(), 1),
+(17, 9, NOW(), 1, NOW(), 1),
+(19, 10, NOW(), 1, NOW(), 1),
+(20, 10, NOW(), 1, NOW(), 1);

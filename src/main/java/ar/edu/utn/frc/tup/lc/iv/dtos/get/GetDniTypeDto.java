@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class GetDniTypeDto {
 
     /**
-     * Identificador único del tipo de documento.
+     * Identificador único del tipo de documento
      */
     private int id;
 

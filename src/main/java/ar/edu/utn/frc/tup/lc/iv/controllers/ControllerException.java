@@ -18,7 +18,6 @@ import java.time.ZonedDateTime;
 @ControllerAdvice
 public class ControllerException {
 
-
     /**
      * Metodo para manejo de excepción de clase INTERNAL_SERVER_ERROR.
      *

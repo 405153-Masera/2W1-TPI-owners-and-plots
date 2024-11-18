@@ -18,9 +18,6 @@ import java.util.*;
 
 import java.util.stream.Collectors;
 
-/**
- * Servicio que maneja las estadísticas relacionadas con los propietarios y los lotes.
- */
 @Service
 @RequiredArgsConstructor
 public class OwnerStatsService implements OwnerStatsInterface {
@@ -57,47 +54,6 @@ public class OwnerStatsService implements OwnerStatsInterface {
     }
 
     /**
-     * Obtiene el conteo de propietarios por estado (activo/inactivo) por mes.
-     *
-     * @return un mapa donde la clave es el nombre del mes y el valor es otro mapa con el estado(activo/inactivo)
-     * y el conteo de propietarios por ese estado
-     */
-    @Override
-    public Map<String, Map<String, Long>> getOwnerCountByStatusPerMonth() {
-        List<OwnerEntity> owners = ownerRepository.findAll();
-        Map<String, Map<String, Long>> ownersCountByStatusPerMonth = owners.stream()
-                .collect(Collectors.groupingBy(
-                        owner -> owner.getCreatedDatetime().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()),
-                        Collectors.groupingBy(
-                                owner -> owner.getActive() ? "Activos" : "Inactivos",
-                                Collectors.counting()
-                        )
-                ));
-        return ownersCountByStatusPerMonth;
-    }
-
-    /**
-     * Obtiene el porcentaje de propietarios por estado fiscal.
-     * @return un mapa donde la clave es el estado fiscal y el valor es el porcentaje de propietarios en ese estado
-     */
-    @Override
-    public Map<String, Double> getOwnerPercentageByTaxStatus() {
-        List<OwnerEntity> owners = ownerRepository.findAll();
-        long totalOwners = owners.size();
-        Map<String, Long> countByTaxStatus = owners.stream()
-                .collect(Collectors.groupingBy(
-                        owner -> owner.getTaxStatus().getDescription(),
-                        Collectors.counting()
-                ));
-        return countByTaxStatus.entrySet().stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> (entry.getValue() * 100.0) / totalOwners
-                ));
-    }
-
-
-    /**
      * Obtiene la cantidad de lotes por el estado del lote.
      *
      * @param startDate la fecha de inicio del filtro (opcional)
@@ -127,7 +83,6 @@ public class OwnerStatsService implements OwnerStatsInterface {
      */
     public List<PlotByPlotTypeCountDTO> countPlotsByType(LocalDate startDate, LocalDate endDate) {
         List<Object[]> result = plotRepository.countPlotsByType(startDate, endDate);
-      
         List<PlotByPlotTypeCountDTO> dtoList = new ArrayList<>();
         for (Object[] row : result) {
             String typeName = (String) row[0];  // El primer valor es 'typeName'
@@ -146,7 +101,6 @@ public class OwnerStatsService implements OwnerStatsInterface {
      * @param plotStatus el estado del lote (opcional)
      * @return un objeto con las estadísticas de los lotes.
      */
-    @Override
     public PlotsStats getStatsOfPlots(LocalDate startDate, LocalDate endDate, String plotType, String plotStatus) {
         List<PlotEntity> plots = this.getFiltersPlots(startDate, endDate, plotType, plotStatus);
 
@@ -167,7 +121,6 @@ public class OwnerStatsService implements OwnerStatsInterface {
      * @param endDate la fecha de fin del filtro (opcional)
      * @return una lista con las estadísticas de los lotes agrupados por manzana.
      */
-    @Override
     public List<PlotsByBlock> getPlotsByBlock(LocalDate startDate, LocalDate endDate) {
         List<PlotEntity> plots = this.getFiltersPlots(startDate, endDate, null, null);
 
@@ -196,7 +149,6 @@ public class OwnerStatsService implements OwnerStatsInterface {
      * @param plotStatus el estado del lote (opcional)
      * @return una lista con las estadísticas de la distribución de los lotes por propietario.
      */
-    @Override
     public List<OwnersPlotsDistribution> getOwnersPlotsDistribution(LocalDate startDate, LocalDate endDate,
                                                                     String plotType, String plotStatus) {
         List<PlotOwnerEntity> plotOwners = plotOwnerRepository.findAll();
@@ -224,7 +176,6 @@ public class OwnerStatsService implements OwnerStatsInterface {
      *
      * @return una lista con las construcciones a lo largo de los años.
      */
-    @Override
     public List<ConstructionProgress> getConstructionProgress() {
         List<PlotEntity> plots = plotRepository.findAll();
 
@@ -243,7 +194,6 @@ public class OwnerStatsService implements OwnerStatsInterface {
      * @param plotOwners la lista que tiene las relaciones entre propietarios y lotes.
      * @return una lista con las estadísticas de la distribución de los lotes por propietario.
      */
-    @Override
     public List<OwnersPlotsDistribution> createOwnersPlotsDistribution(List<PlotOwnerEntity> plotOwners) {
         return plotOwners.stream()
                 .collect(Collectors.groupingBy(PlotOwnerEntity::getOwner))
@@ -276,7 +226,6 @@ public class OwnerStatsService implements OwnerStatsInterface {
      * @param plotStatus el estado del lote (opcional)
      * @return una lista con los lotes filtrados.
      */
-    @Override
     public List<PlotEntity> getFiltersPlots(LocalDate startDate, LocalDate endDate, String plotType, String plotStatus) {
         List<PlotEntity> plots = plotRepository.findAll();
         if (startDate != null && endDate != null) {

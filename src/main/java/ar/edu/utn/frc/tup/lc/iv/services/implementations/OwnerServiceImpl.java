@@ -22,9 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-
+import java.time.format.TextStyle;
 import java.util.*;
-
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -106,7 +106,7 @@ public class OwnerServiceImpl implements OwnerService {
     @Override
     @Transactional
     public GetOwnerDto createOwner(PostOwnerDto postOwnerDto) {
-        if (postOwnerDto.getDni_type_id() == null) {
+        if(postOwnerDto.getDni_type_id() == null){
             postOwnerDto.setDni_type_id(1);
         }
         OwnerEntity ownerEntity = createOwnerEntity(postOwnerDto);
@@ -572,16 +572,6 @@ public class OwnerServiceImpl implements OwnerService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Obtiene el número de propietarios con el estado especificado.
-     *
-     * Este método puede ser sobrescrito en una subclase si es necesario,
-     * pero se recomienda tener cuidado con la lógica interna para evitar
-     * problemas de consistencia de datos. Al sobrescribir este método, asegúrese
-     * de no alterar la lógica de acceso a la base de datos o la forma en que se
-     * calculan los resultados.
-     * @return El número de propietarios con el estado especificado.
-     */
     @Override
     public Map<String, Long> getOwnerCountByStatus() {
         List<OwnerEntity> owners = ownerRepository.findAll();
@@ -663,7 +653,7 @@ public class OwnerServiceImpl implements OwnerService {
                 new EntityNotFoundException("Owner not found with id: " + ownerId)
         );
 
-        multiplePlotsChangeState(ownerId);
+        multiplePlotsChangeState (ownerId);
         logicDeleteOwner(ownerEntity, userIdUpdate);
 
         restUser.deleteUser(ownerEntity.getId(), userIdUpdate);
@@ -687,7 +677,7 @@ public class OwnerServiceImpl implements OwnerService {
      *
      * @param ownerId el id del propietario.
      */
-    public void multiplePlotsChangeState(Integer ownerId) {
+    public void multiplePlotsChangeState (Integer ownerId) {
         List<PlotOwnerEntity> plotOwnerEntity = plotOwnerRepository.findByOwnerId(ownerId);
         for (PlotOwnerEntity plotOwnerEntities : plotOwnerEntity) {
             changePlotToAvaible(plotOwnerEntities.getId());
@@ -700,7 +690,7 @@ public class OwnerServiceImpl implements OwnerService {
      * @param ownerEntity un entidad de propietario.
      * @param userIdUpdate la id del usuario que da baja logica.
      */
-    public void logicDeleteOwner(OwnerEntity ownerEntity, Integer userIdUpdate) {
+    public void logicDeleteOwner (OwnerEntity ownerEntity , Integer userIdUpdate) {
         ownerEntity.setActive(false);
         ownerEntity.setLastUpdatedDatetime(LocalDateTime.now());
         ownerEntity.setLastUpdatedUser(userIdUpdate);

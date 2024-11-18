@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 //import java.awt.*;
-/**
- * Controlador REST para gestionar operaciones relacionadas con lotes y propietarios.
- */
+
 @RestController
 @RequestMapping("/plotOwners")
 @RequiredArgsConstructor

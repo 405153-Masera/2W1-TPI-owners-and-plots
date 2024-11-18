@@ -26,9 +26,9 @@ public class VerificationController {
     private final VerificationService verificationService;
 
     /**
-     * Verifica si el número de lote es único.
+     * Verifica si el nombre de usuario es único.
      *
-     * @param plotNumber número de lote.
+     * @param plotNumber numero de lote.
      * @return Respuesta con el resultado de la verificación.
      */
     @GetMapping("/plotnumber")
