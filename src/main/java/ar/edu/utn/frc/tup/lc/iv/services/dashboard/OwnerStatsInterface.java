@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Interfaz que contiene la lógica de negocio para obtener estadísticas de los propietarios y
@@ -110,4 +109,5 @@ public interface OwnerStatsInterface {
      * @return Una lista de entidades de lotes que cumplen con los filtros.
      */
     List<PlotEntity> getFiltersPlots(LocalDate startDate, LocalDate endDate, String plotType, String plotStatus);
+
 }

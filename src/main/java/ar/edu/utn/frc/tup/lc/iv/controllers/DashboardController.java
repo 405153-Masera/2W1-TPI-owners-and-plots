@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Controlador REST para manejar las operaciones
@@ -43,6 +42,7 @@ public class DashboardController {
     }
 
 
+
     /**
      * Obtiene el conteo mensual de propietarios por estado.
      *
@@ -53,10 +53,15 @@ public class DashboardController {
         return ownerStatsService.getOwnerCountByStatusPerMonth();
     }
 
+
+
     /**
-     * Obtiene el porcentaje de propietarios por estado fiscal.
-     * @return un mapa donde la clave es el estado fiscal y el valor es el porcentaje
-     * de propietarios en ese estado
+     * Cuenta la cantidad de lotes por estado.
+     *
+     * @param startDate Fecha de inicio del rango de fechas.
+     * @param endDate Fecha de fin del rango de fechas.
+     * @param plotType Tipo de lote.
+     * @return una lista de PlotByPlotStateCountDTO que contiene la cantidad de lotes por estado.
      */
     @GetMapping("/percentage-by-tax-status")
     public Map<String, Double> getOwnerPercentageByTaxStatus() {
@@ -69,31 +74,37 @@ public class DashboardController {
      * @return Una lista de {@link PlotByPlotStateCountDTO}.
      */
     @GetMapping("/Plot-By-State-Count")
-    public ResponseEntity<List<PlotByPlotStateCountDTO>> getPlotByStateCount() {
-        List<PlotByPlotStateCountDTO> stats = ownerStatsService.countPlotsByState();
+    public ResponseEntity<List<PlotByPlotStateCountDTO>> getPlotByStateCount(@RequestParam(required = false) LocalDate startDate,
+                                                                             @RequestParam(required = false) LocalDate endDate,
+                                                                             @RequestParam(required = false) Integer plotType) {
+        List<PlotByPlotStateCountDTO> stats = ownerStatsService.countPlotsByState(startDate, endDate, plotType);
         return ResponseEntity.ok(stats);
     }
 
 
     /**
-     * Obtiene el conteo de lotes por tipo.
+     * Cuenta la cantidad de lotes por tipo.
      *
-     * @return Una lista de {@link PlotByPlotTypeCountDTO}.
+     * @param startDate Fecha de inicio del rango de fechas.
+     * @param endDate Fecha de fin del rango de fechas.
+     * @return una lista de PlotByPlotTypeCountDTO que contiene la cantidad de lotes por tipo.
      */
     @GetMapping("/Plot-By-Type-Count")
-    public ResponseEntity<List<PlotByPlotTypeCountDTO>> getPlotByTypeCount() {
-        List<PlotByPlotTypeCountDTO> stats = ownerStatsService.countPlotsByType();
+    public ResponseEntity<List<PlotByPlotTypeCountDTO>> getPlotByTypeCount(@RequestParam(required = false) LocalDate startDate,
+                                                                           @RequestParam(required = false) LocalDate endDate) {
+        List<PlotByPlotTypeCountDTO> stats = ownerStatsService.countPlotsByType(startDate, endDate);
         return ResponseEntity.ok(stats);
     }
 
     /**
-     * Obtiene estadísticas generales de lotes en un rango de fechas.
+     * Maneja las estadísticas generales de los lotes como la cantidad de lotes
+     * en construcción, disponibles, ocupados.
      *
-     * @param startDate fecha de inicio del rango (opcional).
-     * @param endDate   fecha de fin del rango (opcional).
-     * @param plotType  tipo de parcela para filtrar (opcional).
-     * @param plotStatus estado de la parcela para filtrar (opcional).
-     * @return ResponseEntity con estadísticas de las parcelas.
+     * @param startDate Fecha de inicio del rango de fechas.
+     * @param endDate Fecha de fin del rango de fechas.
+     * @param plotType Tipo de lote.
+     * @param plotStatus Estado del lote.
+     * @return una lista de PlotsStats que contiene las estadísticas generales de los lotes.
      */
     @GetMapping("/plots-stats")
     public ResponseEntity<PlotsStats> getGeneralStats(@RequestParam(required = false) LocalDate startDate,
@@ -104,11 +115,11 @@ public class DashboardController {
     }
 
     /**
-     * Obtiene las lotes agrupadas por manzana en un rango de fechas.
+     * Maneja las estadísticas de los lotes por manzana.
      *
-     * @param startDate fecha de inicio del rango (opcional).
-     * @param endDate   fecha de fin del rango (opcional).
-     * @return ResponseEntity con una lista de PlotsByBlock agrupados por manzana.
+     * @param startDate Fecha de inicio del rango de fechas.
+     * @param endDate Fecha de fin del rango de fechas.
+     * @return una lista de PlotsByBlock que contiene las estadísticas de los lotes por manzana.
      */
     @GetMapping("/plots-by-block")
     public ResponseEntity<List<PlotsByBlock>> getPlotsByBlock(@RequestParam(required = false) LocalDate startDate,
@@ -117,13 +128,13 @@ public class DashboardController {
     }
 
     /**
-     * Obtiene la distribución de propietarios según parcelas en un rango de fechas.
+     * Maneja la distribución de los propietarios por manzana.
      *
-     * @param startDate fecha de inicio del rango (opcional).
-     * @param endDate   fecha de fin del rango (opcional).
-     * @param plotType  tipo de parcela para filtrar (opcional).
-     * @param plotStatus estado de la parcela para filtrar (opcional).
-     * @return ResponseEntity con la distribución de propietarios y parcelas.
+     * @param startDate Fecha de inicio del rango de fechas.
+     * @param endDate Fecha de fin del rango de fechas.
+     * @param plotType Tipo de lote.
+     * @param plotStatus Estado del lote.
+     * @return una lista de OwnersPlotsDistribution que contiene las estadísticas de los propietarios por manzana.
      */
     @GetMapping("/owners-distribution")
     public ResponseEntity<List<OwnersPlotsDistribution>> getOwnershipDistribution(@RequestParam(required = false) LocalDate startDate,
@@ -132,7 +143,6 @@ public class DashboardController {
                                                                                   @RequestParam(required = false) String plotStatus) {
         return ResponseEntity.ok(ownerStatsService.getOwnersPlotsDistribution(startDate, endDate, plotType, plotStatus));
     }
-
 
     /**
      * Obtiene el progreso de construcción.
@@ -143,4 +153,5 @@ public class DashboardController {
     public ResponseEntity<List<ConstructionProgress>> getConstructionProgress() {
         return ResponseEntity.ok(ownerStatsService.getConstructionProgress());
     }
+
 }

@@ -288,90 +288,6 @@ CREATE TABLE owners_types_audit (
                                    last_updated_user INT
 );
 
-INSERT INTO tax_status (description, created_datetime, last_updated_datetime, created_user, last_updated_user)
-VALUES
-    ('IVA Responsable inscripto', NOW(), NOW(), 1, 1),
-    ('IVA Responsable no inscripto', NOW(), NOW(), 1, 1),
-    ('IVA no Responsable', NOW(), NOW(), 1, 1),
-    ('IVA Sujeto Exento', NOW(), NOW(), 1, 1),
-    ('Monotributista', NOW(), NOW(), 1, 1);
-
-INSERT INTO owners_types (description, created_datetime, last_updated_datetime, created_user, last_updated_user)
-VALUES
-    ('Persona Fisica' , NOW(), NOW(), 1, 1),
-    ('Persona Juridica', NOW(), NOW(), 1, 1),
-    ('Otro', NOW(), NOW(), 1, 1);
-
-INSERT INTO plot_states (name, created_datetime, last_updated_datetime, created_user, last_updated_user)
-VALUES
-    ('Disponible', NOW(), NOW(), 1, 1),
-    ('Habitado', NOW(), NOW(), 1, 1),
-    ('En construccion', NOW(), NOW(), 1, 1);
-
-INSERT INTO plot_types (name, created_datetime, last_updated_datetime, created_user, last_updated_user)
-VALUES
-    ('Comercial', NOW(), NOW(), 1, 1),
-    ('Residencial', NOW(), NOW(), 1, 1),
-    ('Baldio', NOW(), NOW(), 1, 1);
-
--- Insertar tipos de DNI
-INSERT INTO dni_types (description, created_datetime, last_updated_datetime, created_user, last_updated_user)
-VALUES
-    ('DNI', NOW(), NOW(), 1, 1),
-    ('Pasaporte', NOW(), NOW(), 1, 1),
-    ('CUIT/CUIL', NOW(), NOW(), 1, 1);
-
-INSERT INTO owners (name, lastname, dni_type_id, dni, date_birth, tax_status_id, owner_type_id, business_name, active, created_datetime, created_user, last_updated_datetime, last_updated_user)
-VALUES
-    ('Carlos', 'Perez', 1, '41234567', '1985-04-12 00:00:00', 1, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
-    ('Maria', 'Gonzalez', 1, '39876543', '1990-08-25 00:00:00', 2, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
-    ('Juan', 'Lopez', 1, '41238945', '1978-03-15 00:00:00', 5, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
-    ('Ana', 'Martinez', 1, '44556677', '1995-07-19 00:00:00', 2, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
-    ('Pedro', 'Ramirez', 1, '40785621', '1982-01-05 00:00:00', 3, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
-    ('Sofia', 'Hernandez', 1, '43890123', '1993-11-11 00:00:00', 4, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
-    ('Luis', 'Garcia', 1, '42987654', '1988-09-30 00:00:00', 2, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
-    ('Laura', 'Rojas', 1, '40654321', '2000-02-20 00:00:00', 3, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
-    ('Jose', 'Torres', 1, '43210987', '1975-05-22 00:00:00', 4, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
-    ('Carmen', 'Diaz', 3, '23455948169', '1987-12-10 00:00:00', 2, 1, NULL , TRUE, NOW(), 1, NOW(), 1);
-
-INSERT INTO plots (plot_number, block_number, plot_state_id, plot_type_id, total_area_in_m2, built_area_in_m2, created_datetime, created_user, last_updated_datetime, last_updated_user)
-VALUES
-    (1, 1, 2, 1, 1500.00, 1000.00, NOW(), 1, NOW(), 1),
-    (2, 1, 2, 2, 2500.00, 1500.00, NOW(), 1, NOW(), 1),
-    (3, 1, 2, 3, 1800.00, 0.00, NOW(), 1, NOW(), 1),
-    (4, 1, 3, 3, 500.00, 0.00, NOW(), 1, NOW(), 1),
-    (5, 2, 2, 2, 1200.00, 800.00, NOW(), 1, NOW(), 1),
-    (6, 2, 1, 3, 3000.00, 0.00, NOW(), 1, NOW(), 1),
-    (7, 2, 2, 1, 2100.00, 1500.00, NOW(), 1, NOW(), 1),
-    (8, 3, 1, 2, 900.00, 500.00, NOW(), 1, NOW(), 1),
-    (9, 3, 3, 3, 2600.00, 0.00, NOW(), 1, NOW(), 1),
-    (10, 3, 2, 1, 1300.00, 1100.00, NOW(), 1, NOW(), 1),
-    (11, 3, 2, 2, 2900.00, 1800.00, NOW(), 1, NOW(), 1),
-    (12, 4, 1, 3, 1100.00, 0.00, NOW(), 1, NOW(), 1),
-    (13, 4, 3, 3, 1500.00, 0.00, NOW(), 1, NOW(), 1),
-    (14, 4, 2, 2, 1700.00, 1200.00, NOW(), 1, NOW(), 1),
-    (15, 4, 1, 1, 2400.00, 1300.00, NOW(), 1, NOW(), 1),
-    (16, 5, 2, 3, 2000.00, 0.00, NOW(), 1, NOW(), 1),
-    (17, 5, 2, 1, 1900.00, 1500.00, NOW(), 1, NOW(), 1),
-    (18, 5, 3, 3, 2800.00, 0.00, NOW(), 1, NOW(), 1),
-    (19, 5, 2, 1, 2300.00, 1700.00, NOW(), 1, NOW(), 1),
-    (20, 5, 2, 2, 600.00, 400.00, NOW(), 1, NOW(), 1);
-
-INSERT INTO plot_owners (plot_id, owner_id, created_datetime, created_user, last_updated_datetime, last_updated_user)
-VALUES
-    (1, 1, NOW(), 1, NOW(), 1),
-    (2, 1, NOW(), 1, NOW(), 1),
-    (3, 2, NOW(), 1, NOW(), 1),
-    (5, 3, NOW(), 1, NOW(), 1),
-    (7, 4, NOW(), 1, NOW(), 1),
-    (10, 5, NOW(), 1, NOW(), 1),
-    (11, 6, NOW(), 1, NOW(), 1),
-    (14, 7, NOW(), 1, NOW(), 1),
-    (16, 8, NOW(), 1, NOW(), 1),
-    (17, 9, NOW(), 1, NOW(), 1),
-    (19, 10, NOW(), 1, NOW(), 1),
-    (20, 10, NOW(), 1, NOW(), 1);
-
 DELIMITER $$
 
 CREATE TRIGGER trg_taxstatus_insert
@@ -589,4 +505,90 @@ DELIMITER $$
                                                     END$$
 
                                                     DELIMITER ;
+                                                    
+                                                   
+INSERT INTO tax_status (description, created_datetime, last_updated_datetime, created_user, last_updated_user)
+VALUES
+    ('IVA Responsable inscripto', NOW(), NOW(), 1, 1),
+    ('IVA Responsable no inscripto', NOW(), NOW(), 1, 1),
+    ('IVA no Responsable', NOW(), NOW(), 1, 1),
+    ('IVA Sujeto Exento', NOW(), NOW(), 1, 1),
+    ('Monotributista', NOW(), NOW(), 1, 1);
+
+INSERT INTO owners_types (description, created_datetime, last_updated_datetime, created_user, last_updated_user)
+VALUES
+    ('Persona Fisica' , NOW(), NOW(), 1, 1),
+    ('Persona Juridica', NOW(), NOW(), 1, 1),
+    ('Otro', NOW(), NOW(), 1, 1);
+
+INSERT INTO plot_states (name, created_datetime, last_updated_datetime, created_user, last_updated_user)
+VALUES
+    ('Disponible', NOW(), NOW(), 1, 1),
+    ('Habitado', NOW(), NOW(), 1, 1),
+    ('En construccion', NOW(), NOW(), 1, 1);
+
+INSERT INTO plot_types (name, created_datetime, last_updated_datetime, created_user, last_updated_user)
+VALUES
+    ('Comercial', NOW(), NOW(), 1, 1),
+    ('Residencial', NOW(), NOW(), 1, 1),
+    ('Baldio', NOW(), NOW(), 1, 1);
+
+-- Insertar tipos de DNI
+INSERT INTO dni_types (description, created_datetime, last_updated_datetime, created_user, last_updated_user)
+VALUES
+    ('DNI', NOW(), NOW(), 1, 1),
+    ('Pasaporte', NOW(), NOW(), 1, 1),
+    ('CUIT/CUIL', NOW(), NOW(), 1, 1);
+
+INSERT INTO owners (name, lastname, dni_type_id, dni, date_birth, tax_status_id, owner_type_id, business_name, active, created_datetime, created_user, last_updated_datetime, last_updated_user)
+VALUES
+    ('Carlos', 'Perez', 1, '41234567', '1985-04-12 00:00:00', 1, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
+    ('Maria', 'Gonzalez', 1, '39876543', '1990-08-25 00:00:00', 2, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
+    ('Juan', 'Lopez', 1, '41238945', '1978-03-15 00:00:00', 5, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
+    ('Ana', 'Martinez', 1, '44556677', '1995-07-19 00:00:00', 2, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
+    ('Pedro', 'Ramirez', 1, '40785621', '1982-01-05 00:00:00', 3, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
+    ('Sofia', 'Hernandez', 1, '43890123', '1993-11-11 00:00:00', 4, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
+    ('Luis', 'Garcia', 1, '42987654', '1988-09-30 00:00:00', 2, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
+    ('Laura', 'Rojas', 1, '40654321', '2000-02-20 00:00:00', 3, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
+    ('Jose', 'Torres', 1, '43210987', '1975-05-22 00:00:00', 4, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
+    ('Carmen', 'Diaz', 3, '23455948169', '1987-12-10 00:00:00', 2, 1, NULL , TRUE, NOW(), 1, NOW(), 1);
+
+INSERT INTO plots (plot_number, block_number, plot_state_id, plot_type_id, total_area_in_m2, built_area_in_m2, created_datetime, created_user, last_updated_datetime, last_updated_user)
+VALUES
+    (1, 1, 2, 1, 1500.00, 1000.00, NOW(), 1, NOW(), 1),
+    (2, 1, 2, 2, 2500.00, 1500.00, NOW(), 1, NOW(), 1),
+    (3, 1, 2, 3, 1800.00, 0.00, NOW(), 1, NOW(), 1),
+    (4, 1, 3, 3, 500.00, 0.00, NOW(), 1, NOW(), 1),
+    (5, 2, 2, 2, 1200.00, 800.00, NOW(), 1, NOW(), 1),
+    (6, 2, 1, 3, 3000.00, 0.00, NOW(), 1, NOW(), 1),
+    (7, 2, 2, 1, 2100.00, 1500.00, NOW(), 1, NOW(), 1),
+    (8, 3, 1, 2, 900.00, 500.00, NOW(), 1, NOW(), 1),
+    (9, 3, 3, 3, 2600.00, 0.00, NOW(), 1, NOW(), 1),
+    (10, 3, 2, 1, 1300.00, 1100.00, NOW(), 1, NOW(), 1),
+    (11, 3, 2, 2, 2900.00, 1800.00, NOW(), 1, NOW(), 1),
+    (12, 4, 1, 3, 1100.00, 0.00, NOW(), 1, NOW(), 1),
+    (13, 4, 3, 3, 1500.00, 0.00, NOW(), 1, NOW(), 1),
+    (14, 4, 2, 2, 1700.00, 1200.00, NOW(), 1, NOW(), 1),
+    (15, 4, 1, 1, 2400.00, 1300.00, NOW(), 1, NOW(), 1),
+    (16, 5, 2, 3, 2000.00, 0.00, NOW(), 1, NOW(), 1),
+    (17, 5, 2, 1, 1900.00, 1500.00, NOW(), 1, NOW(), 1),
+    (18, 5, 3, 3, 2800.00, 0.00, NOW(), 1, NOW(), 1),
+    (19, 5, 2, 1, 2300.00, 1700.00, NOW(), 1, NOW(), 1),
+    (20, 5, 2, 2, 600.00, 400.00, NOW(), 1, NOW(), 1);
+
+INSERT INTO plot_owners (plot_id, owner_id, created_datetime, created_user, last_updated_datetime, last_updated_user)
+VALUES
+    (1, 1, NOW(), 1, NOW(), 1),
+    (2, 1, NOW(), 1, NOW(), 1),
+    (3, 2, NOW(), 1, NOW(), 1),
+    (5, 3, NOW(), 1, NOW(), 1),
+    (7, 4, NOW(), 1, NOW(), 1),
+    (10, 5, NOW(), 1, NOW(), 1),
+    (11, 6, NOW(), 1, NOW(), 1),
+    (14, 7, NOW(), 1, NOW(), 1),
+    (16, 8, NOW(), 1, NOW(), 1),
+    (17, 9, NOW(), 1, NOW(), 1),
+    (19, 10, NOW(), 1, NOW(), 1),
+    (20, 10, NOW(), 1, NOW(), 1);
+
 

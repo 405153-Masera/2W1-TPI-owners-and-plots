@@ -6,7 +6,6 @@ import ar.edu.utn.frc.tup.lc.iv.entities.PlotEntity;
 import ar.edu.utn.frc.tup.lc.iv.entities.OwnerEntity;
 
 import ar.edu.utn.frc.tup.lc.iv.entities.PlotOwnerEntity;
-import ar.edu.utn.frc.tup.lc.iv.repositories.OwnerRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotOwnerRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.*;
 
-import java.time.format.TextStyle;
 
 import java.util.stream.Collectors;
 
@@ -26,11 +24,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class OwnerStatsService implements OwnerStatsInterface {
-
-    /**
-     * Repositorio para manejar los datos de los propietarios.
-     */
-    private final OwnerRepository ownerRepository;
 
     /**
      * Repositorio para manejar los datos de los lotes.
@@ -107,11 +100,13 @@ public class OwnerStatsService implements OwnerStatsInterface {
     /**
      * Obtiene la cantidad de lotes por el estado del lote.
      *
+     * @param startDate la fecha de inicio del filtro (opcional)
+     * @param endDate la fecha de fin del filtro (opcional)
+     * @param plotType el tipo de lote (opcional)
      * @return una lista con la cantidad de lotes por estado de lote.
      */
-    @Override
-    public List<PlotByPlotStateCountDTO> countPlotsByState() {
-        List<Object[]> result = plotRepository.countPlotsByState();
+    public List<PlotByPlotStateCountDTO> countPlotsByState(LocalDate startDate, LocalDate endDate, Integer plotType) {
+        List<Object[]> result = plotRepository.countPlotsByState(startDate, endDate, plotType);
 
         List<PlotByPlotStateCountDTO> dtoList = new ArrayList<>();
 
@@ -126,11 +121,13 @@ public class OwnerStatsService implements OwnerStatsInterface {
     /**
      * Obtiene la cantidad de lotes por tipo de lote.
      *
+     * @param startDate la fecha de inicio del filtro (opcional)
+     * @param endDate la fecha de fin del filtro (opcional)
      * @return una lista con la cantidad de lotes por tipo de lote.
      */
-    @Override
-    public List<PlotByPlotTypeCountDTO> countPlotsByType() {
-        List<Object[]> result = plotRepository.countPlotsByType();
+    public List<PlotByPlotTypeCountDTO> countPlotsByType(LocalDate startDate, LocalDate endDate) {
+        List<Object[]> result = plotRepository.countPlotsByType(startDate, endDate);
+      
         List<PlotByPlotTypeCountDTO> dtoList = new ArrayList<>();
         for (Object[] row : result) {
             String typeName = (String) row[0];  // El primer valor es 'typeName'

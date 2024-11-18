@@ -14,12 +14,18 @@ import lombok.NoArgsConstructor;
 public class PlotByPlotStateCountDTO {
 
     /**
-     * Estado del terreno.
+     * Estado del lote.
      */
     private String state;
 
     /**
      * Cantidad de terrenos en el estado especificado.
+     */
+    private long count;
+}
+
+     /**
+     * Cantidad de lotes en ese estado.
      */
     private long count;
 }
