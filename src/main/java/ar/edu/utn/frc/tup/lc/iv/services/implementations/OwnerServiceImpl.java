@@ -721,11 +721,17 @@ public class OwnerServiceImpl implements OwnerService {
         List<GetPlotDto> getPlotDtos = mapPlotOwnersToGetPlotDtos(plotOwnerRepository.findByOwnerId(ownerEntity.getId()));
 
         OwnerDto ownerDto = mapOwnerEntityToOwnerDto(ownerEntity);
-        GetUserDto getUserDto = restUser.getUser(getPlotDtos.isEmpty() ? null : getPlotDtos.get(0).getId());
+        GetUserDto getUserDto;
+        if (!getPlotDtos.isEmpty()) {
+            //EMA Hice validacion
+            getUserDto = restUser.getUser(getPlotDtos.get(0).getId());
+            getOwnerAndPlot.setUser(getUserDto);
+        }
+
 
         getOwnerAndPlot.setOwner(ownerDto);
         getOwnerAndPlot.setPlot(getPlotDtos);
-        getOwnerAndPlot.setUser(getUserDto);
+
 
         return getOwnerAndPlot;
     }
