@@ -101,4 +101,12 @@ public interface PlotService {
      * @param userId id del usuario que realiza la transferencia.
      */
     void transferPlot(Integer plotId, Integer ownerId, Integer userId);
+
+    /**
+     * Cambia el estado de un lote a vendido.
+     *
+     * @param plotId id del lote a vender.
+     * @param userId id del del usuario que edita.
+     */
+    void changePlotState(Integer plotId, Integer userId);
 }

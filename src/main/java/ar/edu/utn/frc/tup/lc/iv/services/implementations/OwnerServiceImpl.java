@@ -170,20 +170,10 @@ public class OwnerServiceImpl implements OwnerService {
             PlotOwnerEntity plotOwnerEntity = mapPlotOwnerEntity(owner, postOwnerDto, plot);
             validatePlot(plotOwnerEntity);
             plotOwnerRepository.save(plotOwnerEntity);
-            changePlotState(plot, postOwnerDto);
+            plotService.changePlotState(plot, postOwnerDto.getUserCreateId());
         }
     }
 
-    private void changePlotState(Integer plotId, PostOwnerDto postOwnerDto) {
-        //Cambiamos el estado a "Habitado"
-        PlotEntity updatePlot = plotRepository.findById(plotId)
-                .orElseThrow(() -> new EntityNotFoundException("Plot not found"));
-
-        updatePlot.setPlotState(plotStateRepository.findById(2).orElseThrow(() -> new EntityNotFoundException("Plot State not found")));
-        updatePlot.setLastUpdatedUser(postOwnerDto.getUserCreateId());
-        updatePlot.setLastUpdatedDatetime(LocalDateTime.now());
-        plotRepository.save(updatePlot);
-    }
 
     /**
      * Crea un DTO con la información de un propietario.
@@ -364,7 +354,7 @@ public class OwnerServiceImpl implements OwnerService {
                 plotOwnerEntity.setLastUpdatedUser(userUpdateId);
                 validatePlot(plotOwnerEntity);
                 plotOwnerRepository.save(plotOwnerEntity);
-                changePlotState(plotId, post);
+                plotService.changePlotState(plotId, post.getUserCreateId());
             }
         }
     }

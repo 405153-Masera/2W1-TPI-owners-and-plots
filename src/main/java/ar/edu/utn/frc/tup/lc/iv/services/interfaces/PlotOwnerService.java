@@ -32,4 +32,9 @@ public interface PlotOwnerService {
      * @param plotId el identificador del lote.
      */
     void createPlotOwner(Integer ownerId, Integer plotId, Integer userId);
+
+    /**
+     * Mapea la entidad PlotOwnerEntity.
+     */
+     void mapPlotOwnerEntity(Integer ownerId, Integer plotId, Integer userId);
 }

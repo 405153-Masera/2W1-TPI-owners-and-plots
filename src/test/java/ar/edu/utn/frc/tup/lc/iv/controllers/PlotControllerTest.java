@@ -95,7 +95,7 @@ class PlotControllerTest {
     @Test
     void putPlot_updatesPlot() throws Exception {
         Integer plotId = 1;
-        PutPlotDto putPlotDto = new PutPlotDto(900,200, 1, 1, 2, null);
+        PutPlotDto putPlotDto = new PutPlotDto(1,1,900,200, 1, 1, 2, null);
         GetPlotDto updatedPlotDto = new GetPlotDto(1, 1, 2, 900, 200, "State2", "Type2", null);
 
         when(plotService.putPlot(putPlotDto, plotId)).thenReturn(updatedPlotDto);

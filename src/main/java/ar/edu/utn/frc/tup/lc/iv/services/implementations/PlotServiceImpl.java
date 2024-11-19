@@ -137,6 +137,23 @@ public class PlotServiceImpl implements PlotService {
     }
 
     /**
+     * Cambia el estado de un lote a vendido.
+     *
+     * @param plotId id del lote a vender.
+     * @param userId id del usuario que actualiza.
+     */
+    @Override
+    public void changePlotState(Integer plotId, Integer userId) {
+        PlotEntity updatePlot = plotRepository.findById(plotId)
+                .orElseThrow(() -> new EntityNotFoundException("Plot not found"));
+
+        updatePlot.setPlotState(plotStateRepository.findById(2).orElseThrow(() -> new EntityNotFoundException("Plot State not found")));
+        updatePlot.setLastUpdatedUser(userId);
+        updatePlot.setLastUpdatedDatetime(LocalDateTime.now());
+        plotRepository.save(updatePlot);
+    }
+
+    /**
      * Crea una entidad de archivo de lote.
      *
      * @param file archivo a subir.
@@ -240,6 +257,8 @@ public class PlotServiceImpl implements PlotService {
      * @param plotDto datos del lote a actualizar.
      */
     public void updatePlotFields(PlotEntity plotEntity, PutPlotDto plotDto) {
+        plotEntity.setPlotNumber(plotDto.getPlot_number());
+        plotEntity.setBlockNumber(plotDto.getBlock_number());
         plotEntity.setTotalAreaInM2(plotDto.getTotal_area_in_m2());
         plotEntity.setBuiltAreaInM2(plotDto.getBuilt_area_in_m2());
         plotEntity.setPlotState(getPlotState(plotDto.getPlot_state_id()));
@@ -385,10 +404,11 @@ public class PlotServiceImpl implements PlotService {
 
         if (plotOwnerRepository.findByPlotId(plotId) != null) {
             plotOwnerService.deletePlotOwner(plotId, plotOwnerEntity.getOwner().getId());
+        } else {
+            changePlotState(plotId, userId); //Cambia el estado a habitado si es un lote que no tiene propietario
         }
 
         plotOwnerService.createPlotOwner(ownerId, plotId, userId);
-
     }
 
     /**
