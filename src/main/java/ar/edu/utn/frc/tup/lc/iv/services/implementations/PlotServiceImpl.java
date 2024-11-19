@@ -227,6 +227,8 @@ public class PlotServiceImpl implements PlotService {
     @Transactional
     public GetPlotDto putPlot(PutPlotDto plotDto, Integer plotId) {
         PlotEntity plotEntity = getPlotEntityById(plotId);
+        validateBuiltArea(modelMapper.map(plotDto, PostPlotDto.class));
+        validateWasteland(modelMapper.map(plotDto, PostPlotDto.class));
         updatePlotFields(plotEntity, plotDto);
         plotRepository.save(plotEntity);
 
