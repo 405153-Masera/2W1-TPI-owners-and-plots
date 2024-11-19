@@ -397,15 +397,17 @@ public class PlotServiceImpl implements PlotService {
     @Transactional
     @Override
     public void transferPlot(Integer plotId, Integer ownerId, Integer userId) {
-        PlotEntity plotEntity = plotRepository.findById(plotId)
-                .orElseThrow(() -> new EntityNotFoundException("Plot not found with id: " + plotId));
 
-        PlotOwnerEntity plotOwnerEntity = plotOwnerRepository.findByPlotId(plotEntity.getId());
+        if (!plotRepository.existsById(plotId)) {
+            throw new EntityNotFoundException("Plot not found with id: " + plotId);
+        }
 
-        if (plotOwnerRepository.findByPlotId(plotId) != null) {
-            plotOwnerService.deletePlotOwner(plotId, plotOwnerEntity.getOwner().getId());
+        PlotOwnerEntity plotOwnerEntity = plotOwnerRepository.findByPlotId(plotId);
+
+        if (plotOwnerEntity != null) {
+            plotOwnerRepository.delete(plotOwnerEntity);
         } else {
-            changePlotState(plotId, userId); //Cambia el estado a habitado si es un lote que no tiene propietario
+            changePlotState(plotId, userId);
         }
 
         plotOwnerService.createPlotOwner(ownerId, plotId, userId);
