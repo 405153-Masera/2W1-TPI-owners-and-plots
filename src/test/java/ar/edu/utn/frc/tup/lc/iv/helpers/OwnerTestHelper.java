@@ -1,6 +1,7 @@
 package ar.edu.utn.frc.tup.lc.iv.helpers;
 
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerAndPlot;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerWithHisPlots;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.OwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.entities.*;
@@ -14,7 +15,6 @@ import java.util.List;
 
 
 public class OwnerTestHelper {
-
     public static final Integer[] plot_id = new Integer[]{1,2};
 
     public static final OwnerDto OWNER_DTO = OwnerDto.builder()
@@ -295,5 +295,13 @@ public class OwnerTestHelper {
             .createdUser(1)
             .lastUpdatedDatetime(LocalDateTime.now())
             .lastUpdatedUser(1)
+            .build();
+
+    public static final List<Integer> LIST_PLOTS = List.of(1, 2, 3);
+
+    public static final GetOwnerWithHisPlots GET_OWNER_WITH_HIS_PLOTS
+            = GetOwnerWithHisPlots.builder()
+            .owner(OWNER_DTO)
+            .plot(LIST_PLOTS)
             .build();
 }

@@ -252,7 +252,7 @@ public class OwnerServiceImpl implements OwnerService {
      * @param userId el id del usuario que crea la relación.
      * @return la entidad creada.
      */
-    private FileOwnerEntity createFileOwnerEntity(FileEntity fileEntity, OwnerEntity ownerEntity, Integer userId) {
+    public FileOwnerEntity createFileOwnerEntity(FileEntity fileEntity, OwnerEntity ownerEntity, Integer userId) {
         FileOwnerEntity fileOwnerEntity = new FileOwnerEntity();
         fileOwnerEntity.setFile(fileEntity);
         fileOwnerEntity.setOwner(ownerEntity);

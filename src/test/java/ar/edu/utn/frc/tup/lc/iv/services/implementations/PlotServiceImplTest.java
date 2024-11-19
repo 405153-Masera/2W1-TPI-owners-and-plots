@@ -820,21 +820,91 @@ class PlotServiceImplTest {
     }
 
     @Test
-    public void transferPlotTest(){
+    void transferPlot_whenPlotExistsAndHasOwner_shouldTransferPlot() {
+        Integer plotId = 1;
+        Integer ownerId = 2;
+        Integer userId = 3;
 
-        PlotEntity plotEntity = new PlotEntity(1, 101, 10, 200.0, 150.0, new PlotStateEntity(), new PlotTypeEntity(), null, null, null, null, new ArrayList<>());
+        PlotEntity plotEntity = new PlotEntity();
+        plotEntity.setId(plotId);
 
         PlotOwnerEntity plotOwnerEntity = new PlotOwnerEntity();
         plotOwnerEntity.setPlot(plotEntity);
-        plotOwnerEntity.setOwner(new OwnerEntity());
 
-        when(plotRepository.findById(1)).thenReturn(Optional.of(plotEntity));
-        when(plotOwnerRepository.findByPlotId(1)).thenReturn(plotOwnerEntity);
+        when(plotRepository.existsById(plotId)).thenReturn(true);
+        when(plotOwnerRepository.findByPlotId(plotId)).thenReturn(plotOwnerEntity);
 
-        plotService.transferPlot(1, 2, 3);
+        plotService.transferPlot(plotId, ownerId, userId);
 
-        verify(plotOwnerService).deletePlotOwner(1, plotOwnerEntity.getOwner().getId());
-        verify(plotOwnerService).createPlotOwner(2, 1, 3);
+        verify(plotOwnerRepository).delete(plotOwnerEntity);
+        verify(plotOwnerService).createPlotOwner(ownerId, plotId, userId);
+    }
+
+    @Test
+    void transferPlot_whenPlotDoesNotExist_shouldThrowEntityNotFoundException() {
+        Integer plotId = 1;
+        Integer ownerId = 2;
+        Integer userId = 3;
+
+        when(plotRepository.existsById(plotId)).thenReturn(false);
+
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
+            plotService.transferPlot(plotId, ownerId, userId);
+        });
+
+        assertEquals("Plot not found with id: " + plotId, exception.getMessage());
+    }
+
+    @Test
+    void changePlotState_whenPlotExists_shouldChangeState() {
+        Integer plotId = 1;
+        Integer userId = 2;
+
+        PlotEntity plotEntity = new PlotEntity();
+        plotEntity.setId(plotId);
+
+        PlotStateEntity plotStateEntity = new PlotStateEntity();
+        plotStateEntity.setId(2);
+
+        when(plotRepository.findById(plotId)).thenReturn(Optional.of(plotEntity));
+        when(plotStateRepository.findById(2)).thenReturn(Optional.of(plotStateEntity));
+
+        plotService.changePlotState(plotId, userId);
+
+        verify(plotRepository).save(plotEntity);
+        assertEquals(plotStateEntity, plotEntity.getPlotState());
+    }
+
+    @Test
+    void changePlotState_whenPlotDoesNotExist_shouldThrowEntityNotFoundException() {
+        Integer plotId = 1;
+        Integer userId = 2;
+
+        when(plotRepository.findById(plotId)).thenReturn(Optional.empty());
+
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
+            plotService.changePlotState(plotId, userId);
+        });
+
+        assertEquals("Plot not found", exception.getMessage());
+    }
+
+    @Test
+    void changePlotState_whenPlotStateDoesNotExist_shouldThrowEntityNotFoundException() {
+        Integer plotId = 1;
+        Integer userId = 2;
+
+        PlotEntity plotEntity = new PlotEntity();
+        plotEntity.setId(plotId);
+
+        when(plotRepository.findById(plotId)).thenReturn(Optional.of(plotEntity));
+        when(plotStateRepository.findById(2)).thenReturn(Optional.empty());
+
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
+            plotService.changePlotState(plotId, userId);
+        });
+
+        assertEquals("Plot State not found", exception.getMessage());
     }
 
     @Test
