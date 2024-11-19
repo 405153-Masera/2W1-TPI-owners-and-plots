@@ -1,8 +1,6 @@
 package ar.edu.utn.frc.tup.lc.iv.services.implementations;
 
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotDto;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotStateDto;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotTypeDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.*;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.entities.*;
@@ -16,6 +14,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,6 +53,9 @@ class PlotServiceImplTest {
 
     @MockBean
     private FileService fileService;
+
+    @MockBean
+    private PlotOwnerServiceImpl plotOwnerService;
 
     @MockBean
     private PlotRepository plotRepository;
@@ -787,4 +790,68 @@ class PlotServiceImplTest {
         assertEquals(plotState.getName(), result.getPlot_state());
         assertEquals(plotType.getName(), result.getPlot_type());
     }
+
+    @Test
+    public void getPlotsWithHisOwnerTest(){
+        List<PlotEntity> plotEntities = List.of(
+                new PlotEntity(1, 101, 10, 200.0, 150.0, new PlotStateEntity(), new PlotTypeEntity(), null, null, null, null, new ArrayList<>()),
+                new PlotEntity(2, 102, 11, 250.0, 180.0, new PlotStateEntity(), new PlotTypeEntity(), null, null, null, null, new ArrayList<>())
+        );
+        when(plotRepository.findAll()).thenReturn(plotEntities);
+
+        List<GetPlotOwnerDto> plotOwners = List.of(
+                new GetPlotOwnerDto(1, 1001),
+                new GetPlotOwnerDto(2, 1002)
+        );
+        when(plotOwnerService.getAllPlotOwner()).thenReturn(plotOwners);
+
+        /*
+        Se configura el mock del servicio fileService para que cuando se llame a
+         getPlotFiles() con cualquier parámetro de tipo entero (representando el ID del lote),
+          devuelva una lista vacía. Esto simula que no se tienen archivos asociados a las parcelas en este caso.
+         */
+        when(fileService.getPlotFiles(anyInt())).thenReturn(new ArrayList<>());
+
+        List<GetPlotWithHisOwnerDto> result = plotService.getPlotsWithHisOwner();
+
+        assertEquals(2, result.size());
+        assertEquals(1001, result.get(0).getOwnerId());
+        assertEquals(1002, result.get(1).getOwnerId());
+    }
+
+    @Test
+    public void transferPlotTest(){
+
+        PlotEntity plotEntity = new PlotEntity(1, 101, 10, 200.0, 150.0, new PlotStateEntity(), new PlotTypeEntity(), null, null, null, null, new ArrayList<>());
+
+        PlotOwnerEntity plotOwnerEntity = new PlotOwnerEntity();
+        plotOwnerEntity.setPlot(plotEntity);
+        plotOwnerEntity.setOwner(new OwnerEntity());
+
+        when(plotRepository.findById(1)).thenReturn(Optional.of(plotEntity));
+        when(plotOwnerRepository.findByPlotId(1)).thenReturn(plotOwnerEntity);
+
+        plotService.transferPlot(1, 2, 3);
+
+        verify(plotOwnerService).deletePlotOwner(1, plotOwnerEntity.getOwner().getId());
+        verify(plotOwnerService).createPlotOwner(2, 1, 3);
+    }
+
+    @Test
+    public void changePlotStateTest(){
+
+        PlotEntity plotEntity = new PlotEntity();
+        plotEntity.setId(1);
+        PlotStateEntity plotStateEntity = new PlotStateEntity();
+        plotStateEntity.setId(2);
+
+        Mockito.when(plotRepository.findById(1)).thenReturn(Optional.of(plotEntity));
+        Mockito.when(plotStateRepository.findById(2)).thenReturn(Optional.of(plotStateEntity));
+
+        plotService.changePlotState(1, 100);
+
+        Mockito.verify(plotRepository).save(plotEntity);
+        assertEquals(plotStateEntity, plotEntity.getPlotState());
+    }
+    
 }
