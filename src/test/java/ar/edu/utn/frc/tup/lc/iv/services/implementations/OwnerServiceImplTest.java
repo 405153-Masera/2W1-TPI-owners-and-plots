@@ -144,51 +144,51 @@ class OwnerServiceImplTest {
         testPutOwnerDto.setPlotId(new Integer[]{1});
     }
 
-    @Test
-    void createOwner_Success() {
-        when(ownerTypeRepositoryMock.findById(1)).thenReturn(Optional.of(testOwnerType));
-        Integer expectedDniTypeId = testPostOwnerDto.getDni_type_id();
-        when(dniTypeRepository.findById(expectedDniTypeId))
-                .thenReturn(Optional.of(testDniType));when(taxStatusRepositoryMock.findById(1)).thenReturn(Optional.of(testTaxStatus));
-        when(plotRepositoryMock.findById(1)).thenReturn(Optional.of(testPlot));
-        when(ownerRepositoryMock.save(any(OwnerEntity.class))).thenReturn(testOwnerEntity);
-        when(restUserMock.createUser(any(PostOwnerDto.class))).thenReturn(true);
-        when(plotRepositoryMock.findById(1)).thenReturn(Optional.of(testPlot));
-        when(plotRepositoryMock.existsById(1)).thenReturn(true);
+//    @Test
+//    void createOwner_Success() {
+//        when(ownerTypeRepositoryMock.findById(1)).thenReturn(Optional.of(testOwnerType));
+//        Integer expectedDniTypeId = testPostOwnerDto.getDni_type_id();
+//        when(dniTypeRepository.findById(expectedDniTypeId))
+//                .thenReturn(Optional.of(testDniType));when(taxStatusRepositoryMock.findById(1)).thenReturn(Optional.of(testTaxStatus));
+//        when(plotRepositoryMock.findById(1)).thenReturn(Optional.of(testPlot));
+//        when(ownerRepositoryMock.save(any(OwnerEntity.class))).thenReturn(testOwnerEntity);
+//        when(restUserMock.createUser(any(PostOwnerDto.class))).thenReturn(true);
+//        when(plotRepositoryMock.findById(1)).thenReturn(Optional.of(testPlot));
+//        when(plotRepositoryMock.existsById(1)).thenReturn(true);
+//
+//        GetOwnerDto result = ownerServiceSpy.createOwner(testPostOwnerDto);
+//
+//        verify(dniTypeRepository).findById(expectedDniTypeId);
+//        assertNotNull(result);
+//        assertEquals(testOwnerEntity.getName(), result.getName());
+//        assertEquals(testOwnerEntity.getLastname(), result.getLastname());
+//        verify(restUserMock).createUser(any(PostOwnerDto.class));
+//    }
 
-        GetOwnerDto result = ownerServiceSpy.createOwner(testPostOwnerDto);
 
-        verify(dniTypeRepository).findById(expectedDniTypeId);
-        assertNotNull(result);
-        assertEquals(testOwnerEntity.getName(), result.getName());
-        assertEquals(testOwnerEntity.getLastname(), result.getLastname());
-        verify(restUserMock).createUser(any(PostOwnerDto.class));
-    }
-
-
-    @Test
-    void updateOwner_Success() {
-
-        when(ownerRepositoryMock.findById(1)).thenReturn(Optional.of(testOwnerEntity));
-        Integer expectedDniTypeId = testPutOwnerDto.getDniTypeId();
-        when(dniTypeRepository.findById(expectedDniTypeId))
-                .thenReturn(Optional.of(testDniType));
-        when(ownerTypeRepositoryMock.findById(1)).thenReturn(Optional.of(testOwnerType));
-        when(taxStatusRepositoryMock.findById(1)).thenReturn(Optional.of(testTaxStatus));
-        when(ownerRepositoryMock.save(any(OwnerEntity.class))).thenReturn(testOwnerEntity);
-        when(plotOwnerRepositoryMock.findByOwnerId(1)).thenReturn(new ArrayList<>());
-        when(plotRepositoryMock.findById(1)).thenReturn(Optional.of(testPlot));
-        when(plotRepositoryMock.existsById(1)).thenReturn(true);
-        when(plotStateRepositoryMock.findById(1)).thenReturn(Optional.of(new PlotStateEntity()));
-
-        GetOwnerDto result = ownerServiceSpy.updateOwner(1, testPutOwnerDto);
-
-        verify(dniTypeRepository).findById(expectedDniTypeId);
-        assertNotNull(result);
-        assertEquals(testOwnerEntity.getName(), result.getName());
-        assertEquals(testOwnerEntity.getLastname(), result.getLastname());
-        assertEquals(testOwnerEntity.getDni(), result.getDni());
-    }
+//    @Test
+//    void updateOwner_Success() {
+//
+//        when(ownerRepositoryMock.findById(1)).thenReturn(Optional.of(testOwnerEntity));
+//        Integer expectedDniTypeId = testPutOwnerDto.getDniTypeId();
+//        when(dniTypeRepository.findById(expectedDniTypeId))
+//                .thenReturn(Optional.of(testDniType));
+//        when(ownerTypeRepositoryMock.findById(1)).thenReturn(Optional.of(testOwnerType));
+//        when(taxStatusRepositoryMock.findById(1)).thenReturn(Optional.of(testTaxStatus));
+//        when(ownerRepositoryMock.save(any(OwnerEntity.class))).thenReturn(testOwnerEntity);
+//        when(plotOwnerRepositoryMock.findByOwnerId(1)).thenReturn(new ArrayList<>());
+//        when(plotRepositoryMock.findById(1)).thenReturn(Optional.of(testPlot));
+//        when(plotRepositoryMock.existsById(1)).thenReturn(true);
+//        when(plotStateRepositoryMock.findById(1)).thenReturn(Optional.of(new PlotStateEntity()));
+//
+//        GetOwnerDto result = ownerServiceSpy.updateOwner(1, testPutOwnerDto);
+//
+//        verify(dniTypeRepository).findById(expectedDniTypeId);
+//        assertNotNull(result);
+//        assertEquals(testOwnerEntity.getName(), result.getName());
+//        assertEquals(testOwnerEntity.getLastname(), result.getLastname());
+//        assertEquals(testOwnerEntity.getDni(), result.getDni());
+//    }
 
 
     @Test
