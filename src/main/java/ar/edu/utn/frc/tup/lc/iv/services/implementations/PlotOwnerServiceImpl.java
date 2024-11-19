@@ -45,8 +45,11 @@ public class PlotOwnerServiceImpl implements PlotOwnerService {
     @Override
     public List<GetPlotOwnerDto> getAllPlotOwner() {
         List<PlotOwnerEntity> plotOwnerEntities = plotOwnerRepository.findAll();
+        System.out.println("Entidades encontradas: " + plotOwnerEntities.size());
+
         return plotOwnerEntities.stream()
                 .map(POE -> {
+                    System.out.println("Mapeando entidad: " + POE.getId());
                     GetPlotOwnerDto plotOwnerDto = new GetPlotOwnerDto();
                     plotOwnerDto.setPlot_id(POE.getPlot().getId());
                     plotOwnerDto.setOwner_id(POE.getOwner().getId());
@@ -85,6 +88,8 @@ public class PlotOwnerServiceImpl implements PlotOwnerService {
      * @param plotId el identificador del lote.
      * @param userId el identificador del usuario que crea el mapeo.
      */
+
+    @Override
     public void mapPlotOwnerEntity(Integer ownerId, Integer plotId, Integer userId) {
         PlotOwnerEntity plotOwnerEntity = new PlotOwnerEntity();
         plotOwnerEntity.setOwner(ownerRepository.findById(ownerId).get());
