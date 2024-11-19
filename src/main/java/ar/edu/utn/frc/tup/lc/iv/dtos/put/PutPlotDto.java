@@ -19,9 +19,18 @@ import java.util.List;
 @Builder
 public class PutPlotDto {
 
-    /*De momento contemplo que el numero de lote y manzano no se puede editar*/
-//    private int plot_number;
-//    private int block_number;
+    /**
+     * Numero de lote.
+     */
+    @NotNull(message = "El lote no puede ser nulo")
+    private int plot_number;
+
+    /**
+     * Manzana del lote.
+     */
+    @NotNull(message = "La manzana no puede ser nula")
+    private int block_number;
+
     /**
      * Metros cuadrados totales del lote.
      */

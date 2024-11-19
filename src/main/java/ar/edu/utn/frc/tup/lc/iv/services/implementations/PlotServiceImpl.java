@@ -1,7 +1,6 @@
 package ar.edu.utn.frc.tup.lc.iv.services.implementations;
 
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.*;
-import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.entities.*;
@@ -258,6 +257,8 @@ public class PlotServiceImpl implements PlotService {
      * @param plotDto datos del lote a actualizar.
      */
     public void updatePlotFields(PlotEntity plotEntity, PutPlotDto plotDto) {
+        plotEntity.setPlotNumber(plotDto.getPlot_number());
+        plotEntity.setBlockNumber(plotDto.getBlock_number());
         plotEntity.setTotalAreaInM2(plotDto.getTotal_area_in_m2());
         plotEntity.setBuiltAreaInM2(plotDto.getBuilt_area_in_m2());
         plotEntity.setPlotState(getPlotState(plotDto.getPlot_state_id()));
@@ -403,8 +404,7 @@ public class PlotServiceImpl implements PlotService {
 
         if (plotOwnerRepository.findByPlotId(plotId) != null) {
             plotOwnerService.deletePlotOwner(plotId, plotOwnerEntity.getOwner().getId());
-        }
-        else {
+        } else {
             changePlotState(plotId, userId); //Cambia el estado a habitado si es un lote que no tiene propietario
         }
 
