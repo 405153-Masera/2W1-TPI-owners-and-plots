@@ -6,10 +6,12 @@ import ar.edu.utn.frc.tup.lc.iv.repositories.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -23,7 +25,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-
+@ExtendWith(MockitoExtension.class)
 class PlotOwnerServiceImplTest {
 
     @InjectMocks
@@ -37,11 +39,6 @@ class PlotOwnerServiceImplTest {
 
     @Mock
     private OwnerRepository ownerRepository;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     public void getAllPlotOwnerTest() {
@@ -111,10 +108,8 @@ class PlotOwnerServiceImplTest {
         Integer ownerId = 1;
         Integer plotId = 1;
 
-        // Act
         plotOwnerService.deletePlotOwner(ownerId, plotId);
 
-        // Assert
         verify(plotOwnerRepository, times(1)).deleteByOwnerIdAndPlotId(ownerId, plotId);
     }
 
