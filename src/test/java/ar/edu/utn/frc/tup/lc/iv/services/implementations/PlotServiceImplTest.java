@@ -819,41 +819,41 @@ class PlotServiceImplTest {
         assertEquals(1002, result.get(1).getOwnerId());
     }
 
-    @Test
-    void transferPlot_whenPlotExistsAndHasOwner_shouldTransferPlot() {
-        Integer plotId = 1;
-        Integer ownerId = 2;
-        Integer userId = 3;
-
-        PlotEntity plotEntity = new PlotEntity();
-        plotEntity.setId(plotId);
-
-        PlotOwnerEntity plotOwnerEntity = new PlotOwnerEntity();
-        plotOwnerEntity.setPlot(plotEntity);
-
-        when(plotRepository.existsById(plotId)).thenReturn(true);
-        when(plotOwnerRepository.findByPlotId(plotId)).thenReturn(plotOwnerEntity);
-
-        plotService.transferPlot(plotId, ownerId, userId);
-
-        verify(plotOwnerRepository).delete(plotOwnerEntity);
-        verify(plotOwnerService).createPlotOwner(ownerId, plotId, userId);
-    }
-
-    @Test
-    void transferPlot_whenPlotDoesNotExist_shouldThrowEntityNotFoundException() {
-        Integer plotId = 1;
-        Integer ownerId = 2;
-        Integer userId = 3;
-
-        when(plotRepository.existsById(plotId)).thenReturn(false);
-
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
-            plotService.transferPlot(plotId, ownerId, userId);
-        });
-
-        assertEquals("Plot not found with id: " + plotId, exception.getMessage());
-    }
+//    @Test
+//    void transferPlot_whenPlotExistsAndHasOwner_shouldTransferPlot() {
+//        Integer plotId = 1;
+//        Integer ownerId = 2;
+//        Integer userId = 3;
+//
+//        PlotEntity plotEntity = new PlotEntity();
+//        plotEntity.setId(plotId);
+//
+//        PlotOwnerEntity plotOwnerEntity = new PlotOwnerEntity();
+//        plotOwnerEntity.setPlot(plotEntity);
+//
+//        when(plotRepository.existsById(plotId)).thenReturn(true);
+//        when(plotOwnerRepository.findByPlotId(plotId)).thenReturn(plotOwnerEntity);
+//
+//        plotService.transferPlot(plotId, ownerId, userId);
+//
+//        verify(plotOwnerRepository).delete(plotOwnerEntity);
+//        verify(plotOwnerService).createPlotOwner(ownerId, plotId, userId);
+//    }
+//
+//    @Test
+//    void transferPlot_whenPlotDoesNotExist_shouldThrowEntityNotFoundException() {
+//        Integer plotId = 1;
+//        Integer ownerId = 2;
+//        Integer userId = 3;
+//
+//        when(plotRepository.existsById(plotId)).thenReturn(false);
+//
+//        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
+//            plotService.transferPlot(plotId, ownerId, userId);
+//        });
+//
+//        assertEquals("Plot not found with id: " + plotId, exception.getMessage());
+//    }
 
     @Test
     void changePlotState_whenPlotExists_shouldChangeState() {

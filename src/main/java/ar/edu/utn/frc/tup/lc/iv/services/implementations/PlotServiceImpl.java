@@ -6,7 +6,9 @@ import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.entities.*;
 import ar.edu.utn.frc.tup.lc.iv.repositories.*;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.FileManagerClient;
+import ar.edu.utn.frc.tup.lc.iv.restTemplate.RestUser;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.FileService;
+import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotOwnerService;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotService;
 import jakarta.persistence.EntityNotFoundException;
@@ -72,6 +74,7 @@ public class PlotServiceImpl implements PlotService {
      */
     private final PlotOwnerRepository plotOwnerRepository;
     private final OwnerRepository ownerRepository;
+    private final RestUser restUser;
 
     /**
      * Crea un nuevo lote.
@@ -390,14 +393,12 @@ public class PlotServiceImpl implements PlotService {
     }
 
     /**
-     * Transfiere un lote de un propietario a otro.
-     *
-     * @param plotId id del lote a transferir.
-     * @param ownerId id del nuevo propietario.
-     * @param userId id del usuario que realiza la transferencia.
-     */
-    @Transactional
-    @Override
+
+     Transfiere un lote de un propietario a otro.*
+     @param plotId id del lote a transferir.
+     @param ownerId id del nuevo propietario.
+     @param userId id del usuario que realiza la transferencia.*/
+    @Transactional@Override
     public void transferPlot(Integer plotId, Integer ownerId, Integer userId) {
 
         if (!plotRepository.existsById(plotId)) {
@@ -407,7 +408,15 @@ public class PlotServiceImpl implements PlotService {
         PlotOwnerEntity plotOwnerEntity = plotOwnerRepository.findByPlotId(plotId);
 
         if (plotOwnerEntity != null) {
+            Integer currentOwnerId = plotOwnerEntity.getOwner().getId();
+
             plotOwnerRepository.delete(plotOwnerEntity);
+
+            boolean hasOtherPlots = plotOwnerRepository.existsByOwnerId(currentOwnerId);
+            if (!hasOtherPlots) {
+                restUser.deleteUser(currentOwnerId, userId);
+                logicDeleteOwner(currentOwnerId, userId);
+            }
         } else {
             changePlotState(plotId, userId);
         }
@@ -456,6 +465,22 @@ public class PlotServiceImpl implements PlotService {
         plotEntity.setLastUpdatedDatetime(LocalDateTime.now());
         plotEntity.setCreatedUser(postPlotDto.getUserCreateId());
         plotEntity.setLastUpdatedUser(postPlotDto.getUserCreateId());
+    }
+
+
+    /**
+     * Baja logica de un owner.
+     *
+     * @param ownerId id del propietario a dar de baja.
+     * @param userId id del usuario que realiza la acción.
+     */
+    void logicDeleteOwner(Integer ownerId, Integer userId) {
+        OwnerEntity ownerEntity = ownerRepository.findById(ownerId)
+                .orElseThrow(() -> new EntityNotFoundException("Owner not found with id: " + ownerId));
+        ownerEntity.setActive(false);
+        ownerEntity.setLastUpdatedDatetime(LocalDateTime.now());
+        ownerEntity.setLastUpdatedUser(userId);
+        ownerRepository.save(ownerEntity);
     }
 
     /**

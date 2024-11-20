@@ -62,9 +62,6 @@ class OwnerServiceImplTest {
     private PlotOwnerRepository plotOwnerRepositoryMock;
 
     @Mock
-    private DniTypeRepository dniTypeRepositoryMock;
-
-    @Mock
     private PlotStateRepository plotStateRepositoryMock;
 
     @Spy
@@ -144,6 +141,7 @@ class OwnerServiceImplTest {
         testPutOwnerDto.setPlotId(new Integer[]{1});
     }
 
+
     @Test
     void createOwner_Success() {
         when(ownerTypeRepositoryMock.findById(1)).thenReturn(Optional.of(testOwnerType));
@@ -168,18 +166,16 @@ class OwnerServiceImplTest {
 
     @Test
     void updateOwner_Success() {
-
         when(ownerRepositoryMock.findById(1)).thenReturn(Optional.of(testOwnerEntity));
         Integer expectedDniTypeId = testPutOwnerDto.getDniTypeId();
-        when(dniTypeRepository.findById(expectedDniTypeId))
-                .thenReturn(Optional.of(testDniType));
+        when(dniTypeRepository.findById(expectedDniTypeId)).thenReturn(Optional.of(testDniType));
+        when(ownerRepositoryMock.save(any(OwnerEntity.class))).thenReturn(testOwnerEntity);
         when(ownerTypeRepositoryMock.findById(1)).thenReturn(Optional.of(testOwnerType));
         when(taxStatusRepositoryMock.findById(1)).thenReturn(Optional.of(testTaxStatus));
-        when(ownerRepositoryMock.save(any(OwnerEntity.class))).thenReturn(testOwnerEntity);
-        when(plotOwnerRepositoryMock.findByOwnerId(1)).thenReturn(new ArrayList<>());
         when(plotRepositoryMock.findById(1)).thenReturn(Optional.of(testPlot));
         when(plotRepositoryMock.existsById(1)).thenReturn(true);
-        when(plotStateRepositoryMock.findById(1)).thenReturn(Optional.of(new PlotStateEntity()));
+
+        when(restUserMock.updateUser(any(PutOwnerDto.class))).thenReturn(true);
 
         GetOwnerDto result = ownerServiceSpy.updateOwner(1, testPutOwnerDto);
 
@@ -467,7 +463,7 @@ class OwnerServiceImplTest {
         assertTrue(result.get(2).getPlot().contains(3));
     }
 
-   /* @Test
+    @Test
     void getDniTypes() {
         when(dniTypeRepository.findAll()).thenReturn(List.of(DNI_TYPE_ENTITY_DNI, DNI_TYPE_ENTITY_CUIT,
                 DNI_TYPE_ENTITY_CUIL, DNI_TYPE_ENTITY_PASAPORTE));
@@ -481,7 +477,7 @@ class OwnerServiceImplTest {
 
         verify(dniTypeRepository, times(1)).findAll();
         verify(modelMapper, times(4)).map(any(DniTypeEntity.class), eq(GetDniTypeDto.class));
-    }*/
+    }
 
     @Test void createFileOwnerEntityTest()
     {

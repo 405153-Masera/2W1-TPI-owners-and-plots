@@ -304,6 +304,10 @@ public class OwnerServiceImpl implements OwnerService {
         // Actualizar los plots asociados al propietario
         updatePlotsForOwner(ownerId, ownerEntity, putOwnerDto);
 
+        if (!restUser.updateUser(putOwnerDto)) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Server error while creating the user");
+        }
+
         OwnerEntity ownerSaved = ownerRepository.save(ownerEntity);
         return createGetOwnerDto(ownerSaved);
     }
@@ -321,13 +325,13 @@ public class OwnerServiceImpl implements OwnerService {
         PostOwnerDto post = modelMapper.map(putOwnerDto, PostOwnerDto.class);
 
         addNewPlots(ownerEntity, post, newPlots, actualPlots, putOwnerDto.getUserUpdateId());
-        removeOldPlots(ownerId, newPlots, actualPlots);
+        removeOldPlots(ownerId, actualPlots, newPlots);
     }
 
     /**
      * Obtiene los plots actuales asociados a un propietario.
      *
-     * @param ownerId el id del propietario.
+     * @param ownerId el ID del propietario.
      * @return un arreglo de ids de plots actuales.
      */
     private Integer[] getActualPlots(Integer ownerId) {
@@ -721,13 +725,18 @@ public class OwnerServiceImpl implements OwnerService {
         List<GetPlotDto> getPlotDtos = mapPlotOwnersToGetPlotDtos(plotOwnerRepository.findByOwnerId(ownerEntity.getId()));
 
         OwnerDto ownerDto = mapOwnerEntityToOwnerDto(ownerEntity);
-        GetUserDto getUserDto = restUser.getUser(getPlotDtos.isEmpty() ? null : getPlotDtos.get(0).getId());
+        GetUserDto getUserDto;
+        if (!getPlotDtos.isEmpty()) {
+            //EMA Hice validacion
+            getUserDto = restUser.getUser(getPlotDtos.get(0).getId());
+            getOwnerAndPlot.setUser(getUserDto);
+        }
+
 
         getOwnerAndPlot.setOwner(ownerDto);
         getOwnerAndPlot.setPlot(getPlotDtos);
-        getOwnerAndPlot.setUser(getUserDto);
+
 
         return getOwnerAndPlot;
     }
-
 }
