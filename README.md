@@ -12,14 +12,21 @@ El microservicio de Gestión de Lotes y Propietarios permite administrar los lot
 
 Este sistema incluye funcionalidades para:
 
-Consultar la lista completa de lotes (plots), asignar o actualizar propietarios, y gestionar detalles de la información de los lotes.
-Consultar la lista completa de propietarios (owners), asignar lotes a propietarios, y gestionar los detalles de la información personal de los propietarios.
-Consultas personalizadas para obtener información sobre lotes y propietarios, tanto para otros grupos como para nuestro propio grupo en microservicios como OwnersPlots.
-Gestionar la disponibilidad de lotes y realizar acciones de asignación o liberación de lotes.
-Consultar información relacionada con los estados de los lotes, como si están ocupados o disponibles.
-Generar relaciones entre lotes y propietarios a través de consultas específicas que conectan ambas entidades.
-Consultar estadísticas y generar informes relacionados con lotes y propietarios, como el conteo por estado de propietario (activo, inactivo, etc.).
-Proteger la información relacionada con lotes y propietarios, asegurando que solo usuarios autorizados puedan acceder o modificar datos sensibles mediante un sistema de autenticación y autorización.
+- Consultar la lista completa de lotes (plots), asignar o actualizar propietarios, y gestionar detalles de la información de los lotes.
+  
+- Consultar la lista completa de propietarios (owners), asignar lotes a propietarios, y gestionar los detalles de la información personal de los propietarios.
+  
+- Consultas personalizadas para obtener información sobre lotes y propietarios, tanto para otros grupos como para nuestro propio grupo en microservicios como OwnersPlots.
+
+- Gestionar la disponibilidad de lotes y realizar acciones de asignación o liberación de lotes.
+  
+- Consultar información relacionada con los estados de los lotes, como si están ocupados o disponibles.
+  
+- Generar relaciones entre lotes y propietarios a través de consultas específicas que conectan ambas entidades.
+
+- Consultar estadísticas y generar informes relacionados con lotes y propietarios, como el conteo por estado de propietario (activo, inactivo, etc.).
+  
+-Proteger la información relacionada con lotes y propietarios, asegurando que solo usuarios autorizados puedan acceder o modificar datos sensibles mediante un sistema de autenticación y autorización.
 
 
 ### Funcionalidades principales:
