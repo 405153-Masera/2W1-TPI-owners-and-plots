@@ -1,8 +1,10 @@
 package ar.edu.utn.frc.tup.lc.iv.restTemplate;
 
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostOwnerDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.GetUserDto;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.UserPost;
+import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.UserPut;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +71,30 @@ public class RestUser {
     }
 
     /**
+     * Metodo para crear un usuario.
+     *
+     * @param putOwnerDto DTO con la información del usuario a crear.
+     * @return true si se creo correctamente, false en caso contrario.
+     * @throws ResponseStatusException si hubo un error en la petición.
+     */
+    public boolean updateUser(PutOwnerDto putOwnerDto) {
+        UserPut userPut = mapToUserPut(putOwnerDto);
+        GetUserDto getUserDto = getUser(putOwnerDto.getPlotId()[0]);
+
+        Integer userId = getUserDto.getId();
+
+        try {
+            ResponseEntity<Void> response = restTemplate.postForEntity(url + "/put/owner/" + userId, userPut, Void.class);
+            return response.getStatusCode().is2xxSuccessful();
+        } catch (HttpClientErrorException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getMessage(), e);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Server error while creating the user: " + e.getMessage(), e);
+        }
+    }
+
+    /**
      * Metodo para obtener un usuario a través de un lote.
      *
      * @param plotId identificador del lote.
@@ -86,7 +112,6 @@ public class RestUser {
         } else {
             throw  new EntityNotFoundException("No se encontró el usuario");
         }
-
     }
 
     /**
@@ -111,6 +136,22 @@ public class RestUser {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Server error while deleting the user: " + e.getMessage(), e);
         }
+    }
+
+    private UserPut mapToUserPut(PutOwnerDto putOwnerDto) {
+        UserPut userPut = new UserPut();
+        userPut.setName(putOwnerDto.getName());
+        userPut.setLastName(putOwnerDto.getLastname());
+        userPut.setDni_type_id(putOwnerDto.getDniTypeId());
+        userPut.setDni(putOwnerDto.getDni());
+        userPut.setPhoneNumber(putOwnerDto.getPhoneNumber());
+        userPut.setEmail(putOwnerDto.getEmail());
+        userPut.setDatebirth(putOwnerDto.getDateBirth());
+        userPut.setRoles(putOwnerDto.getRoles());
+        userPut.setTelegram_id(putOwnerDto.getTelegram_id());
+        userPut.setUserUpdateId(putOwnerDto.getUserUpdateId());
+        userPut.setPlot_id(putOwnerDto.getPlotId());
+        return userPut;
     }
 
     private UserPost mapToUserPost(PostOwnerDto postOwnerDto) {
