@@ -42,5 +42,5 @@ public interface PlotOwnerRepository extends JpaRepository<PlotOwnerEntity, Inte
      * @param ownerId el id de un propietario.
      * @return true si existe, false en caso contrario.
      */
-    boolean existsByOwnerId (int ownerId);
+    boolean existsByOwnerId(int ownerId);
 }
