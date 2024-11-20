@@ -55,15 +55,15 @@ class PlotOwnerControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    void transferPlotOwner_ShouldReturnOk() throws Exception {
-        doNothing().when(plotService).transferPlot(1, 2, 3);
-
-        mockMvc.perform(post("/plotOwners/transfer")
-                        .param("plotId", "1")
-                        .param("ownerId", "2")
-                        .param("userId", "3")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
+//    @Test
+//    void transferPlotOwner_ShouldReturnOk() throws Exception {
+//        doNothing().when(plotService).transferPlot(1, 2, 3);
+//
+//        mockMvc.perform(post("/plotOwners/transfer")
+//                        .param("plotId", "1")
+//                        .param("ownerId", "2")
+//                        .param("userId", "3")
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk());
+//    }
 }

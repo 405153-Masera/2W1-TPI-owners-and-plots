@@ -104,8 +104,21 @@ public class PutOwnerDto {
      */
     private List<MultipartFile> files = new ArrayList<>();
 
-       /**
+    /**
      * Identificador del lote asociado al propietario.
      */
     private Integer[] plotId;
+    //Le agrege estos dos porque me parece que no va andar el restUser
+    //al no tener estos campos
+    /**
+     * Lista de roles asignados al usuario.
+     */
+    @NotNull(message = "Los roles no pueden ser nulos")
+    private String[] roles;
+
+    /**
+     * Identificador de la plataforma telegram utilizada en notificaciones.
+     */
+    @NotNull
+    private Long telegram_id;
 }
