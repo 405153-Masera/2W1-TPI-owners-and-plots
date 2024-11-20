@@ -107,9 +107,9 @@ public class PutOwnerDto {
     /**
      * Identificador del lote asociado al propietario.
      */
+    @NotNull(message = "El lote no puede ser nulo")
     private Integer[] plotId;
-    //Le agrege estos dos porque me parece que no va andar el restUser
-    //al no tener estos campos
+
     /**
      * Lista de roles asignados al usuario.
      */

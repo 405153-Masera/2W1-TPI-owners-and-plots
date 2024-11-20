@@ -331,7 +331,8 @@ VALUES
     ('Luis', 'Garcia', 1, '42987654', '1988-09-30 00:00:00', 2, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
     ('Laura', 'Rojas', 1, '40654321', '2000-02-20 00:00:00', 3, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
     ('Jose', 'Torres', 1, '43210987', '1975-05-22 00:00:00', 4, 1, NULL, TRUE, NOW(), 1, NOW(), 1),
-    ('Carmen', 'Diaz', 3, '23455948169', '1987-12-10 00:00:00', 2, 1, NULL , TRUE, NOW(), 1, NOW(), 1);
+    ('Carmen', 'Diaz', 3, '23455948169', '1987-12-10 00:00:00', 2, 1, NULL , TRUE, NOW(), 1, NOW(), 1),
+    ('Gabriel','De Maussion', 1, '43432654','2000-02-02 00:00:00' , 1, 1 ,NULL,TRUE,NOW(),1,NOW(),1 );
 
 INSERT INTO plots (plot_number, block_number, plot_state_id, plot_type_id, total_area_in_m2, built_area_in_m2, created_datetime, created_user, last_updated_datetime, last_updated_user)
 VALUES
@@ -354,7 +355,8 @@ VALUES
     (17, 5, 2, 1, 1900.00, 1500.00, NOW(), 1, NOW(), 1),
     (18, 5, 3, 3, 2800.00, 0.00, NOW(), 1, NOW(), 1),
     (19, 5, 2, 1, 2300.00, 1700.00, NOW(), 1, NOW(), 1),
-    (20, 5, 2, 2, 600.00, 400.00, NOW(), 1, NOW(), 1);
+    (20, 5, 2, 2, 600.00, 400.00, NOW(), 1, NOW(), 1),
+    (21, 5, 2, 2, 800.00, 500.00, NOW(), 1, NOW(), 1);
 
 INSERT INTO plot_owners (plot_id, owner_id, created_datetime, created_user, last_updated_datetime, last_updated_user)
 VALUES
@@ -369,7 +371,8 @@ VALUES
     (16, 8, NOW(), 1, NOW(), 1),
     (17, 9, NOW(), 1, NOW(), 1),
     (19, 10, NOW(), 1, NOW(), 1),
-    (20, 10, NOW(), 1, NOW(), 1);
+    (20, 10, NOW(), 1, NOW(), 1),
+    (21, 11, NOW(), 1, NOW(), 1);
 
 DELIMITER $$
 
