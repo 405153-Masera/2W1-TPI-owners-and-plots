@@ -166,17 +166,16 @@ class OwnerServiceImplTest {
 
     @Test
     void updateOwner_Success() {
-
         when(ownerRepositoryMock.findById(1)).thenReturn(Optional.of(testOwnerEntity));
         Integer expectedDniTypeId = testPutOwnerDto.getDniTypeId();
-        when(dniTypeRepository.findById(any())).thenReturn(Optional.of(testDniType));
+        when(dniTypeRepository.findById(expectedDniTypeId)).thenReturn(Optional.of(testDniType));
+        when(ownerRepositoryMock.save(any(OwnerEntity.class))).thenReturn(testOwnerEntity);
         when(ownerTypeRepositoryMock.findById(1)).thenReturn(Optional.of(testOwnerType));
         when(taxStatusRepositoryMock.findById(1)).thenReturn(Optional.of(testTaxStatus));
-        when(ownerRepositoryMock.save(any(OwnerEntity.class))).thenReturn(testOwnerEntity);
-        when(plotOwnerRepositoryMock.findByOwnerId(1)).thenReturn(new ArrayList<>());
         when(plotRepositoryMock.findById(1)).thenReturn(Optional.of(testPlot));
         when(plotRepositoryMock.existsById(1)).thenReturn(true);
-        when(plotStateRepositoryMock.findById(1)).thenReturn(Optional.of(new PlotStateEntity()));
+
+        when(restUserMock.updateUser(any(PutOwnerDto.class))).thenReturn(true);
 
         GetOwnerDto result = ownerServiceSpy.updateOwner(1, testPutOwnerDto);
 

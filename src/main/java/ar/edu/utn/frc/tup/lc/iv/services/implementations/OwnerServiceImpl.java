@@ -325,7 +325,7 @@ public class OwnerServiceImpl implements OwnerService {
         PostOwnerDto post = modelMapper.map(putOwnerDto, PostOwnerDto.class);
 
         addNewPlots(ownerEntity, post, newPlots, actualPlots, putOwnerDto.getUserUpdateId());
-        removeOldPlots(ownerId, newPlots, actualPlots);
+        removeOldPlots(ownerId, actualPlots, newPlots);
     }
 
     /**

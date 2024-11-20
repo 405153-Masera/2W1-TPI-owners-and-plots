@@ -36,4 +36,11 @@ public interface PlotOwnerRepository extends JpaRepository<PlotOwnerEntity, Inte
      */
     void deleteByOwnerIdAndPlotId(int ownerId, int plotId);
 
+    /**
+     * Verifica si existe un PlotOwnerEntity por el id de un propietario.
+     *
+     * @param ownerId el id de un propietario.
+     * @return true si existe, false en caso contrario.
+     */
+    boolean existsByOwnerId (int ownerId);
 }

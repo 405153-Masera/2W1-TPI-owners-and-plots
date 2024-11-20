@@ -93,6 +93,7 @@ public interface PlotService {
      */
     List<GetPlotWithHisOwnerDto> getPlotsWithHisOwner();
 
+
     /**
      * Transfiere un lote de un propietario a otro.
      *

@@ -71,10 +71,10 @@ public class RestUser {
     }
 
     /**
-     * Metodo para crear un usuario.
+     * Metodo para actualizar un usuario.
      *
-     * @param putOwnerDto DTO con la información del usuario a crear.
-     * @return true si se creo correctamente, false en caso contrario.
+     * @param putOwnerDto DTO con la información del usuario a actualizar.
+     * @return true si se actualizó correctamente, false en caso contrario.
      * @throws ResponseStatusException si hubo un error en la petición.
      */
     public boolean updateUser(PutOwnerDto putOwnerDto) {
@@ -84,13 +84,13 @@ public class RestUser {
         Integer userId = getUserDto.getId();
 
         try {
-            ResponseEntity<Void> response = restTemplate.postForEntity(url + "/put/owner/" + userId, userPut, Void.class);
-            return response.getStatusCode().is2xxSuccessful();
+            restTemplate.put(url + "/put/owner/" + userId, userPut);
+            return true;
         } catch (HttpClientErrorException e) {
             throw new ResponseStatusException(e.getStatusCode(), e.getMessage(), e);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Server error while creating the user: " + e.getMessage(), e);
+                    "Server error while updating the user: " + e.getMessage(), e);
         }
     }
 
