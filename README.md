@@ -3,36 +3,42 @@
 Este proyecto forma parte del Trabajo Práctico Integrador (TPI) desarrollado durante el año 2024, correspondiente a las asignaturas **Laboratorio de Computación IV**, **Programación IV** y **Metodología de Sistemas** de la carrera **Tecnicatura Universitaria en Programación** en la **Universidad Tecnológica Nacional - Facultad Regional Córdoba**.
 
 <div align="center"> 
-  <h1>👤 Gestión de Usuarios 👤</h1>
+  <h1>👤 Gestión de Lotes y Propietarios 👤</h1>
 </div>
 
 ## ✍ Descripción
 
-El microservicio de **Gestión de Usuarios** permite administrar los usuarios de la aplicación y sus roles. Brinda a los administradores la capacidad de gestionar los datos de los usuarios finales, como información personal y roles asignados. Utilizado por la matoria de los demas microservicios siendo una parte esencial en el proyecto.
+El microservicio de Gestión de Lotes y Propietarios permite administrar los lotes y sus propietarios dentro de la aplicación. Brinda a los administradores la capacidad de gestionar los datos de los lotes, como su asignación y estado, así como la información personal de los propietarios y la asignación de los lotes a estos. Es utilizado por la mayoría de los demás microservicios, siendo una parte esencial en el proyecto para la correcta gestión de los lotes y sus propietarios.
 
 Este sistema incluye funcionalidades para:
 
-- Consultar la lista completa de usuarios del sistema, asignar o actualizar roles, y gestionar detalles de información personal y dar de baja usuarios.
-- Consultar información necesaria para realizar dashboards o graficos en el front-end.
-- Consultas personalizadas requeridas para otros grupos o para nuestro mismo grupo en microservicios como OwnersPlots.
-- Generar accesos utilizando el microservicio de Accesos.
-- Generar contactos de un usuario en el microservicio de Contacos.
-- Generar notificación de bienvenida utilizando el microservicio de Notificaciones.
-- Generar recuperación de contraseña por medio de un email utilizando el microservicio de Notificaciones.
-- Proteger información de login y generar token utilizando JWT.
+Consultar la lista completa de lotes (plots), asignar o actualizar propietarios, y gestionar detalles de la información de los lotes.
+Consultar la lista completa de propietarios (owners), asignar lotes a propietarios, y gestionar los detalles de la información personal de los propietarios.
+Consultas personalizadas para obtener información sobre lotes y propietarios, tanto para otros grupos como para nuestro propio grupo en microservicios como OwnersPlots.
+Gestionar la disponibilidad de lotes y realizar acciones de asignación o liberación de lotes.
+Consultar información relacionada con los estados de los lotes, como si están ocupados o disponibles.
+Generar relaciones entre lotes y propietarios a través de consultas específicas que conectan ambas entidades.
+Consultar estadísticas y generar informes relacionados con lotes y propietarios, como el conteo por estado de propietario (activo, inactivo, etc.).
+Proteger la información relacionada con lotes y propietarios, asegurando que solo usuarios autorizados puedan acceder o modificar datos sensibles mediante un sistema de autenticación y autorización.
 
 
 ### Funcionalidades principales:
 
-1. **Alta de usuarios**
+Alta de propietarios:
 
-2. **Consulta de usuarios:** 
+Permite crear un nuevo propietario con información personal, tipo de documento, situación fiscal, y otros datos relevantes.
+Consulta de propietarios:
 
-3. **Actualización de información:** 
+Permite obtener la lista completa de propietarios o buscar propietarios específicos por ID. También permite obtener los propietarios asociados a un lote.
+Actualización de información de propietarios:
 
-4. **Filtrado avanzado:**
-   
-5. **Baja logica de usuarios:**+ 
+Permite actualizar los datos de un propietario, como su nombre, situación fiscal, tipo de propietario, entre otros.
+Gestión de lotes:
+
+Permite crear, actualizar y consultar lotes. Incluye funcionalidades para obtener todos los lotes disponibles, obtener lotes por propietario y gestionar el estado de los lotes.
+Baja lógica de propietarios:
+
+Permite dar de baja a un propietario de forma lógica, eliminando su acceso a los recursos del sistema sin eliminar la información.
    
 
 ## 📥 Instalación
@@ -64,32 +70,31 @@ Este sistema incluye funcionalidades para:
 
 ### **Usuarios**
 
-- **GET** `/users/getall`  
-  Retorna una lista de todos los usuarios activos registrados en el sistema.
+- **GET** `/owners`  
+  Retorna una lista de todos los propietarios activos registrados en el sistema.
 
-- **GET** `/usersgetById/{userId}`  
-  Permite consultar la información detallada de un usuario específico.
+- **GET** `/owners/{ownerId}`  
+  Permite consultar la información detallada de un propietario específico.
 
-- **POST** `/users/post`  
-  Crea un nuevo usuario en el sistema.
+- **POST** `/owners`  
+  Crea un nuevo propietario en el sistema.
 
-- **PUT** `users/put/{userId}`  
-  Actualiza la información de un usuario existente, como nombre, teléfono o roles.
+- **PUT** `owners/{ownerId}`  
+  Actualiza la información de un propietario existente.
 
-- **DELETE** `/delete/{userId}/{userIdUpdate}`  
-  Elimina un usuario del sistema.
+### **Plots**
 
----
+- **GET** `/plots`  
+  Retorna una lista de todos los lotes en el sistema.
 
-### **Roles**
+- **GET** `/plots/{plotId}`  
+  Permite consultar la información detallada de un lote específico.
 
-- **GET** `/roles`  
-  Retorna una lista de todos los roles disponibles en el sistema.
+- **POST** `/plots`  
+  Crea un nuevo plot en el sistema.
 
-- **POST** `/roles`  
-  Pemrite el alta de un nuevo rol.
-
----
+- **PUT** `plots/{plotId}`  
+  Actualiza la información de un plot existente.
 
 ## Integrantes
 
