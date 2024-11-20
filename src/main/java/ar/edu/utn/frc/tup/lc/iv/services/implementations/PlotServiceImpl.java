@@ -8,7 +8,6 @@ import ar.edu.utn.frc.tup.lc.iv.repositories.*;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.FileManagerClient;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.RestUser;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.FileService;
-import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotOwnerService;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotService;
 import jakarta.persistence.EntityNotFoundException;
@@ -393,11 +392,13 @@ public class PlotServiceImpl implements PlotService {
     }
 
     /**
+     Transfiere un lote de un propietario a otro.
 
-     Transfiere un lote de un propietario a otro.*
      @param plotId id del lote a transferir.
      @param ownerId id del nuevo propietario.
-     @param userId id del usuario que realiza la transferencia.*/
+     @param userId id del usuario que realiza la transferencia.
+
+     */
     @Transactional@Override
     public void transferPlot(Integer plotId, Integer ownerId, Integer userId) {
 
