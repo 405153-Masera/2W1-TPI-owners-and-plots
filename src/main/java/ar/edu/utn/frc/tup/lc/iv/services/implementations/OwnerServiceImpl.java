@@ -370,7 +370,7 @@ public class OwnerServiceImpl implements OwnerService {
      * @param newPlots los nuevos plots.
      * @param actualPlots los plots actuales.
      */
-    private void removeOldPlots(Integer ownerId, Integer[] actualPlots, Integer... newPlots) {
+    private void removeOldPlots(Integer ownerId, Integer[] actualPlots, Integer[] newPlots) {
         for (Integer plotId : actualPlots) {
             if (!Arrays.asList(newPlots).contains(plotId)) {
                 plotOwnerRepository.deleteByOwnerIdAndPlotId(ownerId, plotId);

@@ -119,6 +119,5 @@ public class PutOwnerDto {
     /**
      * Identificador de la plataforma telegram utilizada en notificaciones.
      */
-    @NotNull
     private Long telegram_id;
 }
