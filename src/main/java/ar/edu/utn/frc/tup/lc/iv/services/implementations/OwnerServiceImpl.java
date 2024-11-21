@@ -526,7 +526,7 @@ public class OwnerServiceImpl implements OwnerService {
      */
     @Override
     public List<GetOwnerDto> getAllOwners() {
-        List<OwnerEntity> ownerEntities = ownerRepository.findAll();
+        List<OwnerEntity> ownerEntities = ownerRepository.findAllActives();
         List<GetOwnerDto> ownerDtos = new ArrayList<>();
 
         for (OwnerEntity ownerEntity : ownerEntities) {

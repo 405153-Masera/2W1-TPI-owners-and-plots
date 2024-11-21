@@ -309,7 +309,7 @@ class OwnerServiceImplTest {
         ownerEntities.add(ownerEntity);
 
         // When
-        when(ownerRepositoryMock.findAll()).thenReturn(ownerEntities);
+        when(ownerRepositoryMock.findAllActives()).thenReturn(ownerEntities);
         when(fileServiceMock.getOwnerFiles(1)).thenReturn(fileDtoList);
 
         // Then
@@ -318,7 +318,7 @@ class OwnerServiceImplTest {
         assertEquals(ownerEntities.size(), result.size());
         assertEquals(ownerEntities.get(0).getName(), result.get(0).getName());
 
-        verify(ownerRepositoryMock, times(1)).findAll();
+        verify(ownerRepositoryMock, times(1)).findAllActives();
         verify(fileServiceMock, times(3)).getOwnerFiles(1);
     }
 
