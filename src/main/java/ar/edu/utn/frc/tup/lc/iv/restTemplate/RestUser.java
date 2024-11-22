@@ -18,6 +18,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -138,7 +139,14 @@ public class RestUser {
         }
     }
 
+    /**
+     * Metodo para mapear un DTO a un objeto de tipo {@link UserPut}.
+     *
+     * @param putOwnerDto DTO con la información del usuario.
+     * @return un objeto de tipo {@link UserPut}.
+     */
     private UserPut mapToUserPut(PutOwnerDto putOwnerDto) {
+        ensureOwnerRole(putOwnerDto);
         UserPut userPut = new UserPut();
         userPut.setName(putOwnerDto.getName());
         userPut.setLastName(putOwnerDto.getLastname());
@@ -154,7 +162,14 @@ public class RestUser {
         return userPut;
     }
 
+    /**
+     * Metodo para mapear un DTO a un objeto de tipo {@link UserPost}.
+     *
+     * @param postOwnerDto DTO con la información del usuario.
+     * @return un objeto de tipo {@link UserPost}.
+     */
     private UserPost mapToUserPost(PostOwnerDto postOwnerDto) {
+        ensureOwnerRole(postOwnerDto);
         UserPost userPost = new UserPost();
         userPost.setName(postOwnerDto.getName());
         userPost.setLastname(postOwnerDto.getLastname());
@@ -173,6 +188,40 @@ public class RestUser {
         userPost.setDni_type_id(postOwnerDto.getDni_type_id());
         return userPost;
     }
+
+    /**
+     * Metodo para asegurar que el usuario tenga el rol de propietario.
+     *
+     * @param postOwnerDto DTO con la información del usuario.
+     */
+    private void ensureOwnerRole(PostOwnerDto postOwnerDto) {
+        String[] roles = postOwnerDto.getRoles();
+
+        List<String> rolesList = roles != null ? new ArrayList<>(List.of(roles)) : new ArrayList<>();
+
+        if (!rolesList.contains("Propietario")) {
+            rolesList.add("Propietario");
+        }
+
+        postOwnerDto.setRoles(rolesList.toArray(new String[0]));
+    }
+
+    /**
+     * Metodo para asegurar que el usuario tenga el rol de propietario.
+     *
+     * @param putOwnerDto DTO con la información del usuario.
+     */
+    private void ensureOwnerRole(PutOwnerDto putOwnerDto) {
+        String[] roles = putOwnerDto.getRoles();
+
+        List<String> rolesList = roles != null ? new ArrayList<>(List.of(roles)) : new ArrayList<>();
+
+        if (!rolesList.contains("Propietario")) {
+            rolesList.add("Propietario");
+        }
+        putOwnerDto.setRoles(rolesList.toArray(new String[0]));
+    }
+
 
     /**
      * Metodo para obtener un usuario propietario.
