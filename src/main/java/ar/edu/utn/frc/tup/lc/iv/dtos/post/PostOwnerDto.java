@@ -94,7 +94,6 @@ public class PostOwnerDto {
      * Correo electrónico del usuario utilizado en el login
      * que se guarda en el microservicio de contactos.
      */
-    @NotBlank(message = "El correo electrónico no puede estar vacío")
     @Email(message = "El formato del correo electrónico es inválido")
     private String email;
 
@@ -102,7 +101,6 @@ public class PostOwnerDto {
      * Teléfono del usuario que se guarda en
      * el microservicio de contactos.
      */
-    @NotBlank(message = "El número de teléfono no puede estar vacío")
     @Size(min = 10, max = 20, message = "El número de teléfono debe tener entre 8 y 20 caracteres")
     @Pattern(regexp = "\\d+", message = "El número de teléfono debe ser numérico")
     private String phoneNumber;
