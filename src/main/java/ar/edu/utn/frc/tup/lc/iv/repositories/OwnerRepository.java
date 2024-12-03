@@ -39,4 +39,12 @@ public interface OwnerRepository extends JpaRepository<OwnerEntity, Integer> {
      * @return true si existe, false en caso contrario.
      */
     boolean existsByIdAndActive(Integer id, Boolean active);
+
+    /**
+     * Busca un propietario por su id.
+     *
+     * @param dni el identificador de un propietario.
+     * @return un {@link OwnerEntity}
+     */
+    OwnerEntity findByDni(String dni);
 }

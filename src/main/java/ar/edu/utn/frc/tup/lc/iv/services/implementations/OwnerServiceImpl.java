@@ -304,9 +304,7 @@ public class OwnerServiceImpl implements OwnerService {
         // Actualizar los plots asociados al propietario
         updatePlotsForOwner(ownerId, ownerEntity, putOwnerDto);
 
-        if (!restUser.updateUser(putOwnerDto)) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Server error while creating the user");
-        }
+        restUser.updateUser(putOwnerDto);
 
         OwnerEntity ownerSaved = ownerRepository.save(ownerEntity);
         return createGetOwnerDto(ownerSaved);

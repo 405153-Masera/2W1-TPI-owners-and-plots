@@ -2,6 +2,8 @@ package ar.edu.utn.frc.tup.lc.iv.restTemplate;
 
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutOwnerDto;
+import ar.edu.utn.frc.tup.lc.iv.entities.OwnerEntity;
+import ar.edu.utn.frc.tup.lc.iv.repositories.OwnerRepository;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.GetUserDto;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.UserPost;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.UserPut;
@@ -33,6 +35,7 @@ public class RestUser {
      * Instancia de restTemplate para utilizar dentro de la clase.
      */
     private final RestTemplate restTemplate;
+    private final OwnerRepository ownerRepository;
 
     /**
      * Dirección url donde se levanta el microservicio de usuarios.
@@ -46,8 +49,9 @@ public class RestUser {
      * @param restTemplate instancia de restTemplate.
      */
     @Autowired
-    public RestUser(RestTemplate restTemplate) {
+    public RestUser(RestTemplate restTemplate, OwnerRepository ownerRepository) {
         this.restTemplate = restTemplate;
+        this.ownerRepository = ownerRepository;
     }
 
     /**
@@ -80,7 +84,9 @@ public class RestUser {
      */
     public boolean updateUser(PutOwnerDto putOwnerDto) {
         UserPut userPut = mapToUserPut(putOwnerDto);
-        GetUserDto getUserDto = getUser(putOwnerDto.getPlotId()[0]);
+        OwnerEntity ownerEntity = ownerRepository.findByDni(putOwnerDto.getDni());
+        GetUserDto ownerUser = getOwnerUser(ownerEntity.getId());
+        GetUserDto getUserDto = getUser(ownerUser.getPlot_id()[0]);
 
         Integer userId = getUserDto.getId();
 
@@ -112,6 +118,21 @@ public class RestUser {
             return response.getBody();
         } else {
             throw  new EntityNotFoundException("No se encontró el usuario");
+        }
+    }
+
+    public GetUserDto getOwnerUser(Integer userId) {
+        ResponseEntity<GetUserDto[]> response = restTemplate.getForEntity(url + "/byOwner/" + userId, GetUserDto[].class);
+        GetUserDto owner = new GetUserDto();
+        for (GetUserDto user : response.getBody()) {
+            if (Arrays.asList(user.getRoles()).contains("Propietario")) {
+                owner = user;
+            }
+        }
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return owner;
+        } else {
+            throw new EntityNotFoundException("No se encontró el usuario");
         }
     }
 
@@ -152,11 +173,27 @@ public class RestUser {
         userPut.setLastName(putOwnerDto.getLastname());
         userPut.setDni_type_id(putOwnerDto.getDniTypeId());
         userPut.setDni(putOwnerDto.getDni());
-        userPut.setPhoneNumber(putOwnerDto.getPhoneNumber());
-        userPut.setEmail(putOwnerDto.getEmail());
-        userPut.setDatebirth(putOwnerDto.getDateBirth());
+        if (putOwnerDto.getPhoneNumber() != null) {
+            userPut.setPhoneNumber(putOwnerDto.getPhoneNumber());
+        } else {
+            userPut.setPhoneNumber(null);
+        }
+        if (putOwnerDto.getEmail() != null) {
+            userPut.setEmail(putOwnerDto.getEmail());
+        } else {
+            userPut.setEmail(null);
+        }
+        if (putOwnerDto.getDateBirth() != null) {
+            userPut.setDatebirth(putOwnerDto.getDateBirth());
+        } else {
+            userPut.setDatebirth(null);
+        }
         userPut.setRoles(putOwnerDto.getRoles());
-        userPut.setTelegram_id(putOwnerDto.getTelegram_id());
+        if (putOwnerDto.getTelegram_id() != null) {
+            userPut.setTelegram_id(putOwnerDto.getTelegram_id());
+        } else {
+            userPut.setTelegram_id(null);
+        }
         userPut.setUserUpdateId(putOwnerDto.getUserUpdateId());
         userPut.setPlot_id(putOwnerDto.getPlotId());
         return userPut;
