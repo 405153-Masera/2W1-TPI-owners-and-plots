@@ -8,6 +8,7 @@ import ar.edu.utn.frc.tup.lc.iv.services.interfaces.RequestService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.mapping.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,12 @@ public class RequestController {
     public ResponseEntity<GetRequestDTO> postRequest(@Valid @RequestBody GetRequestDTO requestDTO) {
         GetRequestDTO requestDTOsaved = requestService.createRequest(requestDTO);
         return ResponseEntity.ok(requestDTOsaved);
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<GetRequestDTO>> getAllRequests() {
+        List<GetRequestDTO> result = requestService.getAllRequests();
+        return ResponseEntity.ok(result);
     }
 
     /**
