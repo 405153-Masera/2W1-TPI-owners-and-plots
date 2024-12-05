@@ -8,11 +8,12 @@ import ar.edu.utn.frc.tup.lc.iv.services.interfaces.RequestService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.mapping.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Controlador para manejar la lógica de solicitudes de compra de lotes.
