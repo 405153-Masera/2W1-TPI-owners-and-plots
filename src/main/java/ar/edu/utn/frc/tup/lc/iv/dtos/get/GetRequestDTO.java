@@ -46,8 +46,18 @@ public class GetRequestDTO {
      * Identificador que representa el ID del lote asociado.
      */
     @NotNull(message = "El lot_id no puede ser nula")
-    @JsonProperty("lot_id")
+    @JsonProperty("plot_id")
     private Integer lotId;
+    /**
+     * Identificador que representa el numero de lote.
+     */
+    @JsonProperty("plot_number")
+    private Integer plotNumber;
+    /**
+     * Identificador que representa el numero de manzana.
+     */
+    @JsonProperty("block_number")
+    private Integer blockNumber;
 
     /**
      * Observaciones de la solicitud

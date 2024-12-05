@@ -8,6 +8,7 @@ import ar.edu.utn.frc.tup.lc.iv.entities.OwnerEntity;
 import ar.edu.utn.frc.tup.lc.iv.entities.PlotEntity;
 import ar.edu.utn.frc.tup.lc.iv.entities.RequestEntity;
 import ar.edu.utn.frc.tup.lc.iv.repositories.RequestRepository;
+import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotService;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.RequestService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,7 +30,10 @@ public class RequestServiceImpl implements RequestService {
      * Repositorio para manejar Request entities.
      */
     private final RequestRepository requestRepository;
-
+    /**
+     * Servicio para manejar los plots.
+     */
+    private final PlotService plotService;
 
     /**
      * Obtiene todos las solicitudes
@@ -39,10 +44,17 @@ public class RequestServiceImpl implements RequestService {
     public List<GetRequestDTO> getAllRequests() {
         List<RequestEntity> requestEntities = requestRepository.findAll();
         List<GetRequestDTO> requestDTOS = new ArrayList<>();
-
+        List<GetPlotDto> plotDtos = plotService.getAllPlots();
         for (RequestEntity requestEntity : requestEntities) {
+            GetPlotDto plotDto = null;
+            if(requestEntity.getId() != null){
+                plotDto=plotDtos.stream().filter(m->requestEntity.getId().equals(m.getId())).findFirst().orElse(null);
+            }
             GetRequestDTO requestDTO = mapRequestEntityToDTO(requestEntity);
-
+            if(Objects.nonNull(plotDto)){
+                requestDTO.setBlockNumber(plotDto.getBlock_number());
+                requestDTO.setPlotNumber(plotDto.getPlot_number());
+            }
             requestDTOS.add(requestDTO);
 
         }
