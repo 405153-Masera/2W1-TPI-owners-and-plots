@@ -6,11 +6,9 @@ import ar.edu.utn.frc.tup.lc.iv.repositories.OwnerRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotOwnerRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotRepository;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.PlotOwnerService;
-
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 
 import java.time.LocalDateTime;
 import java.util.List;

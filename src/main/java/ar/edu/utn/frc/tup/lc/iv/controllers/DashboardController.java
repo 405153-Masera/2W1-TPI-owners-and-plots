@@ -1,6 +1,11 @@
 package ar.edu.utn.frc.tup.lc.iv.controllers;
 
-import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.*;
+import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.BlockData;
+import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.OwnersPlotsDistribution;
+import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.PlotByPlotStateCountDTO;
+import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.PlotByPlotTypeCountDTO;
+import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.PlotsByBlock;
+import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.PlotsStats;
 import ar.edu.utn.frc.tup.lc.iv.services.dashboard.OwnerStatsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

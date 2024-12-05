@@ -1,9 +1,6 @@
 package ar.edu.utn.frc.tup.lc.iv.services.interfaces;
 
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerDto;
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetRequestDTO;
-import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.entities.RequestEntity;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;

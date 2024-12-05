@@ -18,7 +18,7 @@ public interface PlotOwnerRepository extends JpaRepository<PlotOwnerEntity, Inte
      * @param ownerId el id de un propietario.
      * @return un {@link PlotOwnerEntity}
      */
-    List<PlotOwnerEntity> findByOwnerId(int ownerId);
+    List<PlotOwnerEntity> findAllByOwner_Id(int ownerId);
 
     /**
      * Busca un PlotOwnerEntity por el id de un lote.

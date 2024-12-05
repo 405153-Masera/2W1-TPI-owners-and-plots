@@ -1,6 +1,13 @@
 package ar.edu.utn.frc.tup.lc.iv.controllers;
 
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.*;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetDniTypeDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerAndPlot;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerTypeDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerWithHisPlots;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetTaxStatusDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.OwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.OwnerService;
@@ -8,7 +15,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
@@ -179,5 +193,15 @@ public class OwnerController {
     public ResponseEntity<Void> deleteOwner(@PathVariable("id") Integer ownerId, @PathVariable("userIdUpdate") Integer userIdUpdate) {
         ownerService.deleteOwner(ownerId, userIdUpdate);
         return ResponseEntity.noContent().build();
+    }
+    /**
+     * Obtiene una lista de lotes por ID de usuario.
+     *
+     * @param userId id del propietario asignado al lote.
+     * @return una lista de lotes.
+     */
+    @GetMapping("getplotbyuserid/{userId}")
+    public ResponseEntity<List<GetPlotDto>> getPlotByUserId(@PathVariable Integer userId) {
+        return ResponseEntity.ok(ownerService.getPlotByUserId(userId));
     }
 }

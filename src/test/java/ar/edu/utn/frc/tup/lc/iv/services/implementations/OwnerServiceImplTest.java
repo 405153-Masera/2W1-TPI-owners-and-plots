@@ -326,9 +326,9 @@ class OwnerServiceImplTest {
     void getOwersAndPlots() {
         when(ownerRepositoryMock.findAllActives()).thenReturn(OwnerTestHelper.OWNER_ENTITY_LIST);
 
-        when(plotOwnerRepositoryMock.findByOwnerId(1)).thenReturn(List.of(PLOT_OWNER_ENTITY_1));
-        when(plotOwnerRepositoryMock.findByOwnerId(2)).thenReturn(List.of(OwnerTestHelper.PLOT_OWNER_ENTITY_2));
-        when(plotOwnerRepositoryMock.findByOwnerId(3)).thenReturn(List.of(OwnerTestHelper.PLOT_OWNER_ENTITY_3));
+        when(plotOwnerRepositoryMock.findAllByOwner_Id(1)).thenReturn(List.of(PLOT_OWNER_ENTITY_1));
+        when(plotOwnerRepositoryMock.findAllByOwner_Id(2)).thenReturn(List.of(OwnerTestHelper.PLOT_OWNER_ENTITY_2));
+        when(plotOwnerRepositoryMock.findAllByOwner_Id(3)).thenReturn(List.of(OwnerTestHelper.PLOT_OWNER_ENTITY_3));
 
         when(plotRepositoryMock.findById(OwnerTestHelper.PLOT_ENTITY_1.getId())).thenReturn(Optional.of(OwnerTestHelper.PLOT_ENTITY_1));
         when(plotRepositoryMock.findById(OwnerTestHelper.PLOT_ENTITY_2.getId())).thenReturn(Optional.of(OwnerTestHelper.PLOT_ENTITY_2));
@@ -352,7 +352,7 @@ class OwnerServiceImplTest {
         when(ownerRepositoryMock.findAllActives()).thenReturn(OwnerTestHelper.OWNER_ENTITY_LIST);
 
         List<PlotOwnerEntity> plotOwnerEntities = List.of(PLOT_OWNER_ENTITY_1);
-        when(plotOwnerRepositoryMock.findByOwnerId(1)).thenReturn(plotOwnerEntities);
+        when(plotOwnerRepositoryMock.findAllByOwner_Id(1)).thenReturn(plotOwnerEntities);
 
         when(plotRepositoryMock.findById(anyInt())).thenReturn(Optional.empty());
 
@@ -372,7 +372,7 @@ class OwnerServiceImplTest {
         GetPlotDto getPlotDto = new GetPlotDto();
 
         when(ownerRepositoryMock.findById(ownerId)).thenReturn(Optional.of(ownerEntity));
-        when(plotOwnerRepositoryMock.findByOwnerId(ownerEntity.getId())).thenReturn(Collections.singletonList(plotOwnerEntity));
+        when(plotOwnerRepositoryMock.findAllByOwner_Id(ownerEntity.getId())).thenReturn(Collections.singletonList(plotOwnerEntity));
         when(plotRepositoryMock.findById(plotOwnerEntity.getPlot().getId())).thenReturn(Optional.of(plotEntity));
         doReturn(OwnerTestHelper.GET_USER_DTO).when(restUserMock).getUser(anyInt());
 
@@ -393,7 +393,7 @@ class OwnerServiceImplTest {
         GetOwnerAndPlot result = ownerServiceSpy.getOwnerAndPlotById(10);
 
         assertNull(result);
-        Mockito.verify(plotOwnerRepositoryMock, Mockito.times(0)).findByOwnerId(anyInt());
+        Mockito.verify(plotOwnerRepositoryMock, Mockito.times(0)).findAllByOwner_Id(anyInt());
         Mockito.verify(plotRepositoryMock, Mockito.times(0)).findById(anyInt());
         Mockito.verify(restUserMock, Mockito.times(0)).getUser(anyInt());
     }
@@ -445,11 +445,11 @@ class OwnerServiceImplTest {
         List<OwnerEntity> owners = Arrays.asList(OWNER_ENTITY_1, OWNER_ENTITY_2, OWNER_ENTITY_3);
 
         when(ownerRepositoryMock.findAllActives()).thenReturn(owners);
-        when(plotOwnerRepositoryMock.findByOwnerId(OWNER_ENTITY_1.getId()))
+        when(plotOwnerRepositoryMock.findAllByOwner_Id(OWNER_ENTITY_1.getId()))
                 .thenReturn(Arrays.asList(PLOT_OWNER_ENTITY_1));
-        when(plotOwnerRepositoryMock.findByOwnerId(OWNER_ENTITY_2.getId()))
+        when(plotOwnerRepositoryMock.findAllByOwner_Id(OWNER_ENTITY_2.getId()))
                 .thenReturn(Arrays.asList(PLOT_OWNER_ENTITY_2));
-        when(plotOwnerRepositoryMock.findByOwnerId(OWNER_ENTITY_3.getId()))
+        when(plotOwnerRepositoryMock.findAllByOwner_Id(OWNER_ENTITY_3.getId()))
                 .thenReturn(Arrays.asList(PLOT_OWNER_ENTITY_3));
 
 

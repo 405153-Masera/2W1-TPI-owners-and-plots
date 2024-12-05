@@ -1,10 +1,30 @@
 package ar.edu.utn.frc.tup.lc.iv.services.implementations;
 
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.*;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetDniTypeDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerAndPlot;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerTypeDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerWithHisPlots;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetTaxStatusDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.OwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutOwnerDto;
-import ar.edu.utn.frc.tup.lc.iv.entities.*;
-import ar.edu.utn.frc.tup.lc.iv.repositories.*;
+import ar.edu.utn.frc.tup.lc.iv.entities.DniTypeEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.FileEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.FileOwnerEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.OwnerEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.OwnerTypeEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.PlotEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.PlotOwnerEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.TaxStatusEntity;
+import ar.edu.utn.frc.tup.lc.iv.repositories.DniTypeRepository;
+import ar.edu.utn.frc.tup.lc.iv.repositories.OwnerRepository;
+import ar.edu.utn.frc.tup.lc.iv.repositories.OwnerTypeRepository;
+import ar.edu.utn.frc.tup.lc.iv.repositories.PlotOwnerRepository;
+import ar.edu.utn.frc.tup.lc.iv.repositories.PlotRepository;
+import ar.edu.utn.frc.tup.lc.iv.repositories.PlotStateRepository;
+import ar.edu.utn.frc.tup.lc.iv.repositories.TaxStatusRepository;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.FileManagerClient;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.RestUser;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.GetUserDto;
@@ -22,7 +42,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -333,7 +357,7 @@ public class OwnerServiceImpl implements OwnerService {
      * @return un arreglo de ids de plots actuales.
      */
     private Integer[] getActualPlots(Integer ownerId) {
-        return plotOwnerRepository.findByOwnerId(ownerId).stream()
+        return plotOwnerRepository.findAllByOwner_Id(ownerId).stream()
                 .map(plotOwner -> plotOwner.getPlot().getId())
                 .toArray(Integer[]::new);
     }
@@ -582,7 +606,7 @@ public class OwnerServiceImpl implements OwnerService {
         GetOwnerWithHisPlots getOwnerWithHisPlots = new GetOwnerWithHisPlots();
 
         // Obtener la lista de IDs de los plots
-        List<Integer> plotIds = plotOwnerRepository.findByOwnerId(ownerEntity.getId()).stream()
+        List<Integer> plotIds = plotOwnerRepository.findAllByOwner_Id(ownerEntity.getId()).stream()
                 .map(plotOwner -> plotOwner.getPlot().getId())
                 .collect(Collectors.toList());
 
@@ -664,7 +688,7 @@ public class OwnerServiceImpl implements OwnerService {
      * @param ownerId el id del propietario.
      */
     public void multiplePlotsChangeState(Integer ownerId) {
-        List<PlotOwnerEntity> plotOwnerEntity = plotOwnerRepository.findByOwnerId(ownerId);
+        List<PlotOwnerEntity> plotOwnerEntity = plotOwnerRepository.findAllByOwner_Id(ownerId);
         for (PlotOwnerEntity plotOwnerEntities : plotOwnerEntity) {
             changePlotToAvaible(plotOwnerEntities.getId());
         }
@@ -720,7 +744,7 @@ public class OwnerServiceImpl implements OwnerService {
 
     private GetOwnerAndPlot buildGetOwnerAndPlot(OwnerEntity ownerEntity) {
         GetOwnerAndPlot getOwnerAndPlot = new GetOwnerAndPlot();
-        List<GetPlotDto> getPlotDtos = mapPlotOwnersToGetPlotDtos(plotOwnerRepository.findByOwnerId(ownerEntity.getId()));
+        List<GetPlotDto> getPlotDtos = mapPlotOwnersToGetPlotDtos(plotOwnerRepository.findAllByOwner_Id(ownerEntity.getId()));
 
         OwnerDto ownerDto = mapOwnerEntityToOwnerDto(ownerEntity);
         GetUserDto getUserDto;
@@ -736,5 +760,24 @@ public class OwnerServiceImpl implements OwnerService {
 
 
         return getOwnerAndPlot;
+    }
+    /**
+     * Obtiene los lotes de un propietario.
+     *
+     * @param userId id del propietario.
+     * @return lista de lotes del propietario.
+     */
+    @Override
+    public List<GetPlotDto> getPlotByUserId(Integer userId) {
+        //TODO aca arreglar
+        List<GetPlotDto> plotDtos = new ArrayList<>();
+        try {
+            List<GetOwnerAndPlot> ownersAndPlot = getOwersAndPlots();
+            GetOwnerAndPlot getOwnerAndPlot = ownersAndPlot.stream().filter(m->m.getUser().getId().equals(userId)).findFirst().get();
+            plotDtos = getOwnerAndPlot.getPlot();
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return plotDtos;
     }
 }

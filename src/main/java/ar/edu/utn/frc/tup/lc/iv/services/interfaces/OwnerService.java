@@ -1,6 +1,13 @@
 package ar.edu.utn.frc.tup.lc.iv.services.interfaces;
 
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.*;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetDniTypeDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerAndPlot;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerTypeDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetOwnerWithHisPlots;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetTaxStatusDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.OwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutOwnerDto;
 import org.springframework.stereotype.Service;
@@ -112,5 +119,13 @@ public interface OwnerService {
      */
 
     Map<String, Long> getOwnerCountByStatus();
+
+    /**
+     * Obtiene un lote por id de User.
+     *
+     * @param userId id del propietario para buscar el lote.
+     * @return los lotes encontrados.
+     */
+    List<GetPlotDto> getPlotByUserId(Integer userId);
 
 }

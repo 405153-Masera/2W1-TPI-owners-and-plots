@@ -1,21 +1,24 @@
 package ar.edu.utn.frc.tup.lc.iv.services.dashboard;
 
-import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.*;
-import ar.edu.utn.frc.tup.lc.iv.entities.PlotEntity;
-
+import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.BlockData;
+import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.OwnersPlotsDistribution;
+import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.PlotByPlotStateCountDTO;
+import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.PlotByPlotTypeCountDTO;
+import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.PlotsByBlock;
+import ar.edu.utn.frc.tup.lc.iv.dtos.dashboard.PlotsStats;
 import ar.edu.utn.frc.tup.lc.iv.entities.OwnerEntity;
-
+import ar.edu.utn.frc.tup.lc.iv.entities.PlotEntity;
 import ar.edu.utn.frc.tup.lc.iv.entities.PlotOwnerEntity;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotOwnerRepository;
 import ar.edu.utn.frc.tup.lc.iv.repositories.PlotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-
 import java.time.LocalDate;
-import java.util.*;
-
-
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service

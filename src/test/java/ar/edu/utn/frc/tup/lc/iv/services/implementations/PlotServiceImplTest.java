@@ -22,7 +22,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -694,7 +693,7 @@ class PlotServiceImplTest {
                 .owner(new OwnerEntity())
                 .build();
 
-        when(plotOwnerRepository.findByOwnerId(ownerId)).thenReturn(List.of(plotOwnerEntity));
+        when(plotOwnerRepository.findAllByOwner_Id(ownerId)).thenReturn(List.of(plotOwnerEntity));
         when(plotRepository.findById(plotEntity.getId())).thenReturn(Optional.of(plotEntity));
 
         List<GetPlotDto> result = plotService.getPlotByOwnerId(ownerId);

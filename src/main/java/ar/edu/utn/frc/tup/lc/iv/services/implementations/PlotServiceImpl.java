@@ -1,10 +1,24 @@
 package ar.edu.utn.frc.tup.lc.iv.services.implementations;
 
-import ar.edu.utn.frc.tup.lc.iv.dtos.get.*;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotOwnerDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotStateDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotTypeDto;
+import ar.edu.utn.frc.tup.lc.iv.dtos.get.GetPlotWithHisOwnerDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.post.PostPlotDto;
 import ar.edu.utn.frc.tup.lc.iv.dtos.put.PutPlotDto;
-import ar.edu.utn.frc.tup.lc.iv.entities.*;
-import ar.edu.utn.frc.tup.lc.iv.repositories.*;
+import ar.edu.utn.frc.tup.lc.iv.entities.FileEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.FilePlotEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.OwnerEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.PlotEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.PlotOwnerEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.PlotStateEntity;
+import ar.edu.utn.frc.tup.lc.iv.entities.PlotTypeEntity;
+import ar.edu.utn.frc.tup.lc.iv.repositories.OwnerRepository;
+import ar.edu.utn.frc.tup.lc.iv.repositories.PlotOwnerRepository;
+import ar.edu.utn.frc.tup.lc.iv.repositories.PlotRepository;
+import ar.edu.utn.frc.tup.lc.iv.repositories.PlotStateRepository;
+import ar.edu.utn.frc.tup.lc.iv.repositories.PlotTypeRepository;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.FileManagerClient;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.RestUser;
 import ar.edu.utn.frc.tup.lc.iv.services.interfaces.FileService;
@@ -74,6 +88,7 @@ public class PlotServiceImpl implements PlotService {
     private final PlotOwnerRepository plotOwnerRepository;
     private final OwnerRepository ownerRepository;
     private final RestUser restUser;
+
 
     /**
      * Crea un nuevo lote.
@@ -380,7 +395,7 @@ public class PlotServiceImpl implements PlotService {
     @Override
     public List<GetPlotDto> getPlotByOwnerId(Integer ownerdId) {
         List<GetPlotDto> plotDtos = new ArrayList<>();
-        List<PlotOwnerEntity> plotOwnerEntity = plotOwnerRepository.findByOwnerId(ownerdId);
+        List<PlotOwnerEntity> plotOwnerEntity = plotOwnerRepository.findAllByOwner_Id(ownerdId);
         for (PlotOwnerEntity plotOwner : plotOwnerEntity) {
             GetPlotDto getPlotDto = new GetPlotDto();
             PlotEntity plotEntity = plotRepository.findById(plotOwner.getPlot().getId())
