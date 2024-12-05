@@ -141,7 +141,8 @@ public class OwnerController {
      */
     @GetMapping("/ownersandplots")
     public ResponseEntity<List<GetOwnerAndPlot>> getOwnersPlots() {
-        return ResponseEntity.ok(ownerService.getOwersAndPlots());
+        List<GetOwnerAndPlot> result = ownerService.getOwersAndPlots();
+        return ResponseEntity.ok(result);
     }
 
     /**

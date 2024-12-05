@@ -55,7 +55,7 @@ public class OwnerTestHelper {
             .datebirth(LocalDate.of(1977, 7, 28))
             .roles(new String[]{"ADMIN"})
             .plot_id(plot_id)
-            .telegram_id(2002)
+            .telegram_id(2002L)
             .build();
 
     public static final GetOwnerAndPlot GET_OWNER_AND_PLOT_1 = GetOwnerAndPlot.builder()
