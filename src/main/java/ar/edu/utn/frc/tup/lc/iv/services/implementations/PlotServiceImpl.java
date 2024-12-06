@@ -414,7 +414,8 @@ public class PlotServiceImpl implements PlotService {
      @param userId id del usuario que realiza la transferencia.
 
      */
-    @Transactional@Override
+    @Transactional
+    @Override
     public void transferPlot(Integer plotId, Integer ownerId, Integer userId) {
 
         if (!plotRepository.existsById(plotId)) {
@@ -427,6 +428,7 @@ public class PlotServiceImpl implements PlotService {
             Integer currentOwnerId = plotOwnerEntity.getOwner().getId();
 
             plotOwnerRepository.delete(plotOwnerEntity);
+            restUser.deleteUserPlot(currentOwnerId, plotId);
 
             boolean hasOtherPlots = plotOwnerRepository.existsByOwnerId(currentOwnerId);
             if (!hasOtherPlots) {
@@ -437,6 +439,7 @@ public class PlotServiceImpl implements PlotService {
             changePlotState(plotId, userId);
         }
 
+        restUser.createUserPlot(ownerId, plotId, userId);
         plotOwnerService.createPlotOwner(ownerId, plotId, userId);
     }
 

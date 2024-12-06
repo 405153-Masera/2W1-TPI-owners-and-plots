@@ -8,6 +8,7 @@ import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.GetUserDto;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.UserPost;
 import ar.edu.utn.frc.tup.lc.iv.restTemplate.users.UserPut;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -72,6 +73,43 @@ public class RestUser {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Server error while creating the user: " + e.getMessage(), e);
+        }
+    }
+
+    public void createUserPlot(Integer userId, Integer plotId, Integer userIdUpdate) {
+        ResponseEntity<GetUserDto[]> response = restTemplate.getForEntity(url + "/byOwner/" + userId, GetUserDto[].class);
+        GetUserDto owner = new GetUserDto();
+        for (GetUserDto user : response.getBody()) {
+            if (Arrays.asList(user.getRoles()).contains("Propietario")) {
+                owner = user;
+            }
+        }
+        try {
+            restTemplate.postForEntity(url + "/post/userplot/" + owner.getId() + "/" + plotId + "/" + userIdUpdate, null, Void.class);
+        } catch (HttpClientErrorException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getMessage(), e);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Server error while creating the user: " + e.getMessage(), e);
+        }
+    }
+
+    @Transactional
+    public void deleteUserPlot(Integer userId, Integer plotId) {
+        ResponseEntity<GetUserDto[]> response = restTemplate.getForEntity(url + "/byOwner/" + userId, GetUserDto[].class);
+        GetUserDto owner = new GetUserDto();
+        for (GetUserDto user : response.getBody()) {
+            if (Arrays.asList(user.getRoles()).contains("Propietario")) {
+                owner = user;
+            }
+        }
+        try {
+            restTemplate.delete(url + "/delete/userplot/" + owner.getId() + "/" + plotId);
+        } catch (HttpClientErrorException e) {
+            throw new ResponseStatusException(e.getStatusCode(), e.getMessage(), e);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Server error while deleting the user: " + e.getMessage(), e);
         }
     }
 
