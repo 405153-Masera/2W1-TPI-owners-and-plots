@@ -113,6 +113,7 @@ Permite dar de baja a un propietario de forma lógica, eliminando su acceso a lo
 | Cifuentes Pilar             |
 | Lara, Ulises                |
 | Lopez, Camila Antonella     |
+| Masera, Gustavo Martin      |
 | Moro, Benjamín              |
 | Ruiz, Facundo Nicolás       |
 |  Sánchez, Juan Manuel       |
